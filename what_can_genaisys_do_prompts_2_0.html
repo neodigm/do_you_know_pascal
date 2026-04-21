@@ -1,0 +1,1822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenAIsys WCGD Config 2.0 - Gen20 Format</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/arcanus55/neodigm55@gh-pages/dist/neodigm55__v4_0.min.css">
+<script>
+    let neodigmOptCustom = { CONSOLE_LOG_VER:false, W4S_VOLUME: .016 }
+</script>
+<script src="https://cdn.jsdelivr.net/gh/arcanus55/neodigm55@gh-pages/dist/neodigm55__v4_0.min.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: #1a1a1a;
+            --bg-dark-secondary: #242424;
+            --bg-dark-tertiary: #2d2d2d;
+            --text-primary: #e4e4e4;
+            --text-secondary: #a8a8a8;
+            --brand-primary: #92a8d1;
+            --brand-primary-dark: #364C75;
+            --brand-accent: #edba08;
+            --brand-accent-dark: #915E00;
+            --success: #009473;
+            --success-dark: #003817;
+            --danger: #DD4124;
+            --danger-dark: #810000;
+            --warning: #F5DF4D;
+            --warning-dark: #988200;
+            --info: #7BC4C4;
+            --info-dark: #1F6868;
+            --border-color: #3a3a3a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            background-image:
+                radial-gradient(circle at 25% 25%, #2a2a2a 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, #1f1f1f 0%, transparent 50%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        *::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        *::-webkit-scrollbar-track {
+            background: var(--bg-dark-tertiary);
+        }
+
+        *::-webkit-scrollbar-thumb {
+            background: var(--brand-accent);
+            border-radius: 4px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: var(--bg-dark-secondary);
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--brand-primary-dark) 0%, var(--bg-dark-tertiary) 100%);
+            padding: 30px;
+            text-align: center;
+            border-bottom: 2px solid var(--brand-accent);
+        }
+
+        h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            color: var(--brand-accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 0;
+            background: var(--bg-dark);
+        }
+
+        .sidebar {
+            background: var(--bg-dark-secondary);
+            padding: 20px;
+            border-right: 1px solid var(--border-color);
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+
+        .content-area {
+            padding: 30px;
+        }
+
+        .panel {
+            background: var(--bg-dark-secondary);
+            border-radius: 6px;
+            padding: 25px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--brand-accent);
+        }
+
+        .panel-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: var(--brand-accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: var(--bg-dark-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: var(--brand-primary);
+            color: var(--bg-dark);
+            border-color: var(--brand-primary-dark);
+        }
+
+        .btn-primary:hover {
+            background: var(--brand-primary-dark);
+            color: var(--text-primary);
+            box-shadow: 0 4px 12px rgba(146, 168, 209, 0.4);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+            border-color: var(--success-dark);
+        }
+
+        .btn-success:hover {
+            background: var(--success-dark);
+            box-shadow: 0 4px 12px rgba(0, 148, 115, 0.4);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger-dark);
+        }
+
+        .btn-danger:hover {
+            background: var(--danger-dark);
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 0.75em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--brand-accent);
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-dark-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: 'Courier New', monospace;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--brand-accent);
+            box-shadow: 0 0 0 2px rgba(237, 186, 8, 0.2);
+            background: var(--bg-dark);
+        }
+
+        .help-text {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .category-item {
+            margin-bottom: 10px;
+            background: var(--bg-dark-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .category-header {
+            padding: 12px;
+            background: var(--bg-dark);
+            font-weight: 600;
+            color: var(--brand-accent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9em;
+        }
+
+        .category-header:hover {
+            background: var(--bg-dark-tertiary);
+        }
+
+        .category-name {
+            flex: 1;
+        }
+
+        .category-actions {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 4px 8px;
+            font-size: 0.9em;
+            transition: all 0.2s ease;
+        }
+
+        .icon-btn:hover {
+            color: var(--brand-accent);
+            transform: scale(1.1);
+        }
+
+        .sub-category {
+            padding: 10px 12px 10px 24px;
+            border-top: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.85em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sub-category:hover {
+            background: var(--bg-dark);
+            padding-left: 28px;
+        }
+
+        .sub-category.selected {
+            background: var(--brand-primary-dark);
+            color: var(--brand-accent);
+            border-left: 3px solid var(--brand-accent);
+        }
+
+        .prompt-count {
+            background: var(--bg-dark-tertiary);
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.7em;
+            color: var(--text-secondary);
+        }
+
+        .prompt-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .prompt-card {
+            background: var(--bg-dark-tertiary);
+            padding: 20px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .prompt-card:hover {
+            border-color: var(--brand-accent);
+            box-shadow: 0 4px 12px rgba(237, 186, 8, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .prompt-caption {
+            font-weight: 600;
+            color: var(--brand-accent);
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .prompt-text {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-bottom: 12px;
+            font-family: 'Courier New', monospace;
+            background: var(--bg-dark);
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .prompt-meta {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 12px 0;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+        }
+
+        .badge-criterion {
+            background: var(--info-dark);
+            color: var(--info);
+        }
+
+        .badge-required {
+            background: var(--danger-dark);
+            color: var(--danger);
+        }
+
+        .badge-optional {
+            background: var(--success-dark);
+            color: var(--success);
+        }
+
+        .token-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+            padding: 12px;
+            background: var(--bg-dark);
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .token-chip {
+            padding: 6px 12px;
+            background: var(--info-dark);
+            color: var(--info);
+            border: 1px solid var(--info);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .token-chip:hover {
+            background: var(--info);
+            color: var(--bg-dark);
+            transform: scale(1.05);
+        }
+
+        .franchise-chip {
+            padding: 6px 12px;
+            background: var(--bg-dark-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .franchise-chip:hover {
+            background: var(--bg-dark);
+            border-color: var(--brand-accent);
+        }
+
+        .franchise-chip.selected {
+            background: var(--brand-primary);
+            color: var(--bg-dark);
+            border-color: var(--brand-primary-dark);
+        }
+
+        .criteria-list {
+            margin-top: 15px;
+        }
+
+        .criterion-item {
+            display: grid;
+            grid-template-columns: 1.5fr 1.5fr 1fr 1fr auto;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding: 12px;
+            background: var(--bg-dark);
+            border-radius: 4px;
+            align-items: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        input[type="checkbox"] {
+            width: auto;
+            cursor: pointer;
+        }
+
+        .checkbox-label {
+            font-size: 0.85em;
+            color: var(--text-primary);
+            text-transform: none;
+            font-weight: normal;
+            margin: 0;
+        }
+
+        .json-output {
+            width: 100%;
+            min-height: 400px;
+            padding: 15px;
+            background: var(--bg-dark-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            color: var(--text-primary);
+            resize: vertical;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .schema-view {
+            background: var(--bg-dark);
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .schema-view pre {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.8em;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>What Can GenAIsys Do? 2.0</h1>
+            <p class="subtitle">Gen20 Format Configuration Tool - Schema-First Approach</p>
+            <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <button class="btn btn-primary" data-n55-wired4sound-click="5" onclick="loadSample()">Load Sample Data</button>
+                <button class="btn btn-primary" data-n55-wired4sound-click="5" onclick="loadFromClipboard()">Load from Clipboard</button>
+                <button class="btn btn-primary" data-n55-wired4sound-click="5" onclick="importFile()">Import JSON</button>
+                <button class="btn btn-success" data-n55-wired4sound-click="5" onclick="downloadJSON()">Download JSON</button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <!-- Sidebar: Category Navigator -->
+            <div class="sidebar">
+                <div style="margin-bottom: 15px;">
+                    <h3 style="color: var(--brand-accent); font-size: 0.9em; margin-bottom: 10px;">CATEGORIES</h3>
+                    <button class="btn btn-primary btn-small" style="width: 100%;" onclick="showCategoryForm()">+ Add Category</button>
+                </div>
+                <div id="categoryTree"></div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="content-area">
+                <!-- Category/SubCategory Form -->
+                <div id="categoryForm" class="panel" style="display: none;">
+                    <div class="panel-header">
+                        <h2 class="panel-title" id="categoryFormTitle">Add Category</h2>
+                        <button class="btn btn-small" onclick="hideCategoryForm()">Cancel</button>
+                    </div>
+
+                    <input type="hidden" id="editingCategoryIndex" value="">
+
+                    <div class="form-group">
+                        <label>Category Name</label>
+                        <input type="text" id="categoryName" placeholder="e.g., HCP Prescribing Behavior">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Sub-Category Name <span style="font-size: 0.8em; color: var(--text-secondary); font-weight: normal;">(Optional when editing)</span></label>
+                        <input type="text" id="subCategoryName" placeholder="e.g., TRx questions">
+                        <div class="help-text">Leave blank when just updating category franchises</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Category Franchises (Optional)</label>
+                        <div class="help-text" style="margin-bottom: 10px;">Select franchises that can see this category</div>
+                        <div id="categoryFranchiseSelector" class="token-selector"></div>
+                    </div>
+
+                    <div class="actions">
+                        <button class="btn btn-success" data-n55-wired4sound-click="16" onclick="saveCategoryOrSubCategory()">Save</button>
+                        <button class="btn" onclick="hideCategoryForm()">Cancel</button>
+                    </div>
+                </div>
+
+                <!-- Prompt Editor -->
+                <div id="promptEditor" class="panel" style="display: none;">
+                    <div class="panel-header">
+                        <h2 class="panel-title" id="editorTitle">Add Prompt</h2>
+                        <button class="btn btn-small" onclick="hidePromptEditor()">Cancel</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="promptCategorySelect" onchange="updateSubCategorySelect()">
+                            <option value="">-- Select Category --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Sub-Category</label>
+                        <select id="promptSubCategorySelect">
+                            <option value="">-- Select Category First --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Caption (Display Label)</label>
+                        <input type="text" id="promptCaption" placeholder="e.g., TRx Volume by HCP">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Prompt (Question)</label>
+                        <textarea id="promptText" placeholder="e.g., What is the TRx volume for PRODUCT for HCP_NAME?"></textarea>
+                        <div class="help-text">Plain text question without tokens</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Template (Tokenized)</label>
+                        <textarea id="promptTemplate" placeholder="e.g., What is the TRx volume for ##PRODUCT## for ##HCP_NAME##?"></textarea>
+                        <div class="help-text">Click tokens below to insert them at cursor position</div>
+                        <div class="token-selector">
+                            <div class="token-chip" data-n55-wired4sound-click="20" onclick="insertToken('##HCP_NAME##')">##HCP_NAME##</div>
+                            <div class="token-chip" data-n55-wired4sound-click="20" onclick="insertToken('##PRODUCT##')">##PRODUCT##</div>
+                            <div class="token-chip" data-n55-wired4sound-click="20" onclick="insertToken('##TIME_PERIOD##')">##TIME_PERIOD##</div>
+                            <div class="token-chip" data-n55-wired4sound-click="20" onclick="insertToken('##ZIP_CODE##')">##ZIP_CODE##</div>
+                            <div class="token-chip" data-n55-wired4sound-click="20" onclick="insertToken('##INDICATION##')">##INDICATION##</div>
+                            <div class="token-chip" data-n55-wired4sound-click="20" onclick="insertToken('##SPECIALTY##')">##SPECIALTY##</div>
+                            <div class="token-chip" data-n55-wired4sound-click="20" onclick="insertToken('##COMPETITOR##')">##COMPETITOR##</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Prompt Franchises (Optional)</label>
+                        <div class="help-text" style="margin-bottom: 10px;">Select franchises that can see this prompt (overrides category franchises)</div>
+                        <div id="promptFranchiseSelector" class="token-selector"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Criteria <button class="btn btn-small" onclick="addCriterion()">+ Add</button></label>
+                        <div class="help-text">Define validation rules for this prompt</div>
+                        <div id="criteriaList" class="criteria-list"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Workflow ID</label>
+                        <input type="text" id="promptWorkflow" placeholder="Optional">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Feature Flag</label>
+                        <input type="text" id="promptFeature" placeholder="Optional">
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="promptFav">
+                            <label class="checkbox-label" for="promptFav">Mark as Favorite</label>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button class="btn btn-success" data-n55-wired4sound-click="16" onclick="savePrompt()">Save Prompt</button>
+                        <button class="btn" onclick="hidePromptEditor()">Cancel</button>
+                    </div>
+                </div>
+
+                <!-- Prompt List View -->
+                <div id="promptListView" class="panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title" id="viewTitle">Select a Sub-Category</h2>
+                        <button class="btn btn-primary" id="addPromptBtn" style="display: none;" onclick="showPromptEditor()">+ Add Prompt</button>
+                    </div>
+                    <div id="promptListContainer">
+                        <div class="empty-state">
+                            Select a sub-category from the sidebar to view and manage prompts
+                        </div>
+                    </div>
+                </div>
+
+                <!-- JSON Output -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Generated JSON (Gen20 Format)</h2>
+                        <div class="actions">
+                            <button class="btn btn-success" data-n55-wired4sound-click="8" onclick="generateJSON()">Generate</button>
+                            <button class="btn" data-n55-wired4sound-click="8" onclick="copyJSON()">Copy</button>
+                            <button class="btn" data-n55-wired4sound-click="8" onclick="downloadJSON()">Download</button>
+                        </div>
+                    </div>
+
+                    <!-- Schema Reference -->
+                    <details style="margin-bottom: 15px;">
+                        <summary style="cursor: pointer; color: var(--brand-accent); font-weight: 600; margin-bottom: 10px;">📋 View JSON Schema</summary>
+                        <div class="schema-view">
+                            <pre id="schemaDisplay"></pre>
+                        </div>
+                    </details>
+
+                    <textarea id="jsonOutput" class="json-output" readonly placeholder="Click 'Generate' to see JSON output..."></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="fileInput" accept=".json" onchange="handleFileImport(event)">
+
+    <script>
+        // ============================================================================
+        // JSON SCHEMA DEFINITION (Gen20 Format)
+        // ============================================================================
+        const GEN20_SCHEMA = {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "array",
+            "description": "Gen20 WCGD Configuration Schema",
+            "items": {
+                "type": "object",
+                "required": ["cat", "franchises", "roles", "sub-cats"],
+                "properties": {
+                    "cat": {
+                        "type": "string",
+                        "description": "Category name"
+                    },
+                    "franchises": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Franchise filters at category level"
+                    },
+                    "roles": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Role filters at category level"
+                    },
+                    "sub-cats": {
+                        "type": "array",
+                        "description": "Sub-categories within this category",
+                        "items": {
+                            "type": "object",
+                            "required": ["sub", "prompts"],
+                            "properties": {
+                                "sub": {
+                                    "type": "string",
+                                    "description": "Sub-category name"
+                                },
+                                "prompts": {
+                                    "type": "array",
+                                    "description": "Prompts in this sub-category",
+                                    "items": {
+                                        "type": "object",
+                                        "required": ["prompt", "franchises", "roles", "caption", "template", "criteria", "wrkf", "feature", "fav"],
+                                        "properties": {
+                                            "prompt": {
+                                                "type": "string",
+                                                "description": "The prompt text with tokens"
+                                            },
+                                            "franchises": {
+                                                "type": "array",
+                                                "items": {"type": "string"},
+                                                "description": "Franchise filters for this prompt"
+                                            },
+                                            "roles": {
+                                                "type": "array",
+                                                "items": {"type": "string"},
+                                                "description": "Role filters for this prompt"
+                                            },
+                                            "caption": {
+                                                "type": "string",
+                                                "description": "Display caption/label"
+                                            },
+                                            "template": {
+                                                "type": "string",
+                                                "description": "Template identifier"
+                                            },
+                                            "criteria": {
+                                                "type": "array",
+                                                "description": "Semantic validation criteria",
+                                                "items": {
+                                                    "type": "object",
+                                                    "required": ["criterion", "required", "match_tap", "default"],
+                                                    "properties": {
+                                                        "criterion": {
+                                                            "type": "string",
+                                                            "description": "Criterion name (e.g., HCP_NAME, PRODUCT)"
+                                                        },
+                                                        "required": {
+                                                            "type": "boolean",
+                                                            "description": "Is this criterion required?"
+                                                        },
+                                                        "match_tap": {
+                                                            "type": "boolean",
+                                                            "description": "Should match tap context?"
+                                                        },
+                                                        "default": {
+                                                            "type": "string",
+                                                            "description": "Default value"
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "wrkf": {
+                                                "type": "string",
+                                                "description": "Workflow identifier"
+                                            },
+                                            "feature": {
+                                                "type": "string",
+                                                "description": "Feature flag"
+                                            },
+                                            "fav": {
+                                                "type": "boolean",
+                                                "description": "Is this a favorite prompt?"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        // ============================================================================
+        // APPLICATION STATE
+        // ============================================================================
+        let data = [];
+        let selectedCategoryIndex = null;
+        let selectedSubCategoryIndex = null;
+        let editingPromptIndex = null;
+        let currentCriteria = [];
+        let selectedCategoryFranchises = [];
+        let selectedPromptFranchises = [];
+
+        // Available franchises (from ChatAssistantState.js)
+        const AVAILABLE_FRANCHISES = [
+            "IMMUNOLOGY - ACCOUNT EXECS",
+            "IMMUNOLOGY - DERM",
+            "IMMUNOLOGY - GASTRO",
+            "IMMUNOLOGY - RHEUM",
+            "IMMUNOLOGY DERM - AD",
+            "MIGRAINE",
+            "PSYCH",
+            "ONCOLOGY FRANCHISE V"
+        ];
+
+        // Available criterion names (matching token chip values)
+        const AVAILABLE_CRITERIA = [
+            "HCP_NAME",
+            "PRODUCT",
+            "TIME_PERIOD",
+            "ZIP_CODE",
+            "INDICATION",
+            "SPECIALTY",
+            "COMPETITOR"
+        ];
+
+        // ============================================================================
+        // INITIALIZATION
+        // ============================================================================
+        function init() {
+            displaySchema();
+            loadSample();
+        }
+
+        function displaySchema() {
+            document.getElementById('schemaDisplay').textContent = JSON.stringify(GEN20_SCHEMA, null, 2);
+        }
+
+        // ============================================================================
+        // EMBEDDED SAMPLE DATA (from wcgd_data.json)
+        // ============================================================================
+        const SAMPLE_DATA = [
+  {
+    "cat": "HCP Prescribing Behavior",
+    "franchises": [],
+    "roles": [],
+    "sub-cats": [
+      {
+        "sub": "TRx questions",
+        "prompts": [
+          {
+            "prompt": "What is the TRx volume for ##PRODUCT## for ##HCP_NAME##?",
+            "franchises": [],
+            "roles": [],
+            "caption": "TRx Volume by HCP",
+            "template": "",
+            "criteria": [
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "PRODUCT",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "TIME_PERIOD",
+                "required": false,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          }
+        ]
+      },
+      {
+        "sub": "NBRx questions",
+        "prompts": [
+          {
+            "prompt": "What is the NBRx volume for product for Dr. X?",
+            "franchises": [
+              "IMMUNOLOGY - DERM"
+            ],
+            "roles": [],
+            "caption": "NBRx Volume by HCP",
+            "template": "What is the NBRx volume for ##PRODUCT## for ##HCP_NAME##?",
+            "criteria": [
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "PRODUCT",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "TIME_PERIOD",
+                "required": false,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "cat": "HCP Interactions",
+    "franchises": [],
+    "roles": [],
+    "sub-cats": [
+      {
+        "sub": "Recent Interactions",
+        "prompts": [
+          {
+            "prompt": "Show me recent interactions with ##HCP_NAME##",
+            "franchises": [],
+            "roles": [],
+            "caption": "Recent HCP Interactions",
+            "template": "",
+            "criteria": [
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          }
+        ]
+      },
+      {
+        "sub": "Suggestions",
+        "prompts": [
+          {
+            "prompt": "What are my suggestions for ##HCP_NAME##?",
+            "franchises": [],
+            "roles": [],
+            "caption": "HCP Suggestions",
+            "template": "",
+            "criteria": [
+              {
+                "criterion": "HCP_NAME",
+                "required": false,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "cat": "Territory Insights",
+    "franchises": [],
+    "roles": [],
+    "sub-cats": [
+      {
+        "sub": "Top Prescribers",
+        "prompts": [
+          {
+            "prompt": "Who are my top prescribers for ##PRODUCT##?",
+            "franchises": [],
+            "roles": [],
+            "caption": "Top Prescribers by Product",
+            "template": "",
+            "criteria": [
+              {
+                "criterion": "PRODUCT",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "TIME_PERIOD",
+                "required": false,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          }
+        ]
+      },
+      {
+        "sub": "Product Comparison",
+        "prompts": [
+          {
+            "prompt": "Compare ##PRODUCT## vs ##COMPETITOR## in my territory",
+            "franchises": [],
+            "roles": [],
+            "caption": "Product Comparison",
+            "template": "",
+            "criteria": [
+              {
+                "criterion": "PRODUCT",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "COMPETITOR",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "TIME_PERIOD",
+                "required": false,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          }
+        ]
+      },
+      {
+        "sub": "Other HCP Categories",
+        "prompts": [
+          {
+            "prompt": "Show me HCPs by ##SPECIALTY## in my territory",
+            "franchises": [],
+            "roles": [],
+            "caption": "HCPs by Specialty",
+            "template": "",
+            "criteria": [
+              {
+                "criterion": "SPECIALTY",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "cat": "Account Info & Management",
+    "franchises": [],
+    "roles": [],
+    "sub-cats": [
+      {
+        "sub": "HCP Info",
+        "prompts": [
+          {
+            "prompt": "Show me account details for ##HCP_NAME##",
+            "franchises": [],
+            "roles": [],
+            "caption": "HCP Account Details",
+            "template": "",
+            "criteria": [
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          }
+        ]
+      },
+      {
+        "sub": "Sample Lots & Rep Info",
+        "prompts": [
+          {
+            "prompt": "Show me my sample lots",
+            "franchises": [],
+            "roles": [],
+            "caption": "Sample Lots",
+            "template": "",
+            "criteria": [],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          }
+        ]
+      },
+      {
+        "sub": "Account Management",
+        "prompts": [
+          {
+            "prompt": "Show me account management options for ##HCP_NAME##",
+            "franchises": [],
+            "roles": [],
+            "caption": "Account Management",
+            "template": "",
+            "criteria": [
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          }
+        ]
+      },
+      {
+        "sub": "Account Addresses",
+        "prompts": [
+          {
+            "prompt": "Show me addresses for ##HCP_NAME##",
+            "franchises": [],
+            "roles": [],
+            "caption": "Account Addresses",
+            "template": "",
+            "criteria": [
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "cat": "Playbook",
+    "franchises": [],
+    "roles": [],
+    "sub-cats": [
+      {
+        "sub": "Playbook",
+        "prompts": [
+          {
+            "prompt": "Show me the playbook for ##PRODUCT##",
+            "franchises": [],
+            "roles": [],
+            "caption": "Product Playbook",
+            "template": "",
+            "criteria": [
+              {
+                "criterion": "PRODUCT",
+                "required": false,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          }
+        ]
+      }
+    ]
+  }
+];
+
+        function loadSample() {
+            data = JSON.parse(JSON.stringify(SAMPLE_DATA)); // Deep clone
+            renderCategoryTree();
+            generateJSON();
+            neodigmToast.q('Sample data loaded successfully!', 'brand');
+        }
+
+        // ============================================================================
+        // CATEGORY TREE RENDERING
+        // ============================================================================
+        function renderCategoryTree() {
+            const tree = document.getElementById('categoryTree');
+
+            if (data.length === 0) {
+                tree.innerHTML = '<div class="empty-state" style="padding: 20px;">No categories yet</div>';
+                return;
+            }
+
+            tree.innerHTML = data.map((category, catIndex) => {
+                const subCats = category['sub-cats'].map((subCat, subIndex) => {
+                    const count = subCat.prompts.length;
+                    const isSelected = selectedCategoryIndex === catIndex && selectedSubCategoryIndex === subIndex;
+
+                    return `
+                        <div class="sub-category ${isSelected ? 'selected' : ''}"
+                             onclick="selectSubCategory(${catIndex}, ${subIndex})">
+                            <span>${subCat.sub}</span>
+                            <span class="prompt-count">${count}</span>
+                        </div>
+                    `;
+                }).join('');
+
+                const franchiseCount = category.franchises.length;
+                const franchiseIndicator = franchiseCount > 0
+                    ? `<span style="font-size: 0.7em; color: var(--brand-primary);" title="${category.franchises.join(', ')}">(${franchiseCount} franchises)</span>`
+                    : '';
+
+                return `
+                    <div class="category-item">
+                        <div class="category-header">
+                            <span class="category-name">${category.cat} ${franchiseIndicator}</span>
+                            <div class="category-actions">
+                                <span class="prompt-count">${category['sub-cats'].length}</span>
+                                <button class="icon-btn" onclick="editCategory(${catIndex}); event.stopPropagation();" title="Edit category">✏️</button>
+                            </div>
+                        </div>
+                        ${subCats}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ============================================================================
+        // CATEGORY/SUBCATEGORY SELECTION
+        // ============================================================================
+        function selectSubCategory(catIndex, subIndex) {
+            selectedCategoryIndex = catIndex;
+            selectedSubCategoryIndex = subIndex;
+
+            renderCategoryTree();
+            renderPromptList();
+
+            const cat = data[catIndex].cat;
+            const subCat = data[catIndex]['sub-cats'][subIndex].sub;
+            document.getElementById('viewTitle').textContent = `${cat} > ${subCat}`;
+            document.getElementById('addPromptBtn').style.display = 'block';
+        }
+
+        // ============================================================================
+        // PROMPT LIST RENDERING
+        // ============================================================================
+        function renderPromptList() {
+            const container = document.getElementById('promptListContainer');
+
+            if (selectedCategoryIndex === null || selectedSubCategoryIndex === null) {
+                container.innerHTML = '<div class="empty-state">Select a sub-category to view prompts</div>';
+                return;
+            }
+
+            const prompts = data[selectedCategoryIndex]['sub-cats'][selectedSubCategoryIndex].prompts;
+
+            if (prompts.length === 0) {
+                container.innerHTML = '<div class="empty-state">No prompts yet. Click "+ Add Prompt" to create one.</div>';
+                return;
+            }
+
+            container.innerHTML = `<div class="prompt-list">${prompts.map((prompt, index) => {
+                const criteriaHTML = prompt.criteria.map(c => {
+                    const cls = c.required ? 'badge-required' : 'badge-optional';
+                    const label = c.required ? 'Required' : 'Optional';
+                    return `<span class="badge ${cls}">${c.criterion} (${label})</span>`;
+                }).join('');
+
+                const franchiseCount = (prompt.franchises || []).length;
+                const franchiseHTML = franchiseCount > 0
+                    ? `<div style="margin-top: 8px; font-size: 0.85em; color: var(--brand-primary);">
+                         📋 Franchises (${franchiseCount}): ${prompt.franchises.join(', ')}
+                       </div>`
+                    : '';
+
+                return `
+                    <div class="prompt-card">
+                        <div class="prompt-caption">${prompt.caption}</div>
+                        <div class="prompt-text"><strong>Prompt:</strong> ${prompt.prompt}</div>
+                        ${prompt.template ? `<div class="prompt-text"><strong>Template:</strong> ${prompt.template}</div>` : ''}
+                        <div class="prompt-meta">
+                            ${criteriaHTML || '<span class="badge badge-criterion">No criteria</span>'}
+                        </div>
+                        ${franchiseHTML}
+                        ${prompt.fav ? '<div style="color: var(--warning); font-size: 0.85em;">⭐ Favorite</div>' : ''}
+                        <div class="actions" style="margin-top: 15px;">
+                            <button class="btn btn-small" onclick="editPrompt(${index})">Edit</button>
+                            <button class="btn btn-danger btn-small" onclick="deletePrompt(${index})">Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('')}</div>`;
+        }
+
+        // ============================================================================
+        // CATEGORY FORM
+        // ============================================================================
+        function showCategoryForm() {
+            document.getElementById('categoryForm').style.display = 'block';
+            document.getElementById('promptEditor').style.display = 'none';
+            document.getElementById('promptListView').style.display = 'none';
+            document.getElementById('categoryFormTitle').textContent = 'Add New Category';
+
+            document.getElementById('editingCategoryIndex').value = '';
+            document.getElementById('categoryName').value = '';
+            document.getElementById('subCategoryName').value = '';
+            selectedCategoryFranchises = [];
+            renderCategoryFranchiseSelector();
+        }
+
+        function editCategory(catIndex) {
+            const category = data[catIndex];
+
+            document.getElementById('categoryForm').style.display = 'block';
+            document.getElementById('promptEditor').style.display = 'none';
+            document.getElementById('promptListView').style.display = 'none';
+            document.getElementById('categoryFormTitle').textContent = `Edit Category: ${category.cat}`;
+
+            document.getElementById('editingCategoryIndex').value = catIndex;
+            document.getElementById('categoryName').value = category.cat;
+            document.getElementById('subCategoryName').value = '';
+
+            selectedCategoryFranchises = [...category.franchises];
+            renderCategoryFranchiseSelector();
+        }
+
+        function renderCategoryFranchiseSelector() {
+            const selector = document.getElementById('categoryFranchiseSelector');
+            selector.innerHTML = AVAILABLE_FRANCHISES.map(franchise => {
+                const isSelected = selectedCategoryFranchises.includes(franchise);
+                return `<div class="franchise-chip ${isSelected ? 'selected' : ''}"
+                             onclick="toggleCategoryFranchise('${franchise}')">${franchise}</div>`;
+            }).join('');
+        }
+
+        function toggleCategoryFranchise(franchise) {
+            const idx = selectedCategoryFranchises.indexOf(franchise);
+            if (idx > -1) {
+                selectedCategoryFranchises.splice(idx, 1);
+            } else {
+                selectedCategoryFranchises.push(franchise);
+            }
+            renderCategoryFranchiseSelector();
+        }
+
+        function hideCategoryForm() {
+            document.getElementById('categoryForm').style.display = 'none';
+            document.getElementById('promptListView').style.display = 'block';
+            document.getElementById('editingCategoryIndex').value = '';
+            document.getElementById('categoryName').value = '';
+            document.getElementById('subCategoryName').value = '';
+            selectedCategoryFranchises = [];
+        }
+
+        function saveCategoryOrSubCategory() {
+            const editingIndex = document.getElementById('editingCategoryIndex').value;
+            const catName = document.getElementById('categoryName').value.trim();
+            const subCatName = document.getElementById('subCategoryName').value.trim();
+
+            if (!catName) {
+                neodigmToast.q('Category name is required', 'warning');
+                return;
+            }
+
+            let category;
+
+            if (editingIndex === '') {
+                // Creating new category
+                const exists = data.find(c => c.cat === catName);
+                if (exists) {
+                    neodigmToast.q('Category already exists', 'warning');
+                    return;
+                }
+
+                category = {
+                    cat: catName,
+                    franchises: [...selectedCategoryFranchises],
+                    roles: [],
+                    'sub-cats': []
+                };
+                data.push(category);
+
+                neodigmToast.q('Category created!', 'brand');
+            } else {
+                // Editing existing category
+                const catIdx = parseInt(editingIndex);
+                category = data[catIdx];
+
+                // Update category name and franchises
+                category.cat = catName;
+                category.franchises = [...selectedCategoryFranchises];
+
+                neodigmToast.q('Category updated!', 'brand');
+            }
+
+            // Add sub-category if provided
+            if (subCatName) {
+                const exists = category['sub-cats'].find(sc => sc.sub === subCatName);
+                if (exists) {
+                    neodigmToast.q('Sub-category already exists', 'warning');
+                    return;
+                }
+                category['sub-cats'].push({
+                    sub: subCatName,
+                    prompts: []
+                });
+                neodigmToast.q('Sub-category added!', 'brand');
+            }
+
+            renderCategoryTree();
+            generateJSON();
+            hideCategoryForm();
+        }
+
+        // ============================================================================
+        // PROMPT EDITOR
+        // ============================================================================
+        function showPromptEditor() {
+            if (selectedCategoryIndex === null || selectedSubCategoryIndex === null) {
+                neodigmToast.q('Please select a sub-category first', 'warning');
+                return;
+            }
+
+            editingPromptIndex = null;
+            currentCriteria = [];
+            selectedPromptFranchises = [];
+
+            document.getElementById('promptEditor').style.display = 'block';
+            document.getElementById('promptListView').style.display = 'none';
+            document.getElementById('editorTitle').textContent = 'Add Prompt';
+
+            populateCategorySelects();
+            clearPromptForm();
+            renderCriteriaList();
+            renderPromptFranchiseSelector();
+        }
+
+        function hidePromptEditor() {
+            document.getElementById('promptEditor').style.display = 'none';
+            document.getElementById('promptListView').style.display = 'block';
+            clearPromptForm();
+        }
+
+        function clearPromptForm() {
+            document.getElementById('promptCaption').value = '';
+            document.getElementById('promptText').value = '';
+            document.getElementById('promptTemplate').value = '';
+            document.getElementById('promptWorkflow').value = '';
+            document.getElementById('promptFeature').value = '';
+            document.getElementById('promptFav').checked = false;
+            currentCriteria = [];
+        }
+
+        function populateCategorySelects() {
+            const catSelect = document.getElementById('promptCategorySelect');
+            catSelect.innerHTML = '<option value="">-- Select Category --</option>' +
+                data.map((cat, idx) => `<option value="${idx}">${cat.cat}</option>`).join('');
+
+            if (selectedCategoryIndex !== null) {
+                catSelect.value = selectedCategoryIndex;
+                updateSubCategorySelect();
+                document.getElementById('promptSubCategorySelect').value = selectedSubCategoryIndex;
+            }
+        }
+
+        function updateSubCategorySelect() {
+            const catIdx = document.getElementById('promptCategorySelect').value;
+            const subSelect = document.getElementById('promptSubCategorySelect');
+
+            if (catIdx === '') {
+                subSelect.innerHTML = '<option value="">-- Select Category First --</option>';
+                return;
+            }
+
+            const subCats = data[catIdx]['sub-cats'];
+            subSelect.innerHTML = '<option value="">-- Select Sub-Category --</option>' +
+                subCats.map((sc, idx) => `<option value="${idx}">${sc.sub}</option>`).join('');
+        }
+
+        function insertToken(token) {
+            const field = document.getElementById('promptTemplate');
+            const pos = field.selectionStart;
+            const before = field.value.substring(0, pos);
+            const after = field.value.substring(pos);
+            field.value = before + token + after;
+            field.focus();
+            field.setSelectionRange(pos + token.length, pos + token.length);
+        }
+
+        function renderPromptFranchiseSelector() {
+            const selector = document.getElementById('promptFranchiseSelector');
+            selector.innerHTML = AVAILABLE_FRANCHISES.map(franchise => {
+                const isSelected = selectedPromptFranchises.includes(franchise);
+                return `<div class="franchise-chip ${isSelected ? 'selected' : ''}"
+                             onclick="togglePromptFranchise('${franchise}')">${franchise}</div>`;
+            }).join('');
+        }
+
+        function togglePromptFranchise(franchise) {
+            const idx = selectedPromptFranchises.indexOf(franchise);
+            if (idx > -1) {
+                selectedPromptFranchises.splice(idx, 1);
+            } else {
+                selectedPromptFranchises.push(franchise);
+            }
+            renderPromptFranchiseSelector();
+        }
+
+        // ============================================================================
+        // CRITERIA MANAGEMENT
+        // ============================================================================
+        function addCriterion() {
+            currentCriteria.push({
+                criterion: '',
+                required: false,
+                match_tap: false,
+                default: ''
+            });
+            renderCriteriaList();
+        }
+
+        function renderCriteriaList() {
+            const list = document.getElementById('criteriaList');
+
+            if (currentCriteria.length === 0) {
+                list.innerHTML = '<div style="color: var(--text-secondary); font-style: italic; padding: 10px;">No criteria defined</div>';
+                return;
+            }
+
+            list.innerHTML = currentCriteria.map((c, idx) => {
+                const criterionOptions = AVAILABLE_CRITERIA.map(crit =>
+                    `<option value="${crit}" ${c.criterion === crit ? 'selected' : ''}>${crit}</option>`
+                ).join('');
+
+                return `
+                <div class="criterion-item">
+                    <select onchange="updateCriterion(${idx}, 'criterion', this.value)">
+                        <option value="">-- Select Criterion --</option>
+                        ${criterionOptions}
+                    </select>
+                    <input type="text" value="${c.default || ''}" placeholder="Default value (optional)"
+                           onchange="updateCriterion(${idx}, 'default', this.value)">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="req_${idx}" ${c.required ? 'checked' : ''}
+                               onchange="updateCriterion(${idx}, 'required', this.checked)">
+                        <label class="checkbox-label" for="req_${idx}">Required</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="tap_${idx}" ${c.match_tap ? 'checked' : ''}
+                               onchange="updateCriterion(${idx}, 'match_tap', this.checked)">
+                        <label class="checkbox-label" for="tap_${idx}">Match Tap</label>
+                    </div>
+                    <button class="btn btn-danger btn-small" onclick="removeCriterion(${idx})">Remove</button>
+                </div>
+            `;
+            }).join('');
+        }
+
+        function updateCriterion(idx, field, value) {
+            currentCriteria[idx][field] = value;
+        }
+
+        function removeCriterion(idx) {
+            currentCriteria.splice(idx, 1);
+            renderCriteriaList();
+        }
+
+        // ============================================================================
+        // SAVE PROMPT
+        // ============================================================================
+        function savePrompt() {
+            const catIdx = parseInt(document.getElementById('promptCategorySelect').value);
+            const subIdx = parseInt(document.getElementById('promptSubCategorySelect').value);
+            const caption = document.getElementById('promptCaption').value.trim();
+            const promptText = document.getElementById('promptText').value.trim();
+
+            if (isNaN(catIdx) || isNaN(subIdx) || !caption || !promptText) {
+                neodigmToast.q('Please fill in required fields|Category, Sub-Category, Caption, and Prompt are required', 'warning');
+                return;
+            }
+
+            const prompt = {
+                prompt: promptText,
+                franchises: [...selectedPromptFranchises],
+                roles: [],
+                caption: caption,
+                template: document.getElementById('promptTemplate').value.trim(),
+                criteria: currentCriteria.map(c => ({...c})),
+                wrkf: document.getElementById('promptWorkflow').value.trim(),
+                feature: document.getElementById('promptFeature').value.trim(),
+                fav: document.getElementById('promptFav').checked
+            };
+
+            if (editingPromptIndex !== null) {
+                data[catIdx]['sub-cats'][subIdx].prompts[editingPromptIndex] = prompt;
+                neodigmToast.q('Prompt updated!', 'brand');
+            } else {
+                data[catIdx]['sub-cats'][subIdx].prompts.push(prompt);
+                neodigmToast.q('Prompt added!', 'brand');
+            }
+
+            selectedCategoryIndex = catIdx;
+            selectedSubCategoryIndex = subIdx;
+
+            hidePromptEditor();
+            renderCategoryTree();
+            renderPromptList();
+            generateJSON();
+        }
+
+        // ============================================================================
+        // EDIT/DELETE PROMPT
+        // ============================================================================
+        function editPrompt(idx) {
+            editingPromptIndex = idx;
+            const prompt = data[selectedCategoryIndex]['sub-cats'][selectedSubCategoryIndex].prompts[idx];
+
+            document.getElementById('editorTitle').textContent = 'Edit Prompt';
+            document.getElementById('promptCaption').value = prompt.caption;
+            document.getElementById('promptText').value = prompt.prompt;
+            document.getElementById('promptTemplate').value = prompt.template || '';
+            document.getElementById('promptWorkflow').value = prompt.wrkf || '';
+            document.getElementById('promptFeature').value = prompt.feature || '';
+            document.getElementById('promptFav').checked = prompt.fav || false;
+
+            currentCriteria = prompt.criteria.map(c => ({...c}));
+            renderCriteriaList();
+
+            selectedPromptFranchises = [...(prompt.franchises || [])];
+            renderPromptFranchiseSelector();
+
+            populateCategorySelects();
+
+            document.getElementById('promptEditor').style.display = 'block';
+            document.getElementById('promptListView').style.display = 'none';
+        }
+
+        function deletePrompt(idx) {
+            if (!confirm('Delete this prompt?')) return;
+
+            data[selectedCategoryIndex]['sub-cats'][selectedSubCategoryIndex].prompts.splice(idx, 1);
+            renderPromptList();
+            renderCategoryTree();
+            generateJSON();
+            neodigmToast.q('Prompt deleted', 'brand');
+        }
+
+        // ============================================================================
+        // JSON GENERATION & EXPORT
+        // ============================================================================
+        function generateJSON() {
+            const output = JSON.stringify(data, null, 2);
+            document.getElementById('jsonOutput').value = output;
+        }
+
+        function copyJSON() {
+            const textarea = document.getElementById('jsonOutput');
+            if (!textarea.value) {
+                neodigmToast.q('Generate JSON first', 'warning');
+                return;
+            }
+            textarea.select();
+            document.execCommand('copy');
+            neodigmToast.q('JSON copied to clipboard!', 'brand');
+        }
+
+        async function loadFromClipboard() {
+            try {
+                const clipboardText = await navigator.clipboard.readText();
+
+                if (!clipboardText || clipboardText.trim() === '') {
+                    neodigmToast.q('Clipboard is empty', 'warning');
+                    return;
+                }
+
+                const importedData = JSON.parse(clipboardText);
+
+                if (!Array.isArray(importedData)) {
+                    neodigmToast.q('Invalid JSON format|Must be an array', 'danger');
+                    return;
+                }
+
+                if (data.length > 0) {
+                    if (!confirm('This will replace all existing data. Continue?')) {
+                        return;
+                    }
+                }
+
+                data = importedData;
+                selectedCategoryIndex = null;
+                selectedSubCategoryIndex = null;
+
+                renderCategoryTree();
+                generateJSON();
+
+                document.getElementById('promptListView').style.display = 'block';
+                document.getElementById('promptEditor').style.display = 'none';
+                document.getElementById('categoryForm').style.display = 'none';
+
+                neodigmToast.q(`Loaded ${data.length} categories from clipboard!`, 'brand');
+
+            } catch (error) {
+                if (error.name === 'NotAllowedError') {
+                    neodigmToast.q('Clipboard access denied|Please grant permission', 'danger');
+                } else if (error instanceof SyntaxError) {
+                    neodigmToast.q('Invalid JSON in clipboard|' + error.message, 'danger');
+                } else {
+                    neodigmToast.q('Error loading from clipboard|' + error.message, 'danger');
+                }
+            }
+        }
+
+        function downloadJSON() {
+            const textarea = document.getElementById('jsonOutput');
+            if (!textarea.value) {
+                generateJSON();
+            }
+
+            const blob = new Blob([textarea.value], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'wcgd_data.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            neodigmToast.q('JSON downloaded!', 'brand');
+        }
+
+        // ============================================================================
+        // IMPORT
+        // ============================================================================
+        function importFile() {
+            document.getElementById('fileInput').click();
+        }
+
+        function handleFileImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+
+                    if (!Array.isArray(imported)) {
+                        neodigmToast.q('Invalid JSON format', 'danger');
+                        return;
+                    }
+
+                    data = imported;
+                    selectedCategoryIndex = null;
+                    selectedSubCategoryIndex = null;
+
+                    renderCategoryTree();
+                    generateJSON();
+                    neodigmToast.q('JSON imported successfully!', 'brand');
+                } catch (error) {
+                    neodigmToast.q('Error parsing JSON|' + error.message, 'danger');
+                }
+
+                event.target.value = '';
+            };
+
+            reader.readAsText(file);
+        }
+
+        // ============================================================================
+        // INITIALIZE ON LOAD
+        // ============================================================================
+        init();
+    </script>
+</body>
+</html>
