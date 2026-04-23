@@ -638,6 +638,12 @@
                     </div>
 
                     <div class="form-group">
+                        <label>Keywords (Optional) <button class="btn btn-small" onclick="addKeyword()">+ Add</button></label>
+                        <div class="help-text">Keywords to help match this prompt to user queries</div>
+                        <div id="keywordsList" class="criteria-list"></div>
+                    </div>
+
+                    <div class="form-group">
                         <label>Criteria <button class="btn btn-small" onclick="addCriterion()">+ Add</button></label>
                         <div class="help-text">Define validation rules for this prompt</div>
                         <div id="criteriaList" class="criteria-list"></div>
@@ -828,6 +834,7 @@
         let selectedSubCategoryIndex = null;
         let editingPromptIndex = null;
         let currentCriteria = [];
+        let currentKeywords = [];
         let selectedCategoryFranchises = [];
         let selectedPromptFranchises = [];
 
@@ -1320,6 +1327,13 @@
                        </div>`
                     : '';
 
+                const keywordsCount = (prompt.keywords || []).length;
+                const keywordsHTML = keywordsCount > 0
+                    ? `<div style="margin-top: 8px; font-size: 0.85em; color: var(--info);">
+                         🔑 Keywords (${keywordsCount}): ${prompt.keywords.join(', ')}
+                       </div>`
+                    : '';
+
                 return `
                     <div class="prompt-card">
                         <div class="prompt-caption">${prompt.caption}</div>
@@ -1328,6 +1342,7 @@
                         <div class="prompt-meta">
                             ${criteriaHTML || '<span class="badge badge-criterion">No criteria</span>'}
                         </div>
+                        ${keywordsHTML}
                         ${franchiseHTML}
                         ${prompt.fav ? '<div style="color: var(--warning); font-size: 0.85em;">⭐ Favorite</div>' : ''}
                         <div class="actions" style="margin-top: 15px;">
@@ -1470,6 +1485,7 @@
 
             editingPromptIndex = null;
             currentCriteria = [];
+            currentKeywords = [];
             selectedPromptFranchises = [];
 
             document.getElementById('promptEditor').style.display = 'block';
@@ -1478,6 +1494,7 @@
 
             populateCategorySelects();
             clearPromptForm();
+            renderKeywordsList();
             renderCriteriaList();
             renderPromptFranchiseSelector();
         }
@@ -1496,6 +1513,7 @@
             document.getElementById('promptFeature').value = '';
             document.getElementById('promptFav').checked = false;
             currentCriteria = [];
+            currentKeywords = [];
         }
 
         function populateCategorySelects() {
@@ -1613,6 +1631,40 @@
         }
 
         // ============================================================================
+        // KEYWORDS MANAGEMENT
+        // ============================================================================
+        function addKeyword() {
+            currentKeywords.push('');
+            renderKeywordsList();
+        }
+
+        function renderKeywordsList() {
+            const list = document.getElementById('keywordsList');
+
+            if (currentKeywords.length === 0) {
+                list.innerHTML = '<div style="color: var(--text-secondary); font-style: italic; padding: 10px;">No keywords defined</div>';
+                return;
+            }
+
+            list.innerHTML = currentKeywords.map((keyword, idx) => `
+                <div class="criterion-item" style="grid-template-columns: 1fr auto;">
+                    <input type="text" value="${keyword}" placeholder="Enter keyword (e.g., prescription, data, trends)"
+                           onchange="updateKeyword(${idx}, this.value)">
+                    <button class="btn btn-danger btn-small" onclick="removeKeyword(${idx})">Remove</button>
+                </div>
+            `).join('');
+        }
+
+        function updateKeyword(idx, value) {
+            currentKeywords[idx] = value.trim();
+        }
+
+        function removeKeyword(idx) {
+            currentKeywords.splice(idx, 1);
+            renderKeywordsList();
+        }
+
+        // ============================================================================
         // SAVE PROMPT
         // ============================================================================
         function savePrompt() {
@@ -1632,6 +1684,7 @@
                 roles: [],
                 caption: caption,
                 template: document.getElementById('promptTemplate').value.trim(),
+                keywords: currentKeywords.filter(k => k.trim() !== ''),
                 criteria: currentCriteria.map(c => ({...c})),
                 wrkf: document.getElementById('promptWorkflow').value.trim(),
                 feature: document.getElementById('promptFeature').value.trim(),
@@ -1669,6 +1722,9 @@
             document.getElementById('promptWorkflow').value = prompt.wrkf || '';
             document.getElementById('promptFeature').value = prompt.feature || '';
             document.getElementById('promptFav').checked = prompt.fav || false;
+
+            currentKeywords = [...(prompt.keywords || [])];
+            renderKeywordsList();
 
             currentCriteria = prompt.criteria.map(c => ({...c}));
             renderCriteriaList();
