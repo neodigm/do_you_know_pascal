@@ -525,6 +525,117 @@
             font-size: 0.8em;
             white-space: pre-wrap;
         }
+
+        /* Modal Dialog */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-dialog {
+            background: var(--bg-dark-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            color: var(--brand-accent);
+            margin: 0;
+            font-size: 1.2em;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: var(--danger);
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .saved-version-item {
+            background: var(--bg-dark-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 10px;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .saved-version-item:hover {
+            border-color: var(--brand-accent);
+            transform: translateY(-1px);
+        }
+
+        .version-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .version-date {
+            color: var(--brand-accent);
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .version-meta {
+            color: var(--text-secondary);
+            font-size: 0.85em;
+        }
+
+        .empty-state-modal {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
     </style>
 </head>
 <body>
@@ -536,6 +647,8 @@
                 <button class="btn btn-primary" data-n55-wired4sound-click="5" onclick="loadSample()">Load Sample Data</button>
                 <button class="btn btn-primary" data-n55-wired4sound-click="5" onclick="loadFromClipboard()">Load from Clipboard</button>
                 <button class="btn btn-primary" data-n55-wired4sound-click="5" onclick="importFile()">Import JSON</button>
+                <button class="btn btn-success" data-n55-wired4sound-click="5" onclick="saveToLocalStorage()">💾 Save to Browser</button>
+                <button class="btn btn-primary" data-n55-wired4sound-click="5" onclick="showLoadDialog()">📂 Load from Browser</button>
                 <button class="btn btn-success" data-n55-wired4sound-click="5" onclick="downloadJSON()">Download JSON</button>
             </div>
         </header>
@@ -628,6 +741,7 @@
                             <div class="token-chip" data-n55-wired4sound-click="20" onclick="insertToken('##INDICATION##')">##INDICATION##</div>
                             <div class="token-chip" data-n55-wired4sound-click="20" onclick="insertToken('##SPECIALTY##')">##SPECIALTY##</div>
                             <div class="token-chip" data-n55-wired4sound-click="20" onclick="insertToken('##COMPETITOR##')">##COMPETITOR##</div>
+                            <div class="token-chip" data-n55-wired4sound-click="20" onclick="insertToken('##FRANCHISE##')">##FRANCHISE##</div>
                         </div>
                     </div>
 
@@ -685,6 +799,18 @@
                     </div>
                 </div>
 
+                <!-- Wait State Phrases -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Wait State Phrases</h2>
+                        <button class="btn btn-primary btn-small" onclick="addWaitStatePhrase()">+ Add Phrase</button>
+                    </div>
+                    <div class="help-text" style="margin-bottom: 15px;">
+                        Messages shown to users while AI is thinking. Leave franchises empty for global phrases.
+                    </div>
+                    <div id="waitStatePhrasesList"></div>
+                </div>
+
                 <!-- JSON Output -->
                 <div class="panel">
                     <div class="panel-header">
@@ -712,114 +838,95 @@
 
     <input type="file" id="fileInput" accept=".json" onchange="handleFileImport(event)">
 
+    <!-- Load Version Modal -->
+    <div id="loadModal" class="modal-overlay" onclick="closeLoadDialog(event)">
+        <div class="modal-dialog" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 class="modal-title">Load Saved Version</h2>
+                <button class="modal-close" onclick="closeLoadDialog()">&times;</button>
+            </div>
+            <div class="modal-body" id="savedVersionsList">
+                <div class="empty-state-modal">
+                    <p>No saved versions found</p>
+                    <p style="font-size: 0.9em; margin-top: 10px;">Click "💾 Save to Browser" to save your work</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ============================================================================
         // JSON SCHEMA DEFINITION (Gen20 Format)
         // ============================================================================
         const GEN20_SCHEMA = {
             "$schema": "http://json-schema.org/draft-07/schema#",
-            "type": "array",
+            "type": "object",
             "description": "Gen20 WCGD Configuration Schema",
-            "items": {
-                "type": "object",
-                "required": ["cat", "franchises", "roles", "sub-cats"],
-                "properties": {
-                    "cat": {
-                        "type": "string",
-                        "description": "Category name"
-                    },
-                    "franchises": {
-                        "type": "array",
-                        "items": {"type": "string"},
-                        "description": "Franchise filters at category level"
-                    },
-                    "roles": {
-                        "type": "array",
-                        "items": {"type": "string"},
-                        "description": "Role filters at category level"
-                    },
-                    "sub-cats": {
-                        "type": "array",
-                        "description": "Sub-categories within this category",
-                        "items": {
-                            "type": "object",
-                            "required": ["sub", "prompts"],
-                            "properties": {
-                                "sub": {
-                                    "type": "string",
-                                    "description": "Sub-category name"
-                                },
-                                "prompts": {
-                                    "type": "array",
-                                    "description": "Prompts in this sub-category",
-                                    "items": {
-                                        "type": "object",
-                                        "required": ["prompt", "franchises", "roles", "caption", "template", "criteria", "wrkf", "feature", "fav"],
-                                        "properties": {
-                                            "prompt": {
-                                                "type": "string",
-                                                "description": "The prompt text with tokens"
-                                            },
-                                            "franchises": {
-                                                "type": "array",
-                                                "items": {"type": "string"},
-                                                "description": "Franchise filters for this prompt"
-                                            },
-                                            "roles": {
-                                                "type": "array",
-                                                "items": {"type": "string"},
-                                                "description": "Role filters for this prompt"
-                                            },
-                                            "caption": {
-                                                "type": "string",
-                                                "description": "Display caption/label"
-                                            },
-                                            "template": {
-                                                "type": "string",
-                                                "description": "Template identifier"
-                                            },
-                                            "criteria": {
-                                                "type": "array",
-                                                "description": "Semantic validation criteria",
-                                                "items": {
-                                                    "type": "object",
-                                                    "required": ["criterion", "required", "match_tap", "default"],
-                                                    "properties": {
-                                                        "criterion": {
-                                                            "type": "string",
-                                                            "description": "Criterion name (e.g., HCP_NAME, PRODUCT)"
-                                                        },
-                                                        "required": {
-                                                            "type": "boolean",
-                                                            "description": "Is this criterion required?"
-                                                        },
-                                                        "match_tap": {
-                                                            "type": "boolean",
-                                                            "description": "Should match tap context?"
-                                                        },
-                                                        "default": {
-                                                            "type": "string",
-                                                            "description": "Default value"
+            "required": ["wcgd", "wait_state"],
+            "properties": {
+                "wcgd": {
+                    "type": "array",
+                    "description": "What Can GenAIsys Do prompt categories",
+                    "items": {
+                        "type": "object",
+                        "required": ["cat", "franchises", "roles", "sub-cats"],
+                        "properties": {
+                            "cat": {"type": "string", "description": "Category name"},
+                            "franchises": {"type": "array", "items": {"type": "string"}},
+                            "roles": {"type": "array", "items": {"type": "string"}},
+                            "sub-cats": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "required": ["sub", "prompts"],
+                                    "properties": {
+                                        "sub": {"type": "string"},
+                                        "prompts": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": ["prompt", "franchises", "roles", "caption", "template", "criteria", "wrkf", "feature", "fav"],
+                                                "properties": {
+                                                    "prompt": {"type": "string"},
+                                                    "franchises": {"type": "array", "items": {"type": "string"}},
+                                                    "roles": {"type": "array", "items": {"type": "string"}},
+                                                    "caption": {"type": "string"},
+                                                    "template": {"type": "string"},
+                                                    "keywords": {"type": "array", "items": {"type": "string"}},
+                                                    "criteria": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "required": ["criterion", "required", "match_tap", "default"],
+                                                            "properties": {
+                                                                "criterion": {"type": "string"},
+                                                                "required": {"type": "boolean"},
+                                                                "match_tap": {"type": "boolean"},
+                                                                "default": {"type": "string"}
+                                                            }
                                                         }
-                                                    }
+                                                    },
+                                                    "wrkf": {"type": "string"},
+                                                    "feature": {"type": "string"},
+                                                    "fav": {"type": "boolean"}
                                                 }
-                                            },
-                                            "wrkf": {
-                                                "type": "string",
-                                                "description": "Workflow identifier"
-                                            },
-                                            "feature": {
-                                                "type": "string",
-                                                "description": "Feature flag"
-                                            },
-                                            "fav": {
-                                                "type": "boolean",
-                                                "description": "Is this a favorite prompt?"
                                             }
                                         }
                                     }
                                 }
                             }
+                        }
+                    }
+                },
+                "wait_state": {
+                    "type": "array",
+                    "description": "Wait state phrases shown while AI is thinking",
+                    "items": {
+                        "type": "object",
+                        "required": ["phrase", "franchises"],
+                        "properties": {
+                            "phrase": {"type": "string", "description": "Wait state phrase"},
+                            "franchises": {"type": "array", "items": {"type": "string"}, "description": "Franchises this phrase applies to"}
                         }
                     }
                 }
@@ -829,7 +936,10 @@
         // ============================================================================
         // APPLICATION STATE
         // ============================================================================
-        let data = [];
+        let data = {
+            wcgd: [],
+            wait_state: []
+        };
         let selectedCategoryIndex = null;
         let selectedSubCategoryIndex = null;
         let editingPromptIndex = null;
@@ -858,7 +968,8 @@
             "ZIP_CODE",
             "INDICATION",
             "SPECIALTY",
-            "COMPETITOR"
+            "COMPETITOR",
+            "FRANCHISE"
         ];
 
         // ============================================================================
@@ -879,18 +990,35 @@
         const SAMPLE_DATA = [
   {
     "cat": "HCP Prescribing Behavior",
-    "franchises": [],
+    "franchises": [
+      "IMMUNOLOGY - ACCOUNT EXECS",
+      "IMMUNOLOGY - DERM",
+      "IMMUNOLOGY - GASTRO",
+      "IMMUNOLOGY - RHEUM",
+      "IMMUNOLOGY DERM - AD",
+      "MIGRAINE",
+      "PSYCH",
+      "ONCOLOGY FRANCHISE V"
+    ],
     "roles": [],
     "sub-cats": [
       {
         "sub": "TRx questions",
         "prompts": [
           {
-            "prompt": "What is the TRx volume for ##PRODUCT## for ##HCP_NAME##?",
-            "franchises": [],
+            "prompt": "Show me the TRx volume for Product for Dr. X for the last time period",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
             "roles": [],
             "caption": "TRx Volume by HCP",
-            "template": "",
+            "template": "Show me the TRx volume for ##PRODUCT## for ##HCP_NAME## for the last ##TIME_PERIOD##",
             "criteria": [
               {
                 "criterion": "HCP_NAME",
@@ -914,6 +1042,82 @@
             "wrkf": "",
             "feature": "",
             "fav": false
+          },
+          {
+            "prompt": "Show me the TRx trend for product for Dr. X for the last time period",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
+            "roles": [],
+            "caption": "TRx Trend",
+            "template": "Show me the TRx trend for ##PRODUCT## for ##HCP_NAME## for the last ##TIME_PERIOD##",
+            "criteria": [
+              {
+                "criterion": "PRODUCT",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "TIME_PERIOD",
+                "required": false,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Show me the TRx share for product for DR. X for the last time period",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
+            "roles": [],
+            "caption": "TRx share",
+            "template": "Show me the TRx share for ##PRODUCT## for ##HCP_NAME## for the last ##TIME_PERIOD##",
+            "criteria": [
+              {
+                "criterion": "PRODUCT",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "TIME_PERIOD",
+                "required": false,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
           }
         ]
       },
@@ -921,13 +1125,18 @@
         "sub": "NBRx questions",
         "prompts": [
           {
-            "prompt": "What is the NBRx volume for product for Dr. X?",
+            "prompt": "Show me the NBRx volume for [product] for [HCP] for the last time period",
             "franchises": [
-              "IMMUNOLOGY - DERM"
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH"
             ],
             "roles": [],
             "caption": "NBRx Volume by HCP",
-            "template": "What is the NBRx volume for ##PRODUCT## for ##HCP_NAME##?",
+            "template": "Show me the NBRx volume for ##PRODUCT## for ##HCP_NAME## for the last ##TIME_PERIOD##",
             "criteria": [
               {
                 "criterion": "HCP_NAME",
@@ -951,6 +1160,118 @@
             "wrkf": "",
             "feature": "",
             "fav": true
+          },
+          {
+            "prompt": "Shoe me the NBRx trend for product for Dr.X for the last time period",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH"
+            ],
+            "roles": [],
+            "caption": "NBRx Trends",
+            "template": "Shoe me the NBRx trend for ##PRODUCT## for ##HCP_NAME## for the last ##TIME_PERIOD##",
+            "criteria": [
+              {
+                "criterion": "PRODUCT",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "TIME_PERIOD",
+                "required": false,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Show me the NBRx share for product for Dr. X for the last time period",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH"
+            ],
+            "roles": [],
+            "caption": "NBRx Share",
+            "template": "Show me the NBRx share for ##PRODUCT## for ##HCP_NAME## for the last ##TIME_PERIOD##",
+            "criteria": [
+              {
+                "criterion": "PRODUCT",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "TIME_PERIOD",
+                "required": false,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          }
+        ]
+      },
+      {
+        "sub": "Snapshot",
+        "prompts": [
+          {
+            "prompt": "Show me the snapshot for Dr. X",
+            "franchises": [
+              "IMMUNOLOGY - ACCOUNT EXECS",
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
+            "roles": [],
+            "caption": "HCP snapshot",
+            "template": "Show me the snapshot for ##HCP_NAME##",
+            "criteria": [
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "TIME_PERIOD",
+                "required": false,
+                "match_tap": false,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
           }
         ]
       }
@@ -958,18 +1279,220 @@
   },
   {
     "cat": "HCP Interactions",
-    "franchises": [],
+    "franchises": [
+      "IMMUNOLOGY - DERM",
+      "IMMUNOLOGY - GASTRO",
+      "IMMUNOLOGY - RHEUM",
+      "IMMUNOLOGY DERM - AD",
+      "MIGRAINE",
+      "PSYCH",
+      "ONCOLOGY FRANCHISE V",
+      "IMMUNOLOGY - ACCOUNT EXECS"
+    ],
     "roles": [],
     "sub-cats": [
       {
         "sub": "Recent Interactions",
         "prompts": [
           {
-            "prompt": "Show me recent interactions with ##HCP_NAME##",
-            "franchises": [],
+            "prompt": "Show me recent interactions with Dr.X",
+            "franchises": [
+              "IMMUNOLOGY - ACCOUNT EXECS",
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "ONCOLOGY FRANCHISE V",
+              "PSYCH"
+            ],
             "roles": [],
             "caption": "Recent HCP Interactions",
-            "template": "",
+            "template": "Show me recent interactions with ##HCP_NAME##",
+            "criteria": [
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Show me samples dropped for Dr. X",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "ONCOLOGY FRANCHISE V",
+              "PSYCH"
+            ],
+            "roles": [],
+            "caption": "Samples Dropped",
+            "template": "Show me samples dropped for ##HCP_NAME##",
+            "criteria": [
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Show me speaker programs attended by Dr. X",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
+            "roles": [],
+            "caption": "Speaker Program Attendance",
+            "template": "Show me speaker programs attended by ##HCP_NAME##",
+            "criteria": [
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Show me conference attendance for Dr. X",
+            "franchises": [
+              "IMMUNOLOGY - ACCOUNT EXECS",
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
+            "roles": [],
+            "caption": "Abbvie Booth Attendance",
+            "template": "Show me conference attendance for ##HCP_NAME##",
+            "criteria": [
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Show me the iRep emails sent to Dr. X",
+            "franchises": [
+              "IMMUNOLOGY - ACCOUNT EXECS",
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
+            "roles": [],
+            "caption": "iRep Emails",
+            "template": "Show me the iRep emails sent to ##HCP_NAME##",
+            "criteria": [
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Show me the Home Office emails sent to Dr. X",
+            "franchises": [
+              "IMMUNOLOGY - ACCOUNT EXECS",
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "ONCOLOGY FRANCHISE V",
+              "PSYCH"
+            ],
+            "roles": [],
+            "caption": "Home office emails",
+            "template": "Show me the Home Office emails sent to ##HCP_NAME##",
+            "criteria": [
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Show me the last ISA tiles show to Dr. X",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
+            "roles": [],
+            "caption": "ISA Last Tile",
+            "template": "Show me the last ISA tiles show to ##HCP_NAME##",
+            "criteria": [
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Which ISA tiles have I not shown to Dr. X",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
+            "roles": [],
+            "caption": "ISA tiles not shown",
+            "template": "Which ISA tiles have I not shown to ##HCP_NAME##",
             "criteria": [
               {
                 "criterion": "HCP_NAME",
@@ -988,15 +1511,73 @@
         "sub": "Suggestions",
         "prompts": [
           {
-            "prompt": "What are my suggestions for ##HCP_NAME##?",
-            "franchises": [],
+            "prompt": "Show me suggestions available for Dr. X",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH"
+            ],
             "roles": [],
             "caption": "HCP Suggestions",
-            "template": "",
+            "template": "Show me suggestions available for ##HCP_NAME##",
             "criteria": [
               {
                 "criterion": "HCP_NAME",
-                "required": false,
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "What are my suggested ISA tiles for Dr. X",
+            "franchises": [
+              "IMMUNOLOGY - RHEUM"
+            ],
+            "roles": [],
+            "caption": "Suggest ISA tiles",
+            "template": "What are my suggested ISA tiles for ##HCP_NAME##",
+            "criteria": [
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          }
+        ]
+      },
+      {
+        "sub": "Call Plan Achievement",
+        "prompts": [
+          {
+            "prompt": "Show me my call plan achievement for Dr. X",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
+            "roles": [],
+            "caption": "Call Plan Achievement",
+            "template": "Show me my call plan achievement for ##HCP_NAME##",
+            "criteria": [
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
                 "match_tap": true,
                 "default": ""
               }
@@ -1011,18 +1592,266 @@
   },
   {
     "cat": "Territory Insights",
-    "franchises": [],
+    "franchises": [
+      "IMMUNOLOGY - DERM",
+      "IMMUNOLOGY - GASTRO",
+      "IMMUNOLOGY - RHEUM",
+      "MIGRAINE",
+      "IMMUNOLOGY DERM - AD",
+      "ONCOLOGY FRANCHISE V",
+      "PSYCH"
+    ],
     "roles": [],
     "sub-cats": [
       {
         "sub": "Top Prescribers",
         "prompts": [
           {
-            "prompt": "Who are my top prescribers for ##PRODUCT##?",
-            "franchises": [],
+            "prompt": "Show me the top TRx prescribers for product in the last time period",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
             "roles": [],
-            "caption": "Top Prescribers by Product",
-            "template": "",
+            "caption": "Top TRx Prescribers in territory",
+            "template": "Show me the top TRx prescribers for ##PRODUCT## in the last ##TIME_PERIOD##",
+            "criteria": [
+              {
+                "criterion": "PRODUCT",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "TIME_PERIOD",
+                "required": false,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Show me the top NBRx prescribers for product in the last time period",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH"
+            ],
+            "roles": [],
+            "caption": "Top NBRx HCPs in territory",
+            "template": "Show me the top NBRx prescribers for ##PRODUCT## in the last ##TIME_PERIOD##",
+            "criteria": [
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "PRODUCT",
+                "required": true,
+                "match_tap": false,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Show me the top TRx prescribers for product in zip code in the last time period",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "ONCOLOGY FRANCHISE V",
+              "PSYCH"
+            ],
+            "roles": [],
+            "caption": "Top TRx HCPs in zip code",
+            "template": "Show me the top TRx prescribers for ##PRODUCT## in ##ZIP_CODE## in the last ##TIME_PERIOD##",
+            "criteria": [
+              {
+                "criterion": "PRODUCT",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "ZIP_CODE",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "TIME_PERIOD",
+                "required": false,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Show me the top NBRx prescribers for product in zip code in the last time period",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH"
+            ],
+            "roles": [],
+            "caption": "Top NBRx HCPs in zip code",
+            "template": "Show me the top NBRx prescribers for ##PRODUCT## in ##ZIP_CODE## in the last ##TIME_PERIOD##",
+            "criteria": [
+              {
+                "criterion": "PRODUCT",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "ZIP_CODE",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "TIME_PERIOD",
+                "required": false,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Show me the top TRx growers for product for the last time period",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
+            "roles": [],
+            "caption": "Top TRx Growers",
+            "template": "Show me the top TRx growers for ##PRODUCT## for the last ##TIME_PERIOD##",
+            "criteria": [
+              {
+                "criterion": "PRODUCT",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "TIME_PERIOD",
+                "required": false,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Show me the top NBRx growers for product for the last time period",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH"
+            ],
+            "roles": [],
+            "caption": "Top NBRx growers",
+            "template": "Show me the top NBRx growers for ##PRODUCT## for the last ##TIME_PERIOD##",
+            "criteria": [
+              {
+                "criterion": "PRODUCT",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "TIME_PERIOD",
+                "required": false,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Show me the top TRx decliners for product for the last time period",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
+            "roles": [],
+            "caption": "Top TRx decliners",
+            "template": "Show me the top TRx decliners for ##PRODUCT## for the last ##TIME_PERIOD##",
+            "criteria": [
+              {
+                "criterion": "PRODUCT",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "TIME_PERIOD",
+                "required": false,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Show me the top NBRx decliners for product for the last time period",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH"
+            ],
+            "roles": [],
+            "caption": "Top NBRx decliners",
+            "template": "Show me the top NBRx decliners for ##PRODUCT## for the last ##TIME_PERIOD##",
             "criteria": [
               {
                 "criterion": "PRODUCT",
@@ -1047,11 +1876,19 @@
         "sub": "Product Comparison",
         "prompts": [
           {
-            "prompt": "Compare ##PRODUCT## vs ##COMPETITOR## in my territory",
-            "franchises": [],
+            "prompt": "How does product 1 TRx data compare to product 2 for time period",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
             "roles": [],
-            "caption": "Product Comparison",
-            "template": "",
+            "caption": "Product Comparison - TRx",
+            "template": "How does ##PRODUCT## TRx data compare to ##COMPETITOR## for ##TIME_PERIOD##",
             "criteria": [
               {
                 "criterion": "PRODUCT",
@@ -1075,6 +1912,130 @@
             "wrkf": "",
             "feature": "",
             "fav": false
+          },
+          {
+            "prompt": "How does product 1 NBRx data compare to product 2 for the last time period",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH"
+            ],
+            "roles": [],
+            "caption": "Product comparison - NBRx",
+            "template": "How does ##PRODUCT## NBRx data compare to ##COMPETITOR## for the last ##TIME_PERIOD##",
+            "criteria": [
+              {
+                "criterion": "PRODUCT",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "COMPETITOR",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "TIME_PERIOD",
+                "required": false,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "How does product 1 TRx data compare to product 2 in zip code for the last time period",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
+            "roles": [],
+            "caption": "Product comparison for zip code - TRx",
+            "template": "How does ##PRODUCT## TRx data compare to ##COMPETITOR## in ##ZIP_CODE## for the last ##TIME_PERIOD##",
+            "criteria": [
+              {
+                "criterion": "PRODUCT",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "COMPETITOR",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "ZIP_CODE",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "TIME_PERIOD",
+                "required": false,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "How does product 1 NBRx data compare to product 2 in zipcode for the last time period",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH"
+            ],
+            "roles": [],
+            "caption": "Product comparison for zip code - NBRx",
+            "template": "How does ##PRODUCT## NBRx data compare to ##COMPETITOR## in ##ZIP_CODE## for the last ##TIME_PERIOD##",
+            "criteria": [
+              {
+                "criterion": "PRODUCT",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "COMPETITOR",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "ZIP_CODE",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              },
+              {
+                "criterion": "TIME_PERIOD",
+                "required": false,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
           }
         ]
       },
@@ -1082,15 +2043,82 @@
         "sub": "Other HCP Categories",
         "prompts": [
           {
-            "prompt": "Show me HCPs by ##SPECIALTY## in my territory",
-            "franchises": [],
+            "prompt": "Sow me all HCPs with AOC status ESR samples blocked",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "PSYCH"
+            ],
             "roles": [],
-            "caption": "HCPs by Specialty",
-            "template": "",
+            "caption": "AOC ESR sample blocked",
+            "template": "Sow me all HCPs with AOC status ESR samples blocked",
+            "criteria": [],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Show me the top HCPs with the most total spend",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
+            "roles": [],
+            "caption": "Territory most HCP spend",
+            "template": "Show me the top HCPs with the most total spend",
+            "criteria": [],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Show me active suggestions in my territory",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "ONCOLOGY FRANCHISE V"
+            ],
+            "roles": [],
+            "caption": "Territory suggestions",
+            "template": "Show me active suggestions in my territory",
+            "criteria": [],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          }
+        ]
+      },
+      {
+        "sub": "Snapshot",
+        "prompts": [
+          {
+            "prompt": "Show me my territory snapshot for the last time period",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "ONCOLOGY FRANCHISE V",
+              "PSYCH"
+            ],
+            "roles": [],
+            "caption": "Territory Snapshot",
+            "template": "Show me my territory snapshot for the last ##TIME_PERIOD##",
             "criteria": [
               {
-                "criterion": "SPECIALTY",
-                "required": true,
+                "criterion": "TIME_PERIOD",
+                "required": false,
                 "match_tap": true,
                 "default": ""
               }
@@ -1105,18 +2133,113 @@
   },
   {
     "cat": "Account Info & Management",
-    "franchises": [],
+    "franchises": [
+      "IMMUNOLOGY - ACCOUNT EXECS",
+      "IMMUNOLOGY - DERM",
+      "IMMUNOLOGY - GASTRO",
+      "IMMUNOLOGY - RHEUM",
+      "IMMUNOLOGY DERM - AD",
+      "MIGRAINE",
+      "PSYCH",
+      "ONCOLOGY FRANCHISE V"
+    ],
     "roles": [],
     "sub-cats": [
       {
         "sub": "HCP Info",
         "prompts": [
           {
-            "prompt": "Show me account details for ##HCP_NAME##",
-            "franchises": [],
+            "prompt": "Show me the Abbvie Account team for Dr. X",
+            "franchises": [
+              "IMMUNOLOGY - ACCOUNT EXECS",
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
             "roles": [],
-            "caption": "HCP Account Details",
-            "template": "",
+            "caption": "Abbvie Account team",
+            "template": "Show me the Abbvie Account team for ##HCP_NAME##",
+            "criteria": [
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Show me affiliated prescribers for Dr. X",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
+            "roles": [],
+            "caption": "Prescribers in practice",
+            "template": "Show me affiliated prescribers for ##HCP_NAME##",
+            "criteria": [
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Show me the HCP spend data for Dr. X",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
+            "roles": [],
+            "caption": "HCP Spend",
+            "template": "Show me the HCP spend data for ##HCP_NAME##",
+            "criteria": [
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Show me the AOC status for Dr. X",
+            "franchises": [
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH"
+            ],
+            "roles": [],
+            "caption": "AOC Status",
+            "template": "Show me the AOC status for ##HCP_NAME##",
             "criteria": [
               {
                 "criterion": "HCP_NAME",
@@ -1136,10 +2259,99 @@
         "prompts": [
           {
             "prompt": "Show me my sample lots",
-            "franchises": [],
+            "franchises": [
+              "IMMUNOLOGY - ACCOUNT EXECS",
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
             "roles": [],
             "caption": "Sample Lots",
-            "template": "",
+            "template": "Show me my sample lots",
+            "criteria": [],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Show me my pending sample shipments",
+            "franchises": [
+              "IMMUNOLOGY - ACCOUNT EXECS",
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
+            "roles": [],
+            "caption": "Pending sample shipments",
+            "template": "Show me my pending sample shipments",
+            "criteria": [],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Show me my profile information",
+            "franchises": [
+              "IMMUNOLOGY - ACCOUNT EXECS",
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "ONCOLOGY FRANCHISE V",
+              "PSYCH"
+            ],
+            "roles": [],
+            "caption": "Profile data",
+            "template": "Show me my profile information",
+            "criteria": [],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Activate a sample lot",
+            "franchises": [
+              "IMMUNOLOGY - ACCOUNT EXECS",
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
+            "roles": [],
+            "caption": "Activate sample lot",
+            "template": "Activate a sample lot",
+            "criteria": [],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Inactivate a sample lot",
+            "franchises": [
+              "IMMUNOLOGY - ACCOUNT EXECS",
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
+            "roles": [],
+            "caption": "Inactivate a sample lot",
+            "template": "Inactivate a sample lot",
             "criteria": [],
             "wrkf": "",
             "feature": "",
@@ -1151,11 +2363,148 @@
         "sub": "Account Management",
         "prompts": [
           {
-            "prompt": "Show me account management options for ##HCP_NAME##",
-            "franchises": [],
+            "prompt": "Show me the account details for Dr. X",
+            "franchises": [
+              "IMMUNOLOGY - ACCOUNT EXECS",
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "ONCOLOGY FRANCHISE V",
+              "PSYCH"
+            ],
             "roles": [],
-            "caption": "Account Management",
-            "template": "",
+            "caption": "Account Details",
+            "template": "Show me the account details for ##HCP_NAME##",
+            "criteria": [
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "What is the specialty for Dr. X?",
+            "franchises": [
+              "IMMUNOLOGY - ACCOUNT EXECS",
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "ONCOLOGY FRANCHISE V",
+              "PSYCH"
+            ],
+            "roles": [],
+            "caption": "Account Specialty",
+            "template": "What is the specialty for ##HCP_NAME##?",
+            "criteria": [
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Show me the associated accounts for Dr.X",
+            "franchises": [
+              "IMMUNOLOGY - ACCOUNT EXECS",
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
+            "roles": [],
+            "caption": "Association lookup",
+            "template": "Show me the associated accounts for ##HCP_NAME##",
+            "criteria": [
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Show me my change requests for Dr. X",
+            "franchises": [
+              "IMMUNOLOGY - ACCOUNT EXECS",
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
+            "roles": [],
+            "caption": "Change requests",
+            "template": "Show me my change requests for ##HCP_NAME##",
+            "criteria": [
+              {
+                "criterion": "HCP_NAME",
+                "required": true,
+                "match_tap": true,
+                "default": ""
+              }
+            ],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Add an HCP",
+            "franchises": [
+              "IMMUNOLOGY - ACCOUNT EXECS",
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
+            "roles": [],
+            "caption": "Add a person account",
+            "template": "Add an HCP",
+            "criteria": [],
+            "wrkf": "",
+            "feature": "",
+            "fav": false
+          },
+          {
+            "prompt": "Create a follow up request for Dr.x",
+            "franchises": [
+              "IMMUNOLOGY - ACCOUNT EXECS",
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
+            "roles": [],
+            "caption": "Create follow up request",
+            "template": "Create a follow up request for ##HCP_NAME##",
             "criteria": [
               {
                 "criterion": "HCP_NAME",
@@ -1174,11 +2523,20 @@
         "sub": "Account Addresses",
         "prompts": [
           {
-            "prompt": "Show me addresses for ##HCP_NAME##",
-            "franchises": [],
+            "prompt": "Show me the account addresses for Dr. X",
+            "franchises": [
+              "IMMUNOLOGY - ACCOUNT EXECS",
+              "IMMUNOLOGY - DERM",
+              "IMMUNOLOGY - GASTRO",
+              "IMMUNOLOGY - RHEUM",
+              "IMMUNOLOGY DERM - AD",
+              "MIGRAINE",
+              "PSYCH",
+              "ONCOLOGY FRANCHISE V"
+            ],
             "roles": [],
-            "caption": "Account Addresses",
-            "template": "",
+            "caption": "Account Address",
+            "template": "Show me the account addresses for ##HCP_NAME##",
             "criteria": [
               {
                 "criterion": "HCP_NAME",
@@ -1227,9 +2585,309 @@
   }
 ];
 
+        const WAIT_STATE_SAMPLE = [
+          {
+            "phrase": "Not sure where to start? Try asking \"What can GenAIsys do for me?\" to get a personalized list of capabilities.",
+            "franchises": []
+          },
+          {
+            "phrase": "Pull up an HCP Snapshot for a quick one-page view of prescribing trends, recent interactions, segmentation, and active suggestions.",
+            "franchises": []
+          },
+          {
+            "phrase": "Ask GenAIsys to show your sample lots — view both active and inactive inventory at a glance.",
+            "franchises": []
+          },
+          {
+            "phrase": "Want to know who else is calling on an account? Ask \"Who else is aligned with [Account X]?\"",
+            "franchises": []
+          },
+          {
+            "phrase": "GenAIsys links with iRep — access an HCP's iRep account page directly through their Snapshot.",
+            "franchises": []
+          },
+          {
+            "phrase": "You can ask GenAIsys about home office emails sent to any of your HCPs to stay in sync with marketing outreach.",
+            "franchises": []
+          },
+          {
+            "phrase": "Ask for a last interaction summary for any HCP — including calls, emails, speaker programs, and the last ISA shown.",
+            "franchises": []
+          },
+          {
+            "phrase": "Affiliated HCPs are displayed right in the Snapshot — tap any name to explore their profile without leaving the screen.",
+            "franchises": []
+          },
+          {
+            "phrase": "Ask GenAIsys to create a follow-up request for any HCP or account without leaving the app.",
+            "franchises": []
+          },
+          {
+            "phrase": "View AbbVie booth and conference attendance for any HCP by simply asking GenAIsys.",
+            "franchises": []
+          },
+          {
+            "phrase": "Use the home screen carousel for recommended prompts to help you get the most out of every call.",
+            "franchises": []
+          },
+          {
+            "phrase": "Need to update an address or association? GenAIsys can handle territory admin actions like adding, updating, or removing accounts.",
+            "franchises": []
+          },
+          {
+            "phrase": "After completing a territory action, don't forget to sync in iRep to see your changes reflected.",
+            "franchises": []
+          },
+          {
+            "phrase": "Keep track of your AOC status by asking GenAIsys — it shows the current status and number of days outstanding.",
+            "franchises": [
+              "IMMUNOLOGY - GASTRO"
+            ]
+          },
+          {
+            "phrase": "You can mark a suggestion as complete directly in GenAIsys — it will sync back to iRep automatically.",
+            "franchises": [
+              "IMMUNOLOGY - GASTRO"
+            ]
+          },
+          {
+            "phrase": "Your Snapshot shows data for both UC and CD indications — get the full prescribing picture in one view.",
+            "franchises": [
+              "IMMUNOLOGY - GASTRO"
+            ]
+          },
+          {
+            "phrase": "Ask for Complete Enrollment data for any HCP directly from their Snapshot or via a quick prompt.",
+            "franchises": [
+              "IMMUNOLOGY - GASTRO"
+            ]
+          },
+          {
+            "phrase": "GenAIsys shows your HCPs' HIT segmentation to help you prioritize the right accounts.",
+            "franchises": [
+              "IMMUNOLOGY - GASTRO"
+            ]
+          },
+          {
+            "phrase": "View Channel Payor Mix for any HCP or across your territory to better understand access dynamics.",
+            "franchises": [
+              "IMMUNOLOGY - GASTRO"
+            ]
+          },
+          {
+            "phrase": "Ask GenAIsys for top growers and decliners in your territory to focus your energy where it matters most.",
+            "franchises": [
+              "IMMUNOLOGY - GASTRO"
+            ]
+          },
+          {
+            "phrase": "Search for top writers by zip code to identify high-value prescribers in any area you're targeting.",
+            "franchises": [
+              "IMMUNOLOGY - GASTRO"
+            ]
+          },
+          {
+            "phrase": "Keep track of your AOC status by asking GenAIsys — it shows the current status and number of days outstanding.",
+            "franchises": [
+              "IMMUNOLOGY - DERM"
+            ]
+          },
+          {
+            "phrase": "Keep track of your AOC status by asking GenAIsys — it shows the current status and number of days outstanding.",
+            "franchises": [
+              "IMMUNOLOGY DERM - AD"
+            ]
+          },
+          {
+            "phrase": "You can mark a suggestion as complete directly in GenAIsys — it will sync back to iRep automatically.",
+            "franchises": [
+              "IMMUNOLOGY DERM - AD"
+            ]
+          },
+          {
+            "phrase": "The Derm AD Snapshot includes an NBRx competitor table — get both NBRx and TRx competitor views in one place.",
+            "franchises": [
+              "IMMUNOLOGY DERM - AD"
+            ]
+          },
+          {
+            "phrase": "Your Snapshot features SPIFF Target segmentation to help you identify and prioritize key accounts.",
+            "franchises": [
+              "IMMUNOLOGY DERM - AD"
+            ]
+          },
+          {
+            "phrase": "Ask GenAIsys for NBRx and TRx trends over time to track how your HCPs are trending against the market.",
+            "franchises": [
+              "IMMUNOLOGY DERM - AD"
+            ]
+          },
+          {
+            "phrase": "View Complete Enrollment data right in the Snapshot or ask for it directly.",
+            "franchises": [
+              "IMMUNOLOGY DERM - AD"
+            ]
+          },
+          {
+            "phrase": "Request a competitive comparison to see how products in your market stack up.",
+            "franchises": [
+              "IMMUNOLOGY DERM - AD"
+            ]
+          },
+          {
+            "phrase": "Keep track of your AOC status by asking GenAIsys — it shows the current status and number of days outstanding.",
+            "franchises": [
+              "IMMUNOLOGY - RHEUM"
+            ]
+          },
+          {
+            "phrase": "You can mark a suggestion as complete directly in GenAIsys — it will sync back to iRep automatically.",
+            "franchises": [
+              "IMMUNOLOGY - RHEUM"
+            ]
+          },
+          {
+            "phrase": "Ask GenAIsys for suggested ISA tiles for any HCP — dynamically updated for Rinvoq Portfolio, RA/GCA, and SKY PsA.",
+            "franchises": [
+              "IMMUNOLOGY - RHEUM"
+            ]
+          },
+          {
+            "phrase": "Have a clinical question? Ask GenAIsys to pull from the Rheum Playbook for talking points, study data, and objection handling guidance.",
+            "franchises": [
+              "IMMUNOLOGY - RHEUM"
+            ]
+          },
+          {
+            "phrase": "Ask \"What are my suggested ISA tiles for [HCP]?\" to make sure you're leading with the most relevant content on your next call.",
+            "franchises": [
+              "IMMUNOLOGY - RHEUM"
+            ]
+          },
+          {
+            "phrase": "View Channel Payor Mix for individual HCPs or across your full territory to stay ahead of access challenges.",
+            "franchises": [
+              "IMMUNOLOGY - RHEUM"
+            ]
+          },
+          {
+            "phrase": "Pull up top growers and decliners in your territory to sharpen your targeting strategy.",
+            "franchises": [
+              "IMMUNOLOGY - RHEUM"
+            ]
+          },
+          {
+            "phrase": "Ask for prescribing data by indication — specify RA, PsA, or others to get focused insights.",
+            "franchises": [
+              "IMMUNOLOGY - RHEUM"
+            ]
+          },
+          {
+            "phrase": "Keep track of your AOC status by asking GenAIsys — it shows the current status and number of days outstanding.",
+            "franchises": [
+              "PSYCH"
+            ]
+          },
+          {
+            "phrase": "Keep track of your AOC status by asking GenAIsys — it shows the current status and number of days outstanding.",
+            "franchises": [
+              "MIGRAINE"
+            ]
+          },
+          {
+            "phrase": "You can mark a suggestion as complete directly in GenAIsys — it will sync back to iRep automatically.",
+            "franchises": [
+              "MIGRAINE"
+            ]
+          },
+          {
+            "phrase": "The Migraine Snapshot separates Ubrelvy and Qulipta competitor data — view acute and preventive markets independently.",
+            "franchises": [
+              "MIGRAINE"
+            ]
+          },
+          {
+            "phrase": "Your Snapshot tiles show absolute volume changes instead of percentages, making it easier to gauge real-world impact.",
+            "franchises": [
+              "MIGRAINE"
+            ]
+          },
+          {
+            "phrase": "Ask GenAIsys for NBRx and TRx trends for both AbbVie and competitor products.",
+            "franchises": [
+              "MIGRAINE"
+            ]
+          },
+          {
+            "phrase": "View Channel Payor Mix for any HCP or your territory to understand access and market dynamics.",
+            "franchises": [
+              "MIGRAINE"
+            ]
+          },
+          {
+            "phrase": "Ask for top growers and decliners in your territory to stay focused on high-opportunity accounts.",
+            "franchises": [
+              "MIGRAINE"
+            ]
+          },
+          {
+            "phrase": "You can mark a suggestion as complete directly in GenAIsys — it will sync back to iRep automatically.",
+            "franchises": [
+              "ONCOLOGY FRANCHISE V"
+            ]
+          },
+          {
+            "phrase": "Ask GenAIsys for TRx trends for AbbVie and competitor products — charts and summaries available on demand.",
+            "franchises": [
+              "ONCOLOGY FRANCHISE V"
+            ]
+          },
+          {
+            "phrase": "View speaker program attendance for any HCP to understand their engagement history with AbbVie.",
+            "franchises": [
+              "ONCOLOGY FRANCHISE V"
+            ]
+          },
+          {
+            "phrase": "See your HCPs' affiliated prescribers within a practice — ask GenAIsys who else is seeing patients at the same location.",
+            "franchises": [
+              "ONCOLOGY FRANCHISE V"
+            ]
+          },
+          {
+            "phrase": "Look up top writers by territory or zip code to find the highest-volume prescribers in your area.",
+            "franchises": [
+              "ONCOLOGY FRANCHISE V"
+            ]
+          },
+          {
+            "phrase": "Ask GenAIsys to pull HCP Spend data to stay informed about spend limits and restrictions before your call.",
+            "franchises": [
+              "ONCOLOGY FRANCHISE V"
+            ]
+          },
+          {
+            "phrase": "Pull up ISA tiles shown to an HCP this year — including which ones haven't been shown yet — to plan your next interaction.",
+            "franchises": [
+              "ONCOLOGY FRANCHISE V"
+            ]
+          },
+          {
+            "phrase": "View an HCO Snapshot for a full account-level overview — including affiliated child accounts, recent prescribing behavior, and suggestions.",
+            "franchises": [
+              "IMMUNOLOGY - ACCOUNT EXECS"
+            ]
+          }
+        ] ;
+
+
         function loadSample() {
-            data = JSON.parse(JSON.stringify(SAMPLE_DATA)); // Deep clone
+            data = {
+                wcgd: JSON.parse(JSON.stringify(SAMPLE_DATA)), // Deep clone
+                wait_state: JSON.parse(JSON.stringify(WAIT_STATE_SAMPLE)) // Deep clone
+            };
             renderCategoryTree();
+            renderWaitStatePhrases();
             generateJSON();
             neodigmToast.q('Sample data loaded successfully!', 'brand');
         }
@@ -1240,12 +2898,12 @@
         function renderCategoryTree() {
             const tree = document.getElementById('categoryTree');
 
-            if (data.length === 0) {
+            if (data.wcgd.length === 0) {
                 tree.innerHTML = '<div class="empty-state" style="padding: 20px;">No categories yet</div>';
                 return;
             }
 
-            tree.innerHTML = data.map((category, catIndex) => {
+            tree.innerHTML = data.wcgd.map((category, catIndex) => {
                 const subCats = category['sub-cats'].map((subCat, subIndex) => {
                     const count = subCat.prompts.length;
                     const isSelected = selectedCategoryIndex === catIndex && selectedSubCategoryIndex === subIndex;
@@ -1289,8 +2947,8 @@
             renderCategoryTree();
             renderPromptList();
 
-            const cat = data[catIndex].cat;
-            const subCat = data[catIndex]['sub-cats'][subIndex].sub;
+            const cat = data.wcgd[catIndex].cat;
+            const subCat = data.wcgd[catIndex]['sub-cats'][subIndex].sub;
             document.getElementById('viewTitle').textContent = `${cat} > ${subCat}`;
             document.getElementById('addPromptBtn').style.display = 'block';
         }
@@ -1306,7 +2964,7 @@
                 return;
             }
 
-            const prompts = data[selectedCategoryIndex]['sub-cats'][selectedSubCategoryIndex].prompts;
+            const prompts = data.wcgd[selectedCategoryIndex]['sub-cats'][selectedSubCategoryIndex].prompts;
 
             if (prompts.length === 0) {
                 container.innerHTML = '<div class="empty-state">No prompts yet. Click "+ Add Prompt" to create one.</div>';
@@ -1371,7 +3029,7 @@
         }
 
         function editCategory(catIndex) {
-            const category = data[catIndex];
+            const category = data.wcgd[catIndex];
 
             document.getElementById('categoryForm').style.display = 'block';
             document.getElementById('promptEditor').style.display = 'none';
@@ -1428,7 +3086,7 @@
 
             if (editingIndex === '') {
                 // Creating new category
-                const exists = data.find(c => c.cat === catName);
+                const exists = data.wcgd.find(c => c.cat === catName);
                 if (exists) {
                     neodigmToast.q('Category already exists', 'warning');
                     return;
@@ -1440,13 +3098,13 @@
                     roles: [],
                     'sub-cats': []
                 };
-                data.push(category);
+                data.wcgd.push(category);
 
                 neodigmToast.q('Category created!', 'brand');
             } else {
                 // Editing existing category
                 const catIdx = parseInt(editingIndex);
-                category = data[catIdx];
+                category = data.wcgd[catIdx];
 
                 // Update category name and franchises
                 category.cat = catName;
@@ -1519,7 +3177,7 @@
         function populateCategorySelects() {
             const catSelect = document.getElementById('promptCategorySelect');
             catSelect.innerHTML = '<option value="">-- Select Category --</option>' +
-                data.map((cat, idx) => `<option value="${idx}">${cat.cat}</option>`).join('');
+                data.wcgd.map((cat, idx) => `<option value="${idx}">${cat.cat}</option>`).join('');
 
             if (selectedCategoryIndex !== null) {
                 catSelect.value = selectedCategoryIndex;
@@ -1537,7 +3195,7 @@
                 return;
             }
 
-            const subCats = data[catIdx]['sub-cats'];
+            const subCats = data.wcgd[catIdx]['sub-cats'];
             subSelect.innerHTML = '<option value="">-- Select Sub-Category --</option>' +
                 subCats.map((sc, idx) => `<option value="${idx}">${sc.sub}</option>`).join('');
         }
@@ -1692,10 +3350,10 @@
             };
 
             if (editingPromptIndex !== null) {
-                data[catIdx]['sub-cats'][subIdx].prompts[editingPromptIndex] = prompt;
+                data.wcgd[catIdx]['sub-cats'][subIdx].prompts[editingPromptIndex] = prompt;
                 neodigmToast.q('Prompt updated!', 'brand');
             } else {
-                data[catIdx]['sub-cats'][subIdx].prompts.push(prompt);
+                data.wcgd[catIdx]['sub-cats'][subIdx].prompts.push(prompt);
                 neodigmToast.q('Prompt added!', 'brand');
             }
 
@@ -1713,7 +3371,7 @@
         // ============================================================================
         function editPrompt(idx) {
             editingPromptIndex = idx;
-            const prompt = data[selectedCategoryIndex]['sub-cats'][selectedSubCategoryIndex].prompts[idx];
+            const prompt = data.wcgd[selectedCategoryIndex]['sub-cats'][selectedSubCategoryIndex].prompts[idx];
 
             document.getElementById('editorTitle').textContent = 'Edit Prompt';
             document.getElementById('promptCaption').value = prompt.caption;
@@ -1741,7 +3399,7 @@
         function deletePrompt(idx) {
             if (!confirm('Delete this prompt?')) return;
 
-            data[selectedCategoryIndex]['sub-cats'][selectedSubCategoryIndex].prompts.splice(idx, 1);
+            data.wcgd[selectedCategoryIndex]['sub-cats'][selectedSubCategoryIndex].prompts.splice(idx, 1);
             renderPromptList();
             renderCategoryTree();
             generateJSON();
@@ -1778,29 +3436,46 @@
 
                 const importedData = JSON.parse(clipboardText);
 
-                if (!Array.isArray(importedData)) {
-                    neodigmToast.q('Invalid JSON format|Must be an array', 'danger');
+                // Validate format: support both old (array) and new (object with wcgd/wait_state)
+                let isValidFormat = false;
+                if (Array.isArray(importedData)) {
+                    isValidFormat = true;
+                } else if (importedData && typeof importedData === 'object' &&
+                          Array.isArray(importedData.wcgd) && Array.isArray(importedData.wait_state)) {
+                    isValidFormat = true;
+                }
+
+                if (!isValidFormat) {
+                    neodigmToast.q('Invalid JSON format|Expected array or {wcgd, wait_state} object', 'danger');
                     return;
                 }
 
-                if (data.length > 0) {
+                if (data.wcgd.length > 0) {
                     if (!confirm('This will replace all existing data. Continue?')) {
                         return;
                     }
                 }
 
-                data = importedData;
+                // Handle both formats
+                if (Array.isArray(importedData)) {
+                    data.wcgd = importedData;
+                    data.wait_state = [];
+                } else {
+                    data = importedData;
+                }
+
                 selectedCategoryIndex = null;
                 selectedSubCategoryIndex = null;
 
                 renderCategoryTree();
+                renderWaitStatePhrases();
                 generateJSON();
 
                 document.getElementById('promptListView').style.display = 'block';
                 document.getElementById('promptEditor').style.display = 'none';
                 document.getElementById('categoryForm').style.display = 'none';
 
-                neodigmToast.q(`Loaded ${data.length} categories from clipboard!`, 'brand');
+                neodigmToast.q(`Loaded ${data.wcgd.length} categories from clipboard!`, 'brand');
 
             } catch (error) {
                 if (error.name === 'NotAllowedError') {
@@ -1847,16 +3522,33 @@
                 try {
                     const imported = JSON.parse(e.target.result);
 
-                    if (!Array.isArray(imported)) {
-                        neodigmToast.q('Invalid JSON format', 'danger');
+                    // Validate format: support both old (array) and new (object with wcgd/wait_state)
+                    let isValidFormat = false;
+                    if (Array.isArray(imported)) {
+                        isValidFormat = true;
+                    } else if (imported && typeof imported === 'object' &&
+                              Array.isArray(imported.wcgd) && Array.isArray(imported.wait_state)) {
+                        isValidFormat = true;
+                    }
+
+                    if (!isValidFormat) {
+                        neodigmToast.q('Invalid JSON format|Expected array or {wcgd, wait_state} object', 'danger');
                         return;
                     }
 
-                    data = imported;
+                    // Handle both formats
+                    if (Array.isArray(imported)) {
+                        data.wcgd = imported;
+                        data.wait_state = [];
+                    } else {
+                        data = imported;
+                    }
+
                     selectedCategoryIndex = null;
                     selectedSubCategoryIndex = null;
 
                     renderCategoryTree();
+                    renderWaitStatePhrases();
                     generateJSON();
                     neodigmToast.q('JSON imported successfully!', 'brand');
                 } catch (error) {
@@ -1867,6 +3559,241 @@
             };
 
             reader.readAsText(file);
+        }
+
+        // ============================================================================
+        // WAIT STATE PHRASES MANAGEMENT
+        // ============================================================================
+        function renderWaitStatePhrases() {
+            const list = document.getElementById('waitStatePhrasesList');
+
+            if (data.wait_state.length === 0) {
+                list.innerHTML = '<div class="empty-state">No wait state phrases defined. Click "+ Add Phrase" to create one.</div>';
+                return;
+            }
+
+            list.innerHTML = data.wait_state.map((item, idx) => `
+                <div class="criterion-item" style="grid-template-columns: 1fr auto auto; margin-bottom: 15px; padding: 15px; background: var(--bg-dark-tertiary); border-radius: 4px;">
+                    <div>
+                        <input type="text" value="${item.phrase || ''}"
+                               placeholder="Enter wait state phrase (e.g., Analyzing your request...)"
+                               onchange="updateWaitStatePhrase(${idx}, this.value)"
+                               style="width: 100%; margin-bottom: 10px;">
+                        <div style="margin-top: 10px;">
+                            <label style="display: block; margin-bottom: 5px; font-size: 0.85em; color: var(--text-secondary);">Franchises (optional)</label>
+                            <div class="token-selector" style="margin-top: 5px;">
+                                ${renderWaitStateFranchiseChips(idx, item.franchises || [])}
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-danger btn-small" onclick="deleteWaitStatePhrase(${idx})" style="height: fit-content;">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function renderWaitStateFranchiseChips(phraseIdx, selectedFranchises) {
+            return AVAILABLE_FRANCHISES.map(franchise => {
+                const isSelected = selectedFranchises.includes(franchise);
+                const chipClass = isSelected ? 'franchise-chip selected' : 'franchise-chip';
+                return `<div class="${chipClass}" onclick="toggleWaitStateFranchise(${phraseIdx}, '${franchise}')">${franchise}</div>`;
+            }).join('');
+        }
+
+        function addWaitStatePhrase() {
+            data.wait_state.push({
+                phrase: '',
+                franchises: []
+            });
+            renderWaitStatePhrases();
+            generateJSON();
+            neodigmToast.q('Phrase added', 'brand');
+        }
+
+        function updateWaitStatePhrase(idx, newPhrase) {
+            data.wait_state[idx].phrase = newPhrase;
+            generateJSON();
+        }
+
+        function toggleWaitStateFranchise(phraseIdx, franchise) {
+            const franchises = data.wait_state[phraseIdx].franchises;
+            const index = franchises.indexOf(franchise);
+
+            if (index === -1) {
+                franchises.push(franchise);
+            } else {
+                franchises.splice(index, 1);
+            }
+
+            renderWaitStatePhrases();
+            generateJSON();
+        }
+
+        function deleteWaitStatePhrase(idx) {
+            if (confirm('Delete this wait state phrase?')) {
+                data.wait_state.splice(idx, 1);
+                renderWaitStatePhrases();
+                generateJSON();
+                neodigmToast.q('Phrase deleted', 'brand');
+            }
+        }
+
+        // ============================================================================
+        // LOCAL STORAGE MANAGEMENT
+        // ============================================================================
+        const STORAGE_KEY = 'wcgd_saved_versions';
+
+        function getAllSavedVersions() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                return saved ? JSON.parse(saved) : [];
+            } catch (error) {
+                console.error('Error reading from localStorage:', error);
+                return [];
+            }
+        }
+
+        function saveToLocalStorage() {
+            try {
+                const versions = getAllSavedVersions();
+
+                // Create new version entry
+                const timestamp = Date.now();
+                const date = new Date(timestamp);
+                const newVersion = {
+                    id: timestamp,
+                    date: date.toLocaleString(),
+                    isoDate: date.toISOString(),
+                    categoriesCount: data.wcgd.length,
+                    phrasesCount: data.wait_state.length,
+                    data: JSON.parse(JSON.stringify(data)) // Deep clone
+                };
+
+                // Add to beginning of array (newest first)
+                versions.unshift(newVersion);
+
+                // Keep only last 20 versions
+                const limitedVersions = versions.slice(0, 20);
+
+                // Save to localStorage
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(limitedVersions));
+
+                neodigmToast.q(`Saved to browser storage|${date.toLocaleString()}`, 'brand');
+            } catch (error) {
+                if (error.name === 'QuotaExceededError') {
+                    neodigmToast.q('Storage quota exceeded|Try deleting old versions', 'danger');
+                } else {
+                    neodigmToast.q('Error saving to storage|' + error.message, 'danger');
+                }
+            }
+        }
+
+        function showLoadDialog() {
+            const versions = getAllSavedVersions();
+            const modal = document.getElementById('loadModal');
+            const list = document.getElementById('savedVersionsList');
+
+            if (versions.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state-modal">
+                        <p>No saved versions found</p>
+                        <p style="font-size: 0.9em; margin-top: 10px;">Click "💾 Save to Browser" to save your work</p>
+                    </div>
+                `;
+            } else {
+                list.innerHTML = versions.map((version, idx) => `
+                    <div class="saved-version-item">
+                        <div class="version-info">
+                            <div class="version-date">${version.date}</div>
+                            <div class="version-meta">
+                                ${version.categoriesCount} categories • ${version.phrasesCount} phrases
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-small" onclick="loadFromLocalStorage(${version.id})">
+                            Load
+                        </button>
+                        <button class="btn btn-danger btn-small" onclick="deleteVersion(${version.id})">
+                            Delete
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            modal.classList.add('active');
+        }
+
+        function closeLoadDialog(event) {
+            // Only close if clicking overlay or close button
+            if (!event || event.target.id === 'loadModal' || event.target.classList.contains('modal-close')) {
+                document.getElementById('loadModal').classList.remove('active');
+            }
+        }
+
+        function loadFromLocalStorage(versionId) {
+            try {
+                const versions = getAllSavedVersions();
+                const version = versions.find(v => v.id === versionId);
+
+                if (!version) {
+                    neodigmToast.q('Version not found', 'danger');
+                    return;
+                }
+
+                // Confirm before loading
+                if (data.wcgd.length > 0 || data.wait_state.length > 0) {
+                    if (!confirm(`Load version from ${version.date}?\n\nThis will replace your current work.`)) {
+                        return;
+                    }
+                }
+
+                // Load the data
+                data = JSON.parse(JSON.stringify(version.data)); // Deep clone
+
+                // Update UI
+                selectedCategoryIndex = null;
+                selectedSubCategoryIndex = null;
+                renderCategoryTree();
+                renderWaitStatePhrases();
+                generateJSON();
+
+                // Reset views
+                document.getElementById('promptListView').style.display = 'block';
+                document.getElementById('promptEditor').style.display = 'none';
+                document.getElementById('categoryForm').style.display = 'none';
+
+                // Close modal
+                closeLoadDialog();
+
+                neodigmToast.q(`Loaded version from ${version.date}`, 'brand');
+            } catch (error) {
+                neodigmToast.q('Error loading version|' + error.message, 'danger');
+            }
+        }
+
+        function deleteVersion(versionId) {
+            try {
+                const versions = getAllSavedVersions();
+                const version = versions.find(v => v.id === versionId);
+
+                if (!version) {
+                    neodigmToast.q('Version not found', 'danger');
+                    return;
+                }
+
+                if (!confirm(`Delete version from ${version.date}?`)) {
+                    return;
+                }
+
+                // Remove the version
+                const updatedVersions = versions.filter(v => v.id !== versionId);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedVersions));
+
+                // Refresh the dialog
+                showLoadDialog();
+
+                neodigmToast.q('Version deleted', 'brand');
+            } catch (error) {
+                neodigmToast.q('Error deleting version|' + error.message, 'danger');
+            }
         }
 
         // ============================================================================
