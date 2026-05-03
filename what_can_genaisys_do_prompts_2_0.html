@@ -3,33 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GenAIsys WCGD Config 2.0 - Gen20 Format</title>
+    <title>AbbVie GenAIsys – What Can GenAIsys Do? (Gen20)</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/arcanus55/neodigm55@gh-pages/dist/neodigm55__v4_0.min.css">
 <script>
-    let neodigmOptCustom = { CONSOLE_LOG_VER:false, W4S_VOLUME: .016 }
+    let neodigmOptCustom = { CONSOLE_LOG_VER:false, W4S_VOLUME: 0 }
 </script>
 <script src="https://cdn.jsdelivr.net/gh/arcanus55/neodigm55@gh-pages/dist/neodigm55__v4_0.min.js"></script>
 
     <style>
+        /* ============================================================
+           AbbVie brand tokens (canonical palette)
+           ============================================================ */
         :root {
-            --bg-dark: #1a1a1a;
-            --bg-dark-secondary: #242424;
-            --bg-dark-tertiary: #2d2d2d;
-            --text-primary: #e4e4e4;
-            --text-secondary: #a8a8a8;
-            --brand-primary: #92a8d1;
-            --brand-primary-dark: #364C75;
-            --brand-accent: #edba08;
-            --brand-accent-dark: #915E00;
-            --success: #009473;
-            --success-dark: #003817;
-            --danger: #DD4124;
-            --danger-dark: #810000;
-            --warning: #F5DF4D;
-            --warning-dark: #988200;
-            --info: #7BC4C4;
-            --info-dark: #1F6868;
-            --border-color: #3a3a3a;
+            --un-color-abbvie-dark-blue: #071D49;
+            --un-color-abbvie-extra-light-blue: #FAFBFF;
+            --un-color-abbvie-light-blue: #F1F3FF;
+            --un-color-abbvie-medium-blue: #A6B5E0;
+            --un-color-abbvie-white: #FFFFFF;
+            --un-color-curious-dark-cobalt-scale-10: #E6F0FE;
+            --un-color-curious-dark-cobalt-scale-20: #CCE0FD;
+            --un-color-curious-dark-cobalt-scale-30: #B3D1FC;
+            --un-color-curious-dark-cobalt-scale-110: #005CDD;
+            --un-color-curious-dark-cobalt-scale-130: #0047AC;
+            --un-color-curious-dark-cobalt: #0066F5;
+            --un-color-curious-light-cobalt: #479FF8;
+            --un-color-extra-light-gray: #FAFAFA;
+            --un-color-global-dark-green: #338700;
+            --un-color-global-light-green: #45AB00;
+            --un-color-light-gray: #F4F4F4;
+            --un-color-medium-gray: #B9B4B4;
+            --un-color-purposeful-dark-purple: #8A2ECC;
+            --un-color-purposeful-light-purple: #A86BDE;
+            --un-color-remarkable-dark-red: #CF451C;
+            --un-color-remarkable-light-red: #F7634F;
+            --un-color-strong-gray-scale-20: #E0E1E4;
+            --un-color-strong-gray-scale-30: #D1D3D7;
+            --un-color-strong-gray-scale-50: #B3B5BC;
+            --un-color-strong-gray-scale-70: #9497A2;
+            --un-color-strong-gray: #666B7A;
+
+            /* ============================================================
+               Semantic aliases — kept on legacy variable names so existing
+               JS template strings (e.g. style="color: var(--brand-accent)")
+               continue to work without modification. The names are
+               historical; the values are AbbVie light-theme.
+               ============================================================ */
+
+            /* Surfaces (page → card → recessed). Was dark gray scale. */
+            --bg-dark: var(--un-color-abbvie-extra-light-blue);
+            --bg-dark-secondary: var(--un-color-abbvie-white);
+            --bg-dark-tertiary: var(--un-color-abbvie-light-blue);
+
+            /* Text. Was light gray on dark; now AbbVie dark blue + strong gray. */
+            --text-primary: var(--un-color-abbvie-dark-blue);
+            --text-secondary: var(--un-color-strong-gray);
+
+            /* Brand primary = subdued brand text on light surfaces. The
+               reference used a muted blue-gray (#92a8d1) on dark bg; on white
+               that hue fails contrast, so we map to Strong Gray for the
+               secondary-text role and reserve AbbVie Dark Blue for primary. */
+            --brand-primary: var(--un-color-strong-gray);
+            --brand-primary-dark: var(--un-color-abbvie-dark-blue);
+
+            /* Action accent = Curious Cobalt (replaces the legacy yellow #edba08). */
+            --brand-accent: var(--un-color-curious-dark-cobalt);
+            --brand-accent-dark: var(--un-color-curious-dark-cobalt-scale-130);
+
+            /* Status colors. */
+            --success: var(--un-color-global-dark-green);
+            --success-dark: #1F5500;
+            --danger: var(--un-color-remarkable-dark-red);
+            --danger-dark: #8A2C0F;
+            --warning: var(--un-color-purposeful-dark-purple);
+            --warning-dark: #5E1F8C;
+            --info: var(--un-color-curious-dark-cobalt);
+            --info-dark: var(--un-color-curious-dark-cobalt-scale-10);
+
+            /* Border (light theme — slightly more definition than scale-20). */
+            --border-color: var(--un-color-strong-gray-scale-30);
+            --border-strong: var(--un-color-strong-gray-scale-50);
+
+            /* Soft tints for badges / pills. */
+            --tint-accent: var(--un-color-curious-dark-cobalt-scale-10);
+            --tint-success: #E6F4DC;
+            --tint-danger: #FCE4DC;
+            --tint-warning: #F1E3FA;
+
+            /* Focus halo */
+            --focus-ring: rgba(0, 102, 245, 0.22);
+
+            /* Elevation */
+            --shadow-sm: 0 1px 2px rgba(7, 29, 73, 0.06);
+            --shadow-md: 0 4px 12px rgba(7, 29, 73, 0.08);
+            --shadow-lg: 0 12px 32px rgba(7, 29, 73, 0.12);
+
+            /* Type */
+            --font-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
         }
 
         * {
@@ -39,14 +109,18 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-primary);
+            font-family: var(--font-sans);
+            background-color: var(--un-color-abbvie-light-blue);
             background-image:
-                radial-gradient(circle at 25% 25%, #2a2a2a 0%, transparent 50%),
-                radial-gradient(circle at 75% 75%, #1f1f1f 0%, transparent 50%);
+                radial-gradient(circle at 12% 8%, var(--un-color-curious-dark-cobalt-scale-10) 0%, transparent 38%),
+                radial-gradient(circle at 88% 92%, var(--un-color-abbvie-medium-blue) 0%, transparent 42%),
+                radial-gradient(circle at 12% 92%, var(--un-color-abbvie-medium-blue) 0%, transparent 42%);
+            background-attachment: fixed;
+            color: var(--text-primary);
             min-height: 100vh;
-            padding: 20px;
+            padding: 24px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         *::-webkit-scrollbar {
@@ -59,8 +133,13 @@
         }
 
         *::-webkit-scrollbar-thumb {
-            background: var(--brand-accent);
+            background: var(--un-color-strong-gray-scale-30);
             border-radius: 4px;
+            border: 2px solid var(--bg-dark-tertiary);
+        }
+
+        *::-webkit-scrollbar-thumb:hover {
+            background: var(--brand-accent);
         }
 
         .container {
@@ -68,57 +147,118 @@
             margin: 0 auto;
             background: var(--bg-dark-secondary);
             border-radius: 8px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            box-shadow: var(--shadow-lg);
             overflow: hidden;
             border: 1px solid var(--border-color);
         }
 
         header {
-            background: linear-gradient(135deg, var(--brand-primary-dark) 0%, var(--bg-dark-tertiary) 100%);
-            padding: 30px;
-            text-align: center;
-            border-bottom: 2px solid var(--brand-accent);
+            background:
+                linear-gradient(135deg, var(--un-color-abbvie-white) 0%, var(--un-color-abbvie-light-blue) 100%);
+            padding: 28px 36px 24px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            height: 4px;
+            background: var(--un-color-abbvie-dark-blue);
+        }
+
+        .brand-lockup {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 4px;
+        }
+
+        .brand-mark {
+            font-size: 0.82em;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--brand-primary-dark);
+            padding: 4px 10px;
+            background: var(--bg-dark-tertiary);
+            border-radius: 3px;
         }
 
         h1 {
-            font-size: 2em;
-            margin-bottom: 10px;
-            color: var(--brand-accent);
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            font-size: 1.6em;
+            color: var(--text-primary);
             font-weight: 600;
+            letter-spacing: -0.01em;
+            line-height: 1.2;
         }
 
         .subtitle {
             color: var(--text-secondary);
-            font-size: 0.95em;
+            font-size: 0.92em;
+            margin-top: 4px;
+        }
+
+        .file-context {
+            margin-top: 12px;
+            font-size: 0.82em;
+            color: var(--brand-primary-dark);
+            background: var(--un-color-curious-dark-cobalt-scale-10);
+            border: 1px solid var(--un-color-curious-dark-cobalt-scale-20);
+            border-left: 3px solid var(--brand-accent);
+            padding: 8px 12px;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            line-height: 1.4;
+        }
+
+        .file-context strong {
+            color: var(--text-primary);
+            font-weight: 600;
         }
 
         .main-content {
             display: grid;
-            grid-template-columns: 300px 1fr;
+            grid-template-columns: 320px 1fr;
             gap: 0;
-            background: var(--bg-dark);
+            background: var(--un-color-abbvie-white);
         }
 
         .sidebar {
-            background: var(--bg-dark-secondary);
-            padding: 20px;
+            background: var(--un-color-abbvie-extra-light-blue);
+            padding: 24px;
             border-right: 1px solid var(--border-color);
-            max-height: calc(100vh - 200px);
+            max-height: calc(100vh - 240px);
             overflow-y: auto;
         }
 
+        .sidebar-title {
+            color: var(--text-secondary);
+            font-size: 0.72em;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
         .content-area {
-            padding: 30px;
+            padding: 28px;
+            background: var(--un-color-abbvie-white);
         }
 
         .panel {
-            background: var(--bg-dark-secondary);
-            border-radius: 6px;
-            padding: 25px;
+            background: var(--un-color-abbvie-white);
+            border-radius: 8px;
+            padding: 24px;
             border: 1px solid var(--border-color);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            box-shadow: var(--shadow-sm);
             margin-bottom: 20px;
         }
 
@@ -127,74 +267,121 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--brand-accent);
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+            gap: 12px;
+            position: relative;
+        }
+
+        .panel-header::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -1px;
+            width: 56px;
+            height: 2px;
+            background: var(--brand-accent);
+            border-radius: 1px;
         }
 
         .panel-title {
-            font-size: 1.2em;
+            font-size: 1.05em;
             font-weight: 600;
-            color: var(--brand-accent);
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
         }
 
+        .panel-actions-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            align-items: flex-start;
+        }
+
+        .panel-actions-group .actions {
+            margin-top: 0;
+        }
+
+        /* ============================================================
+           Buttons
+           ============================================================ */
         .btn {
-            padding: 10px 20px;
-            border: 1px solid transparent;
-            border-radius: 4px;
+            padding: 8px 16px;
+            border: 1px solid var(--border-strong);
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 0.85em;
+            font-size: 0.82em;
             font-weight: 500;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            background: var(--bg-dark-tertiary);
+            transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
+            background: var(--bg-dark-secondary);
             color: var(--text-primary);
+            font-family: var(--font-sans);
+            line-height: 1.2;
+            white-space: nowrap;
         }
 
         .btn:hover {
-            transform: translateY(-1px);
+            background: var(--bg-dark-tertiary);
+            border-color: var(--brand-accent);
+            color: var(--brand-accent-dark);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 3px var(--focus-ring);
+            border-color: var(--brand-accent);
         }
 
         .btn-primary {
-            background: var(--brand-primary);
-            color: var(--bg-dark);
-            border-color: var(--brand-primary-dark);
+            background: var(--brand-accent);
+            color: var(--un-color-abbvie-white);
+            border-color: var(--brand-accent);
         }
 
         .btn-primary:hover {
-            background: var(--brand-primary-dark);
-            color: var(--text-primary);
-            box-shadow: 0 4px 12px rgba(146, 168, 209, 0.4);
+            background: var(--un-color-curious-dark-cobalt-scale-110);
+            border-color: var(--un-color-curious-dark-cobalt-scale-110);
+            color: var(--un-color-abbvie-white);
+            box-shadow: var(--shadow-md);
         }
 
         .btn-success {
             background: var(--success);
-            color: white;
-            border-color: var(--success-dark);
+            color: var(--un-color-abbvie-white);
+            border-color: var(--success);
         }
 
         .btn-success:hover {
             background: var(--success-dark);
-            box-shadow: 0 4px 12px rgba(0, 148, 115, 0.4);
+            border-color: var(--success-dark);
+            color: var(--un-color-abbvie-white);
+            box-shadow: var(--shadow-md);
         }
 
         .btn-danger {
-            background: var(--danger);
-            color: white;
-            border-color: var(--danger-dark);
+            background: var(--bg-dark-secondary);
+            color: var(--danger);
+            border-color: var(--un-color-remarkable-light-red);
         }
 
         .btn-danger:hover {
-            background: var(--danger-dark);
+            background: var(--danger);
+            color: var(--un-color-abbvie-white);
+            border-color: var(--danger);
         }
 
         .btn-small {
-            padding: 5px 10px;
-            font-size: 0.75em;
+            padding: 4px 11px;
+            font-size: 0.82em;
         }
 
+        /* ============================================================
+           Forms
+           ============================================================ */
         .form-group {
             margin-bottom: 20px;
         }
@@ -202,25 +389,29 @@
         label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--brand-accent);
-            font-size: 0.85em;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.82em;
+            letter-spacing: 0.2px;
         }
 
         input[type="text"],
         select,
         textarea {
             width: 100%;
-            padding: 12px;
-            background: var(--bg-dark-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-size: 0.95em;
+            padding: 8px 12px;
+            background: var(--bg-dark-secondary);
+            border: 1px solid var(--border-strong);
+            border-radius: 8px;
+            font-size: 0.92em;
             color: var(--text-primary);
-            transition: all 0.3s ease;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+            font-family: var(--font-sans);
+        }
+
+        input[type="text"]::placeholder,
+        textarea::placeholder {
+            color: var(--un-color-strong-gray-scale-50);
         }
 
         select {
@@ -228,9 +419,11 @@
         }
 
         textarea {
-            min-height: 100px;
+            min-height: 90px;
             resize: vertical;
-            font-family: 'Courier New', monospace;
+            font-family: var(--font-mono);
+            font-size: 0.82em;
+            line-height: 1.5;
         }
 
         input:focus,
@@ -238,47 +431,62 @@
         textarea:focus {
             outline: none;
             border-color: var(--brand-accent);
-            box-shadow: 0 0 0 2px rgba(237, 186, 8, 0.2);
-            background: var(--bg-dark);
+            box-shadow: 0 0 0 3px var(--focus-ring);
+            background: var(--bg-dark-secondary);
         }
 
         .help-text {
-            font-size: 0.85em;
+            font-size: 0.82em;
             color: var(--text-secondary);
-            margin-top: 5px;
-            font-style: italic;
+            margin-top: 4px;
+            line-height: 1.4;
         }
 
+        /* ============================================================
+           Sidebar tree
+           ============================================================ */
         .category-item {
-            margin-bottom: 10px;
-            background: var(--bg-dark-tertiary);
-            border-radius: 4px;
+            margin-bottom: 8px;
+            background: var(--bg-dark-secondary);
+            border-radius: 8px;
             overflow: hidden;
             border: 1px solid var(--border-color);
         }
 
         .category-header {
-            padding: 12px;
-            background: var(--bg-dark);
+            padding: 12px 12px;
+            background: var(--bg-dark-tertiary);
             font-weight: 600;
-            color: var(--brand-accent);
+            color: var(--text-primary);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.9em;
+            font-size: 0.82em;
+            gap: 8px;
         }
 
         .category-header:hover {
-            background: var(--bg-dark-tertiary);
+            background: var(--un-color-curious-dark-cobalt-scale-10);
         }
 
         .category-name {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 0;
+        }
+
+        .category-franchise-count {
+            font-size: 0.92em;
+            font-weight: 500;
+            color: var(--text-secondary);
+            letter-spacing: 0.2px;
         }
 
         .category-actions {
             display: flex;
-            gap: 5px;
+            gap: 8px;
             align-items: center;
         }
 
@@ -287,224 +495,313 @@
             border: none;
             color: var(--text-secondary);
             cursor: pointer;
-            padding: 4px 8px;
-            font-size: 0.9em;
-            transition: all 0.2s ease;
+            padding: 4px 6px;
+            font-size: 0.92em;
+            line-height: 1;
+            border-radius: 3px;
+            transition: background 0.15s ease, color 0.15s ease;
         }
 
         .icon-btn:hover {
             color: var(--brand-accent);
-            transform: scale(1.1);
+            background: var(--un-color-curious-dark-cobalt-scale-10);
         }
 
         .sub-category {
-            padding: 10px 12px 10px 24px;
+            padding: 8px 12px 9px 22px;
             border-top: 1px solid var(--border-color);
             cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 0.85em;
+            transition: background 0.15s ease, padding-left 0.15s ease, color 0.15s ease;
+            font-size: 0.82em;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            color: var(--text-primary);
+            background: var(--bg-dark-secondary);
         }
 
         .sub-category:hover {
-            background: var(--bg-dark);
-            padding-left: 28px;
+            background: var(--un-color-curious-dark-cobalt-scale-10);
+            padding-left: 24px;
         }
 
         .sub-category.selected {
             background: var(--brand-primary-dark);
-            color: var(--brand-accent);
+            color: var(--un-color-abbvie-white);
             border-left: 3px solid var(--brand-accent);
+            padding-left: 20px;
+            font-weight: 600;
+        }
+
+        .sub-category.selected:hover {
+            background: var(--brand-primary-dark);
+            padding-left: 24px;
         }
 
         .prompt-count {
-            background: var(--bg-dark-tertiary);
-            padding: 2px 6px;
-            border-radius: 10px;
-            font-size: 0.7em;
+            background: var(--bg-dark-secondary);
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-size: 0.72em;
+            font-weight: 600;
             color: var(--text-secondary);
+            border: 1px solid var(--border-color);
         }
 
+        .sub-category.selected .prompt-count {
+            background: rgba(255, 255, 255, 0.18);
+            color: var(--un-color-abbvie-white);
+            border-color: transparent;
+        }
+
+        /* ============================================================
+           Prompt list / cards
+           ============================================================ */
         .prompt-list {
             display: grid;
-            gap: 15px;
+            gap: 16px;
         }
 
         .prompt-card {
-            background: var(--bg-dark-tertiary);
-            padding: 20px;
-            border-radius: 6px;
+            background: var(--un-color-abbvie-white);
+            padding: 16px 20px;
+            border-radius: 8px;
             border: 1px solid var(--border-color);
-            transition: all 0.3s ease;
+            border-left: 3px solid var(--un-color-abbvie-medium-blue);
+            transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease, background 0.15s ease;
         }
 
         .prompt-card:hover {
             border-color: var(--brand-accent);
-            box-shadow: 0 4px 12px rgba(237, 186, 8, 0.2);
-            transform: translateY(-2px);
+            border-left-color: var(--brand-accent);
+            background: var(--un-color-abbvie-extra-light-blue);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
         }
 
         .prompt-caption {
             font-weight: 600;
-            color: var(--brand-accent);
-            margin-bottom: 10px;
-            font-size: 1.1em;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-size: 1.05em;
+            letter-spacing: -0.01em;
         }
 
         .prompt-text {
-            color: var(--text-secondary);
-            font-size: 0.9em;
-            margin-bottom: 12px;
-            font-family: 'Courier New', monospace;
-            background: var(--bg-dark);
-            padding: 10px;
+            color: var(--text-primary);
+            font-size: 0.82em;
+            margin-bottom: 8px;
+            font-family: var(--font-mono);
+            background: var(--bg-dark-tertiary);
+            padding: 8px 12px;
             border-radius: 4px;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        .prompt-text strong {
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-family: var(--font-sans);
+            display: inline-block;
+            margin-right: 4px;
         }
 
         .prompt-meta {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
-            margin: 12px 0;
+            margin: 8px 0;
         }
 
         .badge {
-            padding: 4px 10px;
+            padding: 3px 10px;
             border-radius: 12px;
-            font-size: 0.75em;
+            font-size: 0.72em;
             font-weight: 600;
+            letter-spacing: 0.2px;
+            border: 1px solid transparent;
         }
 
         .badge-criterion {
-            background: var(--info-dark);
-            color: var(--info);
+            background: var(--tint-accent);
+            color: var(--brand-accent-dark);
+            border-color: var(--un-color-curious-dark-cobalt-scale-20);
         }
 
         .badge-required {
-            background: var(--danger-dark);
+            background: var(--tint-danger);
             color: var(--danger);
+            border-color: var(--un-color-remarkable-light-red);
         }
 
         .badge-optional {
-            background: var(--success-dark);
+            background: var(--tint-success);
             color: var(--success);
+            border-color: #B5DA9A;
         }
 
+        /* ============================================================
+           Token chips (template builder) + franchise chips
+           ============================================================ */
         .token-selector {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
-            margin-top: 10px;
+            margin-top: 8px;
             padding: 12px;
-            background: var(--bg-dark);
-            border-radius: 4px;
+            background: var(--bg-dark-tertiary);
+            border-radius: 8px;
             border: 1px solid var(--border-color);
         }
 
         .token-chip {
-            padding: 6px 12px;
-            background: var(--info-dark);
-            color: var(--info);
-            border: 1px solid var(--info);
+            padding: 4px 11px;
+            background: var(--un-color-abbvie-white);
+            color: var(--brand-accent-dark);
+            border: 1px solid var(--un-color-curious-dark-cobalt-scale-30);
             border-radius: 4px;
             cursor: pointer;
-            font-size: 0.85em;
+            font-size: 0.82em;
             font-weight: 600;
-            transition: all 0.3s ease;
+            font-family: var(--font-mono);
+            transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
             user-select: none;
         }
 
         .token-chip:hover {
-            background: var(--info);
-            color: var(--bg-dark);
-            transform: scale(1.05);
+            background: var(--brand-accent);
+            color: var(--un-color-abbvie-white);
+            border-color: var(--brand-accent);
         }
 
         .franchise-chip {
-            padding: 6px 12px;
-            background: var(--bg-dark-tertiary);
+            padding: 4px 11px;
+            background: var(--un-color-abbvie-white);
             color: var(--text-primary);
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--border-strong);
             border-radius: 4px;
             cursor: pointer;
-            font-size: 0.85em;
-            font-weight: 600;
-            transition: all 0.3s ease;
+            font-size: 0.82em;
+            font-weight: 500;
+            transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
             user-select: none;
         }
 
         .franchise-chip:hover {
-            background: var(--bg-dark);
+            background: var(--un-color-curious-dark-cobalt-scale-10);
             border-color: var(--brand-accent);
+            color: var(--brand-accent-dark);
         }
 
         .franchise-chip.selected {
-            background: var(--brand-primary);
-            color: var(--bg-dark);
+            background: var(--brand-primary-dark);
+            color: var(--un-color-abbvie-white);
             border-color: var(--brand-primary-dark);
+            font-weight: 600;
         }
 
+        .franchise-chip.selected:hover {
+            background: var(--un-color-curious-dark-cobalt-scale-130);
+            border-color: var(--un-color-curious-dark-cobalt-scale-130);
+        }
+
+        /* ============================================================
+           Criteria / keywords list
+           ============================================================ */
         .criteria-list {
-            margin-top: 15px;
+            margin-top: 8px;
         }
 
         .criterion-item {
             display: grid;
             grid-template-columns: 1.5fr 1.5fr 1fr 1fr auto;
-            gap: 10px;
-            margin-bottom: 10px;
+            gap: 8px;
+            margin-bottom: 8px;
             padding: 12px;
-            background: var(--bg-dark);
-            border-radius: 4px;
+            background: var(--bg-dark-tertiary);
+            border-radius: 8px;
             align-items: center;
             border: 1px solid var(--border-color);
+        }
+
+        .criterion-item input[type="text"],
+        .criterion-item select {
+            background: var(--bg-dark-secondary);
         }
 
         .checkbox-group {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
 
         input[type="checkbox"] {
-            width: auto;
+            width: 16px;
+            height: 16px;
             cursor: pointer;
+            accent-color: var(--brand-accent);
         }
 
         .checkbox-label {
-            font-size: 0.85em;
+            font-size: 0.82em;
             color: var(--text-primary);
             text-transform: none;
-            font-weight: normal;
+            font-weight: 500;
             margin: 0;
+            letter-spacing: 0;
+            cursor: pointer;
         }
 
+        /* ============================================================
+           JSON output / schema viewer
+           ============================================================ */
         .json-output {
             width: 100%;
-            min-height: 400px;
-            padding: 15px;
+            min-height: 380px;
+            padding: 16px 16px;
             background: var(--bg-dark-tertiary);
             border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.85em;
+            border-radius: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.82em;
+            line-height: 1.5;
             color: var(--text-primary);
             resize: vertical;
         }
 
         .actions {
             display: flex;
-            gap: 10px;
-            margin-top: 15px;
+            gap: 8px;
+            margin-top: 16px;
+            flex-wrap: wrap;
         }
 
         .empty-state {
             text-align: center;
-            padding: 60px 20px;
+            padding: 56px 20px;
             color: var(--text-secondary);
             font-style: italic;
+        }
+
+        .empty-state-tip {
+            display: block;
+            margin-top: 12px;
+            font-size: 0.92em;
+            font-style: normal;
+            color: var(--text-secondary);
+        }
+
+        /* Visible only when the sidebar is to the left (above the responsive
+           breakpoint where it stacks above content). Used for directional
+           cues that would mislead on narrow viewports. The !important is
+           required because .icon (defined later) sets display: inline-block
+           with equal specificity, and source-order would otherwise win. */
+        .show-desktop {
+            display: inline-block;
+        }
+        @media (max-width: 900px) {
+            .show-desktop { display: none !important; }
         }
 
         input[type="file"] {
@@ -512,21 +809,27 @@
         }
 
         .schema-view {
-            background: var(--bg-dark);
-            padding: 15px;
-            border-radius: 4px;
+            background: var(--bg-dark-tertiary);
+            padding: 16px;
+            border-radius: 8px;
             border: 1px solid var(--border-color);
-            margin-bottom: 20px;
+            margin-bottom: 16px;
+            max-height: 300px;
+            overflow-y: auto;
         }
 
         .schema-view pre {
             margin: 0;
             color: var(--text-secondary);
-            font-size: 0.8em;
+            font-size: 0.82em;
+            line-height: 1.5;
+            font-family: var(--font-mono);
             white-space: pre-wrap;
         }
 
-        /* Modal Dialog */
+        /* ============================================================
+           Modal
+           ============================================================ */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -534,8 +837,9 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(7, 29, 73, 0.55);
             backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
             z-index: 9999;
             align-items: center;
             justify-content: center;
@@ -549,16 +853,16 @@
             background: var(--bg-dark-secondary);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
+            max-width: 620px;
+            width: 92%;
+            max-height: 82vh;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            box-shadow: var(--shadow-lg);
         }
 
         .modal-header {
-            padding: 20px;
+            padding: 16px 22px;
             border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
@@ -566,32 +870,35 @@
         }
 
         .modal-title {
-            color: var(--brand-accent);
+            color: var(--text-primary);
             margin: 0;
-            font-size: 1.2em;
+            font-size: 1.05em;
+            font-weight: 600;
         }
 
         .modal-close {
             background: none;
             border: none;
             color: var(--text-secondary);
-            font-size: 1.5em;
+            font-size: 1.6em;
             cursor: pointer;
             padding: 0;
-            width: 30px;
-            height: 30px;
+            width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: color 0.3s;
+            border-radius: 4px;
+            transition: background 0.15s ease, color 0.15s ease;
         }
 
         .modal-close:hover {
             color: var(--danger);
+            background: var(--tint-danger);
         }
 
         .modal-body {
-            padding: 20px;
+            padding: 16px 22px;
             overflow-y: auto;
             flex: 1;
         }
@@ -599,80 +906,1142 @@
         .saved-version-item {
             background: var(--bg-dark-tertiary);
             border: 1px solid var(--border-color);
-            border-radius: 4px;
-            padding: 15px;
-            margin-bottom: 10px;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 8px;
             display: grid;
             grid-template-columns: 1fr auto auto;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
-            transition: all 0.3s;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
 
         .saved-version-item:hover {
             border-color: var(--brand-accent);
-            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
         }
 
         .version-info {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 4px;
         }
 
         .version-date {
-            color: var(--brand-accent);
+            color: var(--text-primary);
             font-weight: 600;
-            font-size: 0.95em;
+            font-size: 0.92em;
         }
 
         .version-meta {
             color: var(--text-secondary);
-            font-size: 0.85em;
+            font-size: 0.82em;
         }
 
         .empty-state-modal {
             text-align: center;
-            padding: 40px 20px;
+            padding: 36px 20px;
             color: var(--text-secondary);
         }
 
-        /* Collapsible Details */
+        /* ============================================================
+           Collapsible details (wait-state panel, schema view)
+           ============================================================ */
         details.panel summary {
             user-select: none;
+            list-style: none;
+        }
+
+        details.panel summary::-webkit-details-marker {
+            display: none;
         }
 
         details.panel summary .panel-title::before {
-            content: '▶ ';
+            content: '';
             display: inline-block;
-            transition: transform 0.3s;
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            background-color: var(--brand-accent);
+            -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z"/></svg>') no-repeat center / contain;
+                    mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z"/></svg>') no-repeat center / contain;
+            transition: transform 0.2s ease;
+            vertical-align: -3px;
         }
 
         details.panel[open] summary .panel-title::before {
             transform: rotate(90deg);
         }
+
+        details > summary {
+            cursor: pointer;
+        }
+
+        /* ============================================================
+           Icon system (Material Symbols Outlined, inline SVG, AbbVie-tinted)
+           ============================================================ */
+        .icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            vertical-align: -4px;
+            fill: currentColor;
+            flex-shrink: 0;
+        }
+
+        .icon-sm { width: 16px; height: 16px; vertical-align: -2px; }
+        .icon-md { width: 20px; height: 20px; vertical-align: -5px; }
+        .icon-lg { width: 24px; height: 24px; vertical-align: -5px; }
+        .icon-xl { width: 24px; height: 24px; vertical-align: -6px; }
+
+        /* ============================================================
+           Info tooltips (the "?" affordance)
+           ============================================================ */
+        .info-tip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--un-color-curious-dark-cobalt-scale-10);
+            color: var(--brand-accent-dark);
+            font-size: 0.72em;
+            font-weight: 700;
+            cursor: help;
+            margin-left: 8px;
+            position: relative;
+            user-select: none;
+            border: 1px solid var(--un-color-curious-dark-cobalt-scale-30);
+            font-family: var(--font-sans);
+            text-transform: none;
+            letter-spacing: 0;
+            vertical-align: middle;
+            transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+        }
+
+        .info-tip:hover,
+        .info-tip:focus-visible {
+            background: var(--brand-accent);
+            color: var(--un-color-abbvie-white);
+            border-color: var(--brand-accent);
+            outline: none;
+        }
+
+        .info-tip::after {
+            content: attr(data-tip);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--un-color-abbvie-dark-blue);
+            color: var(--un-color-abbvie-white);
+            padding: 12px 16px;
+            border-radius: 8px;
+            /* Absolute size so the tooltip text doesn't compound the
+               .info-tip badge's 0.72em parent — was rendering at ~0.59em. */
+            font-size: 13px;
+            font-weight: 400;
+            line-height: 1.5;
+            letter-spacing: 0;
+            white-space: normal;
+            width: max-content;
+            max-width: 320px;
+            text-align: left;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 100;
+            box-shadow: var(--shadow-md);
+            transition: opacity 0.15s ease, visibility 0.15s ease;
+        }
+
+        .info-tip::before {
+            content: '';
+            position: absolute;
+            bottom: calc(100% + 2px);
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-top-color: var(--un-color-abbvie-dark-blue);
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 100;
+            transition: opacity 0.15s ease, visibility 0.15s ease;
+        }
+
+        .info-tip:hover::after,
+        .info-tip:hover::before,
+        .info-tip:focus-visible::after,
+        .info-tip:focus-visible::before {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Tooltip flips to below when too close to the top */
+        .info-tip.tip-below::after {
+            bottom: auto;
+            top: calc(100% + 8px);
+        }
+        .info-tip.tip-below::before {
+            bottom: auto;
+            top: calc(100% + 2px);
+            border-top-color: transparent;
+            border-bottom-color: var(--un-color-abbvie-dark-blue);
+        }
+
+        /* ============================================================
+           Breadcrumbs
+           ============================================================ */
+        .breadcrumbs {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding: 8px 14px;
+            background: var(--un-color-abbvie-extra-light-blue);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.82em;
+            color: var(--text-secondary);
+            min-height: 38px;
+        }
+
+        .breadcrumb-item {
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 3px;
+            transition: background 0.15s ease, color 0.15s ease;
+            background: none;
+            border: none;
+            font-size: inherit;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .breadcrumb-item:hover {
+            background: var(--un-color-curious-dark-cobalt-scale-10);
+            color: var(--brand-accent-dark);
+        }
+
+        .breadcrumb-item.is-current {
+            color: var(--text-primary);
+            font-weight: 600;
+            cursor: default;
+        }
+
+        .breadcrumb-item.is-current:hover {
+            background: none;
+            color: var(--text-primary);
+        }
+
+        .breadcrumb-sep {
+            color: var(--un-color-strong-gray-scale-50);
+            font-size: 0.82em;
+            user-select: none;
+        }
+
+        .breadcrumb-meta {
+            margin-left: auto;
+            color: var(--text-secondary);
+            font-size: 0.92em;
+        }
+
+        /* ============================================================
+           Help button in header
+           ============================================================ */
+        .btn-help {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--un-color-abbvie-white);
+            color: var(--brand-primary-dark);
+            border: 1px solid var(--brand-primary-dark);
+            font-weight: 600;
+            position: relative;
+        }
+
+        .btn-help:hover {
+            background: var(--brand-primary-dark);
+            color: var(--un-color-abbvie-white);
+            border-color: var(--brand-primary-dark);
+        }
+
+        @keyframes help-pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(0, 102, 245, 0.45); }
+            50%      { box-shadow: 0 0 0 8px rgba(0, 102, 245, 0); }
+        }
+
+        .btn-help.is-pulsing {
+            animation: help-pulse 2s ease-in-out infinite;
+        }
+
+        /* ============================================================
+           Help drawer
+           ============================================================ */
+        .help-drawer-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(7, 29, 73, 0.32);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+            z-index: 9998;
+        }
+
+        .help-drawer-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .help-drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 520px;
+            max-width: 96%;
+            background: var(--un-color-abbvie-white);
+            box-shadow: -12px 0 36px rgba(7, 29, 73, 0.20);
+            transform: translateX(100%);
+            transition: transform 0.25s ease;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .help-drawer.active {
+            transform: translateX(0);
+        }
+
+        .help-drawer-header {
+            padding: 24px 24px 16px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            background:
+                linear-gradient(135deg, var(--un-color-abbvie-white) 0%, var(--un-color-abbvie-light-blue) 100%);
+            position: relative;
+        }
+
+        .help-drawer-header::before {
+            content: '';
+            position: absolute;
+            left: 0; right: 0; top: 0;
+            height: 4px;
+            background: var(--un-color-abbvie-dark-blue);
+        }
+
+        .help-drawer-title {
+            font-size: 1.05em;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .help-drawer-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.82em;
+        }
+
+        .help-drawer-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.6em;
+            line-height: 1;
+            cursor: pointer;
+            padding: 0;
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            flex-shrink: 0;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+
+        .help-drawer-close:hover {
+            color: var(--danger);
+            background: var(--tint-danger);
+        }
+
+        .help-drawer-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0;
+            padding: 0 24px;
+            background: var(--un-color-abbvie-white);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .help-drawer-tab {
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            padding: 8px 14px;
+            cursor: pointer;
+            font-family: var(--font-sans);
+            font-size: 0.82em;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: color 0.15s ease, border-color 0.15s ease;
+        }
+
+        .help-drawer-tab:hover {
+            color: var(--brand-accent-dark);
+        }
+
+        .help-drawer-tab.is-active {
+            color: var(--brand-accent-dark);
+            border-bottom-color: var(--brand-accent);
+            font-weight: 600;
+        }
+
+        .help-drawer-body {
+            padding: 24px 24px 28px;
+            overflow-y: auto;
+            flex: 1;
+            color: var(--text-primary);
+            font-size: 0.92em;
+            line-height: 1.55;
+        }
+
+        .help-section { display: none; }
+        .help-section.is-active { display: block; }
+
+        .help-section h4 {
+            font-size: 1.05em;
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-top: 16px;
+            margin-bottom: 8px;
+            letter-spacing: -0.01em;
+        }
+
+        .help-section h4:first-child { margin-top: 0; }
+
+        .help-section p {
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .help-section p.muted {
+            color: var(--text-secondary);
+            font-size: 0.92em;
+        }
+
+        .help-section ul,
+        .help-section ol {
+            margin: 8px 0 14px 22px;
+            color: var(--text-primary);
+        }
+
+        .help-section li {
+            margin-bottom: 4px;
+        }
+
+        .help-section code {
+            font-family: var(--font-mono);
+            font-size: 0.82em;
+            background: var(--un-color-abbvie-light-blue);
+            padding: 1px 5px;
+            border-radius: 3px;
+            color: var(--brand-accent-dark);
+            border: 1px solid var(--un-color-curious-dark-cobalt-scale-10);
+        }
+
+        .help-section .help-key-row {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.92em;
+        }
+
+        .help-section .help-key-row:last-child { border-bottom: none; }
+        .help-section .help-key-row dt { font-weight: 600; }
+        .help-section .help-key-row dd { color: var(--text-secondary); margin: 0; }
+
+        .help-section .help-callout {
+            margin-top: 16px;
+            padding: 12px 16px;
+            background: var(--un-color-curious-dark-cobalt-scale-10);
+            border: 1px solid var(--un-color-curious-dark-cobalt-scale-20);
+            border-left: 3px solid var(--brand-accent);
+            border-radius: 4px;
+        }
+
+        .help-section .help-callout-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            font-size: 0.92em;
+        }
+
+        .help-section .help-callout p {
+            margin-bottom: 4px;
+        }
+
+        .help-section .help-callout p:last-child {
+            margin-bottom: 0;
+        }
+
+        .help-section .help-callout-warning {
+            color: var(--brand-primary-dark);
+            font-size: 0.82em;
+            margin-top: 8px !important;
+        }
+
+        .help-section .help-callout-actions {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* Responsive: collapse sidebar on narrow screens */
+        @media (max-width: 900px) {
+            body { padding: 12px; }
+            .main-content { grid-template-columns: 1fr; }
+            .sidebar {
+                max-height: none;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+            header { padding: 24px 20px 18px; }
+            h1 { font-size: 1.6em; }
+            .content-area { padding: 20px; }
+            .criterion-item {
+                grid-template-columns: 1fr;
+            }
+            .help-drawer { width: 100%; }
+            .help-section .help-key-row { grid-template-columns: 1fr; gap: 2px; }
+            .breadcrumb-meta { display: none; }
+        }
+
+        /* ============================================================
+           Sidebar search
+           ============================================================ */
+        .sidebar-search {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .sidebar-search input {
+            width: 100%;
+            padding: 8px 32px 8px 32px;
+            background: var(--un-color-abbvie-white);
+            border: 1px solid var(--border-strong);
+            border-radius: 8px;
+            font-size: 0.82em;
+            color: var(--text-primary);
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+            font-family: var(--font-sans);
+        }
+
+        .sidebar-search input::placeholder {
+            color: var(--un-color-strong-gray-scale-50);
+        }
+
+        .sidebar-search input:focus {
+            outline: none;
+            border-color: var(--brand-accent);
+            box-shadow: 0 0 0 3px var(--focus-ring);
+        }
+
+        .sidebar-search-icon {
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            pointer-events: none;
+            font-size: 0.92em;
+        }
+
+        .sidebar-search-clear {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.05em;
+            line-height: 1;
+            padding: 4px 6px;
+            border-radius: 3px;
+            display: none;
+        }
+
+        .sidebar-search-clear:hover {
+            background: var(--un-color-curious-dark-cobalt-scale-10);
+            color: var(--brand-accent-dark);
+        }
+
+        .sidebar-search.has-text .sidebar-search-clear {
+            display: block;
+        }
+
+        .sidebar-search-meta {
+            font-size: 0.82em;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            min-height: 16px;
+        }
+
+        .sidebar-search-meta strong {
+            color: var(--brand-accent-dark);
+            font-weight: 600;
+        }
+
+        /* Highlight matched substrings */
+        mark.search-hit {
+            background: var(--un-color-curious-dark-cobalt-scale-20);
+            color: var(--brand-accent-dark);
+            padding: 0 2px;
+            border-radius: 2px;
+            font-weight: 600;
+        }
+
+        .sub-category.selected mark.search-hit {
+            background: rgba(255, 255, 255, 0.28);
+            color: var(--un-color-abbvie-white);
+        }
+
+        /* ============================================================
+           Validation results panel
+           ============================================================ */
+        .validation-results {
+            margin-bottom: 16px;
+            padding: 16px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--un-color-abbvie-extra-light-blue);
+            display: none;
+        }
+
+        .validation-results.is-visible {
+            display: block;
+        }
+
+        .validation-results.is-pass {
+            border-color: var(--success);
+            background: var(--tint-success);
+        }
+
+        .validation-results.is-fail {
+            border-color: var(--danger);
+            background: var(--tint-danger);
+        }
+
+        .validation-results.is-warn {
+            border-color: var(--warning);
+            background: var(--tint-warning);
+        }
+
+        .validation-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.92em;
+            margin-bottom: 4px;
+        }
+
+        .validation-summary-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            color: var(--success);
+            flex-shrink: 0;
+        }
+
+        .validation-results.is-fail .validation-summary-icon { color: var(--danger); }
+        .validation-results.is-warn .validation-summary-icon { color: var(--warning); }
+
+        .validation-meta {
+            color: var(--text-secondary);
+            font-size: 0.82em;
+        }
+
+        .validation-issue-list {
+            margin-top: 12px;
+            list-style: none;
+            padding: 0;
+            max-height: 280px;
+            overflow-y: auto;
+            background: var(--un-color-abbvie-white);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        .validation-issue {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            gap: 8px;
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.82em;
+            align-items: start;
+        }
+
+        .validation-issue:last-child { border-bottom: none; }
+
+        .validation-issue-level {
+            font-size: 0.72em;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 3px;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .validation-issue-level.lvl-error {
+            background: var(--tint-danger);
+            color: var(--danger);
+            border: 1px solid var(--un-color-remarkable-light-red);
+        }
+
+        .validation-issue-level.lvl-warn {
+            background: var(--tint-warning);
+            color: var(--warning);
+            border: 1px solid var(--un-color-purposeful-light-purple);
+        }
+
+        .validation-issue-body {
+            color: var(--text-primary);
+            line-height: 1.45;
+        }
+
+        .validation-issue-path {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 0.92em;
+            color: var(--text-secondary);
+            margin-top: 2px;
+            word-break: break-all;
+        }
+
+        /* ============================================================
+           Welcome panel (first-run only)
+           ============================================================ */
+        .welcome-panel {
+            background:
+                linear-gradient(135deg, var(--un-color-abbvie-white) 0%, var(--un-color-abbvie-light-blue) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 36px 32px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .welcome-panel::before {
+            content: '';
+            position: absolute;
+            left: 0; right: 0; top: 0;
+            height: 4px;
+            background: linear-gradient(90deg,
+                var(--un-color-abbvie-dark-blue) 0%,
+                var(--un-color-curious-dark-cobalt) 100%);
+        }
+
+        .welcome-eyebrow {
+            color: var(--brand-primary-dark);
+            font-size: 0.82em;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .welcome-title {
+            font-size: 1.6em;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            letter-spacing: -0.01em;
+        }
+
+        .welcome-lede {
+            color: var(--text-secondary);
+            font-size: 1.05em;
+            line-height: 1.55;
+            margin-bottom: 24px;
+            max-width: 56ch;
+        }
+
+        .welcome-cta-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 720px) {
+            .welcome-cta-grid { grid-template-columns: 1fr; }
+        }
+
+        .welcome-cta {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 16px 18px 20px;
+            background: var(--un-color-abbvie-white);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            font-family: var(--font-sans);
+            transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease, background 0.15s ease;
+        }
+
+        .welcome-cta:hover {
+            border-color: var(--brand-accent);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+            background: var(--un-color-abbvie-extra-light-blue);
+        }
+
+        .welcome-cta:focus-visible {
+            outline: none;
+            border-color: var(--brand-accent);
+            box-shadow: 0 0 0 3px var(--focus-ring);
+        }
+
+        .welcome-cta.is-recommended {
+            border-color: var(--brand-accent);
+            background: var(--un-color-curious-dark-cobalt-scale-10);
+        }
+
+        .welcome-cta.is-recommended:hover {
+            background: var(--un-color-curious-dark-cobalt-scale-20);
+        }
+
+        .welcome-cta-badge {
+            display: inline-block;
+            font-size: 0.72em;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--un-color-abbvie-white);
+            background: var(--brand-accent);
+            padding: 2px 7px;
+            border-radius: 3px;
+            align-self: flex-start;
+            margin-bottom: 4px;
+        }
+
+        .welcome-cta-title {
+            font-size: 1.05em;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+        }
+
+        .welcome-cta-desc {
+            color: var(--text-secondary);
+            font-size: 0.82em;
+            line-height: 1.45;
+        }
+
+        .welcome-footer {
+            color: var(--text-secondary);
+            font-size: 0.82em;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* ============================================================
+           Header layout: top row (brand + Help), action row, secondary menu
+           ============================================================ */
+        .header-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 8px;
+        }
+
+        .header-actions {
+            margin-top: 16px;
+            display: flex;
+            flex-direction: row;
+            gap: 16px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .header-actions-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .header-actions-section.is-right {
+            align-items: flex-end;
+        }
+
+        .header-actions-spacer {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .header-actions-rule {
+            display: inline-block;
+            width: 1px;
+            height: 24px;
+            background: var(--border-color);
+            margin: 0 4px;
+            flex-shrink: 0;
+        }
+
+        .header-actions-eyebrow {
+            font-size: 0.72em;
+            font-weight: 700;
+            letter-spacing: 1.6px;
+            text-transform: uppercase;
+            color: var(--brand-primary-dark);
+        }
+
+        .header-actions-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .save-status {
+            font-size: 0.82em;
+            color: var(--text-secondary);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            line-height: 1.2;
+            padding-left: 2px;
+        }
+
+        .save-status::before {
+            content: '';
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--un-color-strong-gray-scale-50);
+            flex-shrink: 0;
+        }
+
+        .save-status.state-saved { color: var(--success); }
+        .save-status.state-saved::before { background: var(--success); }
+
+        .save-status.state-dirty {
+            color: var(--danger);
+            font-weight: 500;
+        }
+        .save-status.state-dirty::before { background: var(--danger); }
+
+        .save-status.state-empty {
+            color: var(--un-color-strong-gray-scale-50);
+        }
+
+        /* ============================================================
+           Neodigm toast overrides — AbbVie branding
+           Neodigm's default themes are off-brand (yellow brand, teal info,
+           amber warning). These overrides retint the snackbar container
+           and progress bar to the AbbVie palette. The selectors match
+           Neodigm's exact specificity ([data-n55-theme=...]) and our
+           styles load after the CDN, so equal-specificity wins.
+           ============================================================ */
+        .l-snackbar .snackbar__cont {
+            /* Neodigm's JS sets t.style.left = (clientWidth/2 - elemWidth/2) + 'px'
+               as an inline style at toast-show time. Inline styles outrank our
+               external CSS unless we use !important. Pinning both left and right
+               makes the toast auto-size to 70% of the viewport (15% gutters). */
+            left: 15% !important;
+            right: 15% !important;
+            width: auto !important;
+            min-width: 0;
+            max-width: none;
+            transform: none;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            box-shadow: 0 12px 32px rgba(7, 29, 73, 0.24);
+            font-family: var(--font-sans);
+        }
+
+        .l-snackbar .snackbar__msg {
+            font-family: var(--font-sans);
+            font-size: 14px;
+            font-weight: 500;
+            margin: 16px 20px;
+            color: var(--un-color-abbvie-white);
+            white-space: normal;
+            line-height: 1.45;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        /* Branded info icon prepended to every themed toast.
+           Uses CSS mask so the icon color follows --toast-icon-color
+           (white-on-gradient for all three themes). */
+        .l-snackbar .snackbar__cont[data-n55-theme] .snackbar__msg::before {
+            content: '';
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            flex-shrink: 0;
+            background-color: rgba(255, 255, 255, 0.96);
+            -webkit-mask: var(--toast-icon) no-repeat center / contain;
+                    mask: var(--toast-icon) no-repeat center / contain;
+        }
+
+        /* Brand = positive / informational. AbbVie Cobalt + info icon. */
+        .l-snackbar .snackbar__cont[data-n55-theme=brand] {
+            background: linear-gradient(135deg,
+                var(--un-color-curious-dark-cobalt) 0%,
+                var(--un-color-curious-dark-cobalt-scale-130) 100%);
+            box-shadow: 0 12px 32px rgba(0, 102, 245, 0.32);
+            border-color: var(--un-color-curious-dark-cobalt-scale-130);
+            --toast-icon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>');
+        }
+        .l-snackbar .snackbar__cont[data-n55-theme=brand] .snackbar__progbar {
+            background: linear-gradient(90deg,
+                var(--un-color-curious-dark-cobalt-scale-130) 0%,
+                var(--un-color-curious-dark-cobalt) 100%);
+        }
+
+        /* Danger = errors. Remarkable Red + error icon. */
+        .l-snackbar .snackbar__cont[data-n55-theme=danger] {
+            background: linear-gradient(135deg,
+                var(--un-color-remarkable-dark-red) 0%,
+                #8A2C0F 100%);
+            box-shadow: 0 12px 32px rgba(207, 69, 28, 0.32);
+            border-color: #8A2C0F;
+            --toast-icon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>');
+        }
+        .l-snackbar .snackbar__cont[data-n55-theme=danger] .snackbar__progbar {
+            background: linear-gradient(90deg,
+                #8A2C0F 0%,
+                var(--un-color-remarkable-dark-red) 100%);
+        }
+
+        /* Warning = soft attention. Purposeful Purple + warning icon. */
+        .l-snackbar .snackbar__cont[data-n55-theme=warning] {
+            background: linear-gradient(135deg,
+                var(--un-color-purposeful-dark-purple) 0%,
+                #5E1F8C 100%);
+            box-shadow: 0 12px 32px rgba(138, 46, 204, 0.32);
+            border-color: #5E1F8C;
+            --toast-icon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>');
+        }
+        .l-snackbar .snackbar__cont[data-n55-theme=warning] .snackbar__progbar {
+            background: linear-gradient(90deg,
+                #5E1F8C 0%,
+                var(--un-color-purposeful-dark-purple) 100%);
+        }
+
+        @media (max-width: 900px) {
+            .header-actions-section { gap: 8px; }
+            .header-top-row { flex-wrap: wrap; }
+            .header-actions-spacer { display: none; }
+            .header-actions-rule { display: none; }
+        }
     </style>
 </head>
 <body>
+    <!-- Icon library (Material Symbols Outlined-derived paths, AbbVie-tinted via currentColor) -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none" aria-hidden="true">
+        <symbol id="i-save" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2zM5 5v14h14V8.83L15.17 5H5zm2 11h10v-3H7v3zm0-7h7V6H7v3z"/></symbol>
+        <symbol id="i-search" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 0 0 1.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 0 0-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 0 0 5.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></symbol>
+        <symbol id="i-edit" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm17.71-10.04a1 1 0 0 0 0-1.41l-2.5-2.5a1 1 0 0 0-1.41 0L14.13 5.66l3.75 3.75 2.83-2.83z"/></symbol>
+        <symbol id="i-data_object" viewBox="0 0 24 24"><path d="M4 7v4a2 2 0 0 1-2 2 2 2 0 0 1 2 2v4a2 2 0 0 0 2 2h2v-2H6v-5a2 2 0 0 0-1.5-1.94v-.12A2 2 0 0 0 6 12V7h2V5H6a2 2 0 0 0-2 2zm14-2v2h2v5a2 2 0 0 1 1.5 1.94v.12A2 2 0 0 1 20 16v5h-2v2h2a2 2 0 0 0 2-2v-4a2 2 0 0 1 2-2 2 2 0 0 1-2-2V7a2 2 0 0 0-2-2z"/></symbol>
+        <symbol id="i-groups" viewBox="0 0 24 24"><path d="M4 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.13 1.1c-.37-.06-.74-.1-1.13-.1-.99 0-1.93.21-2.78.58A2.01 2.01 0 0 0 0 16.43V18h4.5v-1.61c0-.83.23-1.61.63-2.29zM20 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm4 3.43c0-.81-.48-1.53-1.22-1.85A6.95 6.95 0 0 0 20 14c-.39 0-.76.04-1.13.1.4.68.63 1.46.63 2.29V18H24v-1.57zM16.67 13.13C15.6 12.42 14 12 12 12s-3.6.42-4.67 1.13C6.48 13.65 6 14.4 6 15.22V18h12v-2.78c0-.82-.48-1.57-1.33-2.09zM12 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3z"/></symbol>
+        <symbol id="i-key" viewBox="0 0 24 24"><path d="M21 10h-8.35A5.99 5.99 0 0 0 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6a5.99 5.99 0 0 0 5.65-4H13l2 2 2-2 2 2 4-4.04L21 10zM7 15c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3z"/></symbol>
+        <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></symbol>
+        <symbol id="i-close" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></symbol>
+        <symbol id="i-check_circle" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></symbol>
+        <symbol id="i-error" viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></symbol>
+        <symbol id="i-warning" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></symbol>
+        <symbol id="i-chevron_right" viewBox="0 0 24 24"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z"/></symbol>
+        <symbol id="i-home" viewBox="0 0 24 24"><path d="M12 5.69 17 10.19V18h-2v-6H9v6H7v-7.81l5-4.5M12 3 2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/></symbol>
+        <symbol id="i-help" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/></symbol>
+        <symbol id="i-arrow_back" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></symbol>
+    </svg>
+
     <div class="container">
         <header>
-            <h1>What Can GenAIsys Do? 2.0</h1>
-            <p class="subtitle">Gen20 Configuration Tool - Schema-First Approach - Wait Phrasess</p>
-            <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                <button class="btn btn-primary" data-n55-wired4sound-click="5" onclick="loadSample()">Load Sample Data</button>
-                <button class="btn btn-primary" data-n55-wired4sound-click="5" onclick="loadFromClipboard()">Load from Clipboard</button>
-                <button class="btn btn-primary" data-n55-wired4sound-click="5" onclick="importFile()">Import JSON</button>
-                <button class="btn btn-success" data-n55-wired4sound-click="5" onclick="saveToLocalStorage()">💾 Save to Browser</button>
-                <button class="btn btn-primary" data-n55-wired4sound-click="5" onclick="showLoadDialog()">📂 Load from Browser</button>
-                <button class="btn btn-success" data-n55-wired4sound-click="5" onclick="downloadJSON()">Download JSON</button>
+            <div class="header-top-row">
+                <div class="brand-lockup">
+                    <span class="brand-mark">AbbVie GenAIsys</span>
+                </div>
+                <button id="btnHelp" class="btn btn-help" onclick="openHelp()" aria-label="Open help">
+                    <svg class="icon" aria-hidden="true"><use href="#i-help"/></svg>
+                    <span>Help</span>
+                </button>
+            </div>
+            <h1>What Can GenAIsys Do?</h1>
+            <p class="subtitle">Author and manage Gen20 prompt configurations and wait-state phrases.</p>
+            <div id="fileContext" class="file-context" style="display: none" aria-live="polite"></div>
+            <div class="header-actions">
+                <div class="header-actions-section" aria-labelledby="actionsLabel">
+                    <span id="actionsLabel" class="header-actions-eyebrow">Actions</span>
+                    <div class="header-actions-buttons">
+                        <button class="btn" onclick="showLoadDialog()">Load from Browser</button>
+                        <button class="btn" onclick="loadFromClipboard()">Paste from Clipboard</button>
+                        <button class="btn" onclick="importFile()">Import JSON file</button>
+                    </div>
+                </div>
+
+                <div class="header-actions-spacer" aria-hidden="true"></div>
+
+                <div class="header-actions-section is-right">
+                    <div class="header-actions-buttons">
+                        <button class="btn btn-primary" onclick="saveToLocalStorage()" title="Save current work to this browser">
+                            <svg class="icon" aria-hidden="true"><use href="#i-save"/></svg> Save
+                        </button>
+                    </div>
+                    <span id="saveStatus" class="save-status state-empty" aria-live="polite">No data yet</span>
+                </div>
             </div>
         </header>
 
         <div class="main-content">
             <!-- Sidebar: Category Navigator -->
             <div class="sidebar">
-                <div style="margin-bottom: 15px;">
-                    <h3 style="color: var(--brand-accent); font-size: 0.9em; margin-bottom: 10px;">CATEGORIES</h3>
+                <div id="sidebarSearch" class="sidebar-search">
+                    <span class="sidebar-search-icon" aria-hidden="true"><svg class="icon icon-sm"><use href="#i-search"/></svg></span>
+                    <input type="text" id="searchInput" placeholder="Search categories, prompts, keywords…"
+                           autocomplete="off" oninput="setSearch(this.value)" aria-label="Search">
+                    <button type="button" class="sidebar-search-clear" onclick="clearSearch()" aria-label="Clear search"><svg class="icon icon-sm"><use href="#i-close"/></svg></button>
+                </div>
+                <div id="searchMeta" class="sidebar-search-meta" aria-live="polite"></div>
+                <div style="margin-bottom: 16px;">
+                    <h3 class="sidebar-title">Categories</h3>
                     <button class="btn btn-primary btn-small" style="width: 100%;" onclick="showCategoryForm()">+ Add Category</button>
                 </div>
                 <div id="categoryTree"></div>
@@ -680,6 +2049,36 @@
 
             <!-- Main Content Area -->
             <div class="content-area">
+                <!-- First-run welcome panel (hidden by default; shown only on first ever load) -->
+                <div id="welcomePanel" class="welcome-panel" style="display: none;" role="region" aria-labelledby="welcomeTitle">
+                    <div class="welcome-eyebrow">Welcome</div>
+                    <h2 id="welcomeTitle" class="welcome-title">Set up your first GenAIsys configuration</h2>
+                    <p class="welcome-lede">
+                        This is the authoring tool for the prompts and wait-state phrases that power AbbVie GenAIsys. Start with the sample to see what's possible, begin from a blank slate, or open Help for the full guide. Nothing leaves your browser until you download the JSON.
+                    </p>
+                    <div class="welcome-cta-grid">
+                        <button type="button" class="welcome-cta is-recommended" onclick="welcomeLoadSample()">
+                            <span class="welcome-cta-badge">Recommended</span>
+                            <span class="welcome-cta-title">Load Sample Data</span>
+                            <span class="welcome-cta-desc">A realistic configuration with 5 categories, 50+ prompts, and 53 wait-state phrases. Edit anything to learn the shape.</span>
+                        </button>
+                        <button type="button" class="welcome-cta" onclick="welcomeStartFresh()">
+                            <span class="welcome-cta-title">Start Fresh</span>
+                            <span class="welcome-cta-desc">Begin with an empty config. Add your first category from the sidebar.</span>
+                        </button>
+                        <button type="button" class="welcome-cta" onclick="welcomeOpenHelp()">
+                            <span class="welcome-cta-title">Browse Help</span>
+                            <span class="welcome-cta-desc">Concepts, authoring guide, and the Gen20 schema. Come back here to make a choice.</span>
+                        </button>
+                    </div>
+                    <div class="welcome-footer">
+                        Already have a Gen20 JSON file? Use <strong>Import JSON</strong> or <strong>Load from Clipboard</strong> in the header.
+                    </div>
+                </div>
+
+                <!-- Breadcrumb trail -->
+                <nav id="breadcrumbs" class="breadcrumbs" aria-label="Location"></nav>
+
                 <!-- Category/SubCategory Form -->
                 <div id="categoryForm" class="panel" style="display: none;">
                     <div class="panel-header">
@@ -690,30 +2089,30 @@
                     <input type="hidden" id="editingCategoryIndex" value="">
 
                     <div class="form-group">
-                        <label>Category Name</label>
+                        <label>Category Name<span class="info-tip" tabindex="0" data-tip="The top-level grouping shown in the sidebar. Categories organize related prompts (e.g., 'HCP Prescribing Behavior', 'Territory Insights').">?</span></label>
                         <input type="text" id="categoryName" placeholder="e.g., HCP Prescribing Behavior">
                     </div>
 
                     <div class="form-group">
-                        <label>Category Description <span style="font-size: 0.8em; color: var(--text-secondary); font-weight: normal;">(Optional)</span></label>
+                        <label>Category Description <span style="font-size: 0.82em; color: var(--text-secondary); font-weight: normal;">(Optional)</span><span class="info-tip" tabindex="0" data-tip="Short summary of what this category covers. Helps reviewers and other authors understand the intent at a glance.">?</span></label>
                         <textarea id="categoryDescription" rows="2" placeholder="Brief description of this category (optional)"></textarea>
-                        <div class="help-text">Optional description to help users understand this category</div>
+                        <div class="help-text">Optional. Aids discoverability and review.</div>
                     </div>
 
                     <div class="form-group">
-                        <label>Sub-Category Name <span style="font-size: 0.8em; color: var(--text-secondary); font-weight: normal;">(Optional when editing)</span></label>
+                        <label>Sub-Category Name <span style="font-size: 0.82em; color: var(--text-secondary); font-weight: normal;">(Optional when editing)</span><span class="info-tip" tabindex="0" data-tip="A grouping of related prompts within a category (e.g., 'TRx questions', 'Top Prescribers'). Add one now, or add more later from the Prompts panel.">?</span></label>
                         <input type="text" id="subCategoryName" placeholder="e.g., TRx questions">
-                        <div class="help-text">Leave blank when just updating category franchises</div>
+                        <div class="help-text">Leave blank when just updating category franchises.</div>
                     </div>
 
                     <div class="form-group">
-                        <label>Category Franchises (Optional)</label>
-                        <div class="help-text" style="margin-bottom: 10px;">Select franchises that can see this category</div>
+                        <label>Category Franchises <span style="font-size: 0.82em; color: var(--text-secondary); font-weight: normal;">(Optional)</span><span class="info-tip" tabindex="0" data-tip="Limits this category to selected therapeutic franchises. Empty = visible to all franchises. Prompt-level franchises can further narrow scope.">?</span></label>
+                        <div class="help-text" style="margin-bottom: 8px;">Select franchises that can see this category. Leave empty to make it available to everyone.</div>
                         <div id="categoryFranchiseSelector" class="token-selector"></div>
                     </div>
 
                     <div class="actions">
-                        <button class="btn btn-success" data-n55-wired4sound-click="16" onclick="saveCategoryOrSubCategory()">Save</button>
+                        <button class="btn btn-success" onclick="saveCategoryOrSubCategory()">Save</button>
                         <button class="btn" onclick="hideCategoryForm()">Cancel</button>
                     </div>
                 </div>
@@ -740,69 +2139,70 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Caption (Display Label)</label>
+                        <label>Caption (Display Label)<span class="info-tip" tabindex="0" data-tip="Short title shown to users in suggestion chips and lists. Keep it under ~30 characters (e.g., 'TRx Volume by HCP').">?</span></label>
                         <input type="text" id="promptCaption" placeholder="e.g., TRx Volume by HCP">
                     </div>
 
                     <div class="form-group">
-                        <label>Prompt (Question)</label>
+                        <label>Prompt (Question)<span class="info-tip" tabindex="0" data-tip="The plain-language version of the question users see. Plain text, no tokens — used for display and matching.">?</span></label>
                         <textarea id="promptText" placeholder="e.g., What is the TRx volume for PRODUCT for HCP_NAME?"></textarea>
-                        <div class="help-text">Plain text question without tokens</div>
+                        <div class="help-text">Plain-language question, no tokens. Shown to users.</div>
                     </div>
 
                     <div class="form-group">
-                        <label>Template (Tokenized)</label>
+                        <label>Template (Tokenized)<span class="info-tip" tabindex="0" data-tip="The same question with ##TOKENS## in place of dynamic values. The system fills in tokens at runtime from user context (HCP, product, etc.). Click chips below to insert.">?</span></label>
                         <textarea id="promptTemplate" placeholder="e.g., What is the TRx volume for ##PRODUCT## for ##HCP_NAME##?"></textarea>
-                        <div class="help-text">Click tokens below to insert them at cursor position</div>
+                        <div class="help-text">Click tokens below to insert them at the cursor.</div>
                         <div class="token-selector">
-                            <div class="token-chip" data-n55-wired4sound-click="20" onclick="insertToken('##HCP_NAME##')">##HCP_NAME##</div>
-                            <div class="token-chip" data-n55-wired4sound-click="20" onclick="insertToken('##PRODUCT##')">##PRODUCT##</div>
-                            <div class="token-chip" data-n55-wired4sound-click="20" onclick="insertToken('##TIME_PERIOD##')">##TIME_PERIOD##</div>
-                            <div class="token-chip" data-n55-wired4sound-click="20" onclick="insertToken('##ZIP_CODE##')">##ZIP_CODE##</div>
-                            <div class="token-chip" data-n55-wired4sound-click="20" onclick="insertToken('##INDICATION##')">##INDICATION##</div>
-                            <div class="token-chip" data-n55-wired4sound-click="20" onclick="insertToken('##SPECIALTY##')">##SPECIALTY##</div>
-                            <div class="token-chip" data-n55-wired4sound-click="20" onclick="insertToken('##COMPETITOR##')">##COMPETITOR##</div>
-                            <div class="token-chip" data-n55-wired4sound-click="20" onclick="insertToken('##FRANCHISE##')">##FRANCHISE##</div>
+                            <div class="token-chip" onclick="insertToken('##HCP_NAME##')" title="Healthcare provider name">##HCP_NAME##</div>
+                            <div class="token-chip" onclick="insertToken('##PRODUCT##')" title="Product or medication">##PRODUCT##</div>
+                            <div class="token-chip" onclick="insertToken('##TIME_PERIOD##')" title="Time range (e.g., last 90 days)">##TIME_PERIOD##</div>
+                            <div class="token-chip" onclick="insertToken('##ZIP_CODE##')" title="Geographic ZIP code">##ZIP_CODE##</div>
+                            <div class="token-chip" onclick="insertToken('##INDICATION##')" title="Medical indication">##INDICATION##</div>
+                            <div class="token-chip" onclick="insertToken('##SPECIALTY##')" title="HCP specialty">##SPECIALTY##</div>
+                            <div class="token-chip" onclick="insertToken('##COMPETITOR##')" title="Competitor product">##COMPETITOR##</div>
+                            <div class="token-chip" onclick="insertToken('##FRANCHISE##')" title="Therapeutic franchise">##FRANCHISE##</div>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Prompt Franchises (Optional)</label>
-                        <div class="help-text" style="margin-bottom: 10px;">Select franchises that can see this prompt (overrides category franchises)</div>
+                        <label>Prompt Franchises <span style="font-size: 0.82em; color: var(--text-secondary); font-weight: normal;">(Optional)</span><span class="info-tip" tabindex="0" data-tip="Limits this individual prompt to selected franchises, overriding the category-level scope. Empty = inherit from category.">?</span></label>
+                        <div class="help-text" style="margin-bottom: 8px;">Empty = inherit category scope. Selected = override and show only to those franchises.</div>
                         <div id="promptFranchiseSelector" class="token-selector"></div>
                     </div>
 
                     <div class="form-group">
-                        <label>Keywords (Optional) <button class="btn btn-small" onclick="addKeyword()">+ Add</button></label>
-                        <div class="help-text">Keywords to help match this prompt to user queries</div>
+                        <label>Keywords <span style="font-size: 0.82em; color: var(--text-secondary); font-weight: normal;">(Optional)</span><span class="info-tip" tabindex="0" data-tip="Search terms that help GenAIsys match a user's natural-language query to this prompt. E.g., 'volume', 'TRx', 'prescriptions'.">?</span> <button class="btn btn-small" onclick="addKeyword()">+ Add</button></label>
+                        <div class="help-text">Words that should match this prompt when users ask similar questions.</div>
                         <div id="keywordsList" class="criteria-list"></div>
                     </div>
 
                     <div class="form-group">
-                        <label>Criteria <button class="btn btn-small" onclick="addCriterion()">+ Add</button></label>
-                        <div class="help-text">Define validation rules for this prompt</div>
+                        <label>Criteria<span class="info-tip" tabindex="0" data-tip="Data inputs the prompt expects. Required = must be supplied or asked for. Match Tap = bind to whatever the user tapped/selected (e.g., the HCP they were viewing). Default = fallback value when not provided.">?</span> <button class="btn btn-small" onclick="addCriterion()">+ Add</button></label>
+                        <div class="help-text">Define which data inputs this prompt needs and how they're sourced.</div>
                         <div id="criteriaList" class="criteria-list"></div>
                     </div>
 
                     <div class="form-group">
-                        <label>Workflow ID</label>
-                        <input type="text" id="promptWorkflow" placeholder="Optional">
+                        <label>Workflow ID<span class="info-tip" tabindex="0" data-tip="Optional backend workflow identifier for prompts that route to a custom handler (e.g., 'snapshot', 'top_writers'). Leave blank for the default flow.">?</span></label>
+                        <input type="text" id="promptWorkflow" placeholder="Optional — e.g., snapshot">
                     </div>
 
                     <div class="form-group">
-                        <label>Feature Flag</label>
-                        <input type="text" id="promptFeature" placeholder="Optional">
+                        <label>Feature Flag<span class="info-tip" tabindex="0" data-tip="Optional flag name that gates this prompt's availability. Useful for staged rollouts. Leave blank to make it always available.">?</span></label>
+                        <input type="text" id="promptFeature" placeholder="Optional — e.g., snapshots_enabled">
                     </div>
 
                     <div class="form-group">
                         <div class="checkbox-group">
                             <input type="checkbox" id="promptFav">
                             <label class="checkbox-label" for="promptFav">Mark as Favorite</label>
+                            <span class="info-tip" tabindex="0" data-tip="Favorited prompts surface in the user's suggested-prompt strip. Use sparingly — favorites should be the highest-value, broadly-useful prompts.">?</span>
                         </div>
                     </div>
 
                     <div class="actions">
-                        <button class="btn btn-success" data-n55-wired4sound-click="16" onclick="savePrompt()">Save Prompt</button>
+                        <button class="btn btn-success" onclick="savePrompt()">Save Prompt</button>
                         <button class="btn" onclick="hidePromptEditor()">Cancel</button>
                     </div>
                 </div>
@@ -815,7 +2215,8 @@
                     </div>
                     <div id="promptListContainer">
                         <div class="empty-state">
-                            Select a sub-category from the sidebar to view and manage prompts
+                            <svg class="icon icon-md show-desktop" aria-hidden="true" style="margin-right: 8px;"><use href="#i-arrow_back"/></svg>Select a sub-category from the sidebar to view and manage its prompts.
+                            <span class="empty-state-tip">New here? Open <strong>Help</strong> in the top-right.</span>
                         </div>
                     </div>
                 </div>
@@ -824,13 +2225,13 @@
                 <details class="panel">
                     <summary class="panel-header" style="cursor: pointer; list-style: none;">
                         <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                            <h2 class="panel-title">Wait State Phrases</h2>
+                            <h2 class="panel-title">Wait State Phrases<span class="info-tip" tabindex="0" data-tip="Tips and reassuring messages cycled while GenAIsys processes a request. Empty franchise list = shown to everyone (global). Add franchise-specific phrases for tailored guidance.">?</span></h2>
                             <button class="btn btn-primary btn-small" onclick="event.stopPropagation(); addWaitStatePhrase()">+ Add Phrase</button>
                         </div>
                     </summary>
                     <div style="padding: 0 20px 20px 20px;">
-                        <div class="help-text" style="margin-bottom: 15px;">
-                            Messages shown to users while AI is thinking. Leave franchises empty for global phrases.
+                        <div class="help-text" style="margin-bottom: 16px;">
+                            Messages cycled to users while GenAIsys is thinking. Leave franchises empty for a global (everyone-sees-it) phrase.
                         </div>
                         <div id="waitStatePhrasesList"></div>
                     </div>
@@ -839,17 +2240,24 @@
                 <!-- JSON Output -->
                 <div class="panel">
                     <div class="panel-header">
-                        <h2 class="panel-title">Generated JSON (Gen20 Format)</h2>
-                        <div class="actions">
-                            <button class="btn btn-success" data-n55-wired4sound-click="8" onclick="generateJSON()">Generate</button>
-                            <button class="btn" data-n55-wired4sound-click="8" onclick="copyJSON()">Copy</button>
-                            <button class="btn" data-n55-wired4sound-click="8" onclick="downloadJSON()">Download</button>
+                        <h2 class="panel-title">Generated JSON (Gen20 Format)<span class="info-tip" tabindex="0" data-tip="Live preview of the Gen20-format JSON the rest of the system consumes. Use Generate to refresh, Validate to check it against the Gen20 schema, Copy for the clipboard, or Download to save a .json file.">?</span></h2>
+                        <div class="panel-actions-group" aria-labelledby="jsonActionsLabel">
+                            <span id="jsonActionsLabel" class="header-actions-eyebrow">Actions</span>
+                            <div class="actions">
+                                <button class="btn btn-success" onclick="generateJSON()">Generate</button>
+                                <button class="btn" onclick="validateData()">Validate</button>
+                                <button class="btn" onclick="copyJSON()">Copy</button>
+                                <button class="btn btn-success" onclick="downloadJSON()">Download JSON</button>
+                            </div>
                         </div>
                     </div>
 
+                    <!-- Validation results (hidden until first validate) -->
+                    <div id="validationResults" class="validation-results" role="status" aria-live="polite"></div>
+
                     <!-- Schema Reference -->
-                    <details style="margin-bottom: 15px;">
-                        <summary style="cursor: pointer; color: var(--brand-accent); font-weight: 600; margin-bottom: 10px;">📋 View JSON Schema</summary>
+                    <details style="margin-bottom: 16px;">
+                        <summary style="cursor: pointer; color: var(--brand-accent); font-weight: 600; margin-bottom: 8px;"><svg class="icon" aria-hidden="true"><use href="#i-data_object"/></svg> View JSON Schema</summary>
                         <div class="schema-view">
                             <pre id="schemaDisplay"></pre>
                         </div>
@@ -863,17 +2271,168 @@
 
     <input type="file" id="fileInput" accept=".json" onchange="handleFileImport(event)">
 
+    <!-- Help Drawer -->
+    <div id="helpOverlay" class="help-drawer-overlay" onclick="closeHelp()" aria-hidden="true"></div>
+    <aside id="helpDrawer" class="help-drawer" role="dialog" aria-labelledby="helpDrawerTitle" aria-hidden="true">
+        <div class="help-drawer-header">
+            <div>
+                <div id="helpDrawerTitle" class="help-drawer-title">Help &amp; Reference</div>
+                <div class="help-drawer-subtitle">Concepts, authoring guide, and the Gen20 schema</div>
+            </div>
+            <button class="help-drawer-close" onclick="closeHelp()" aria-label="Close help"><svg class="icon icon-md"><use href="#i-close"/></svg></button>
+        </div>
+
+        <div class="help-drawer-tabs" role="tablist">
+            <button class="help-drawer-tab is-active" role="tab" aria-selected="true" data-help-tab="overview" onclick="selectHelpTab('overview')">Overview</button>
+            <button class="help-drawer-tab" role="tab" aria-selected="false" data-help-tab="concepts" onclick="selectHelpTab('concepts')">Concepts</button>
+            <button class="help-drawer-tab" role="tab" aria-selected="false" data-help-tab="authoring" onclick="selectHelpTab('authoring')">Authoring</button>
+            <button class="help-drawer-tab" role="tab" aria-selected="false" data-help-tab="storage" onclick="selectHelpTab('storage')">Storage &amp; Export</button>
+            <button class="help-drawer-tab" role="tab" aria-selected="false" data-help-tab="schema" onclick="selectHelpTab('schema')">Schema</button>
+        </div>
+
+        <div class="help-drawer-body">
+            <section id="helpSection-overview" class="help-section is-active" role="tabpanel">
+                <h4>What this tool does</h4>
+                <p>The <strong>WCGD applet</strong> is the authoring surface for the prompts and wait-state phrases that power AbbVie GenAIsys. You define <em>what users can ask</em> and <em>how the system frames itself while answering</em>.</p>
+                <p>Output is a single Gen20 JSON file consumed by the GenAIsys client (iRep integration). Edit here, save to your browser, then download the JSON when you're ready to ship.</p>
+
+                <h4>Who uses it</h4>
+                <p class="muted">Field-team enablement, content authors, and franchise leads who curate the suggested-prompt experience for their reps.</p>
+
+                <h4>How it's organized</h4>
+                <ul>
+                    <li><strong>Categories</strong> group related prompts (left sidebar).</li>
+                    <li><strong>Sub-categories</strong> divide a category into themes.</li>
+                    <li><strong>Prompts</strong> are the actual questions users can ask.</li>
+                    <li><strong>Wait-state phrases</strong> are the messages cycled while GenAIsys responds.</li>
+                </ul>
+
+                <h4>First time here?</h4>
+                <p>Nothing leaves your browser until you download the JSON. Edit anything, save snapshots locally, and export when you're ready to ship.</p>
+
+                <div class="help-callout" role="note">
+                    <div class="help-callout-title">Load Sample Data</div>
+                    <p>Populates the editor with a realistic example configuration you can explore and edit.</p>
+                    <p class="help-callout-warning"><strong>Heads up —</strong> loading the sample <strong>replaces your current work</strong>. Use <strong>Save</strong> first if you want to keep it.</p>
+                    <div class="help-callout-actions">
+                        <button class="btn btn-small" onclick="closeHelp(); loadSample();">Load Sample Data</button>
+                    </div>
+                </div>
+
+                <div class="help-callout" role="note">
+                    <div class="help-callout-title">Show Welcome Screen</div>
+                    <p>Re-opens the first-run welcome panel.</p>
+                    <div class="help-callout-actions">
+                        <button class="btn btn-small" onclick="closeHelp(); showWelcomePanel();">Show Welcome Screen</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="helpSection-concepts" class="help-section" role="tabpanel">
+                <h4>Vocabulary</h4>
+                <dl>
+                    <div class="help-key-row"><dt>Category</dt><dd>Top-level grouping of related prompts. Shown in the sidebar tree.</dd></div>
+                    <div class="help-key-row"><dt>Sub-category</dt><dd>A theme inside a category. Selecting one reveals its prompts in the main panel.</dd></div>
+                    <div class="help-key-row"><dt>Prompt</dt><dd>The plain-language question users see. No tokens.</dd></div>
+                    <div class="help-key-row"><dt>Caption</dt><dd>Short display label (≤ ~30 chars) used in suggestion chips and lists.</dd></div>
+                    <div class="help-key-row"><dt>Template</dt><dd>The same question with <code>##TOKENS##</code> swapped in for dynamic values. Filled by the system at runtime.</dd></div>
+                    <div class="help-key-row"><dt>Token</dt><dd>One of eight placeholders: <code>##HCP_NAME##</code>, <code>##PRODUCT##</code>, <code>##TIME_PERIOD##</code>, <code>##ZIP_CODE##</code>, <code>##INDICATION##</code>, <code>##SPECIALTY##</code>, <code>##COMPETITOR##</code>, <code>##FRANCHISE##</code>.</dd></div>
+                    <div class="help-key-row"><dt>Criterion</dt><dd>A data input the prompt expects. Each is one of the eight token types and has three flags.</dd></div>
+                    <div class="help-key-row"><dt>Required</dt><dd>The prompt cannot run until this value is supplied (or asked for).</dd></div>
+                    <div class="help-key-row"><dt>Match Tap</dt><dd>Bind to whatever the user tapped/selected (e.g., the HCP they were viewing) instead of asking.</dd></div>
+                    <div class="help-key-row"><dt>Default</dt><dd>Fallback value used when the criterion is neither supplied nor tapped.</dd></div>
+                    <div class="help-key-row"><dt>Franchise</dt><dd>Therapeutic area the content belongs to (e.g., <code>IMMUNOLOGY - DERM</code>). Scopes visibility — empty list = visible to all.</dd></div>
+                    <div class="help-key-row"><dt>Keywords</dt><dd>Search hints that help GenAIsys match natural-language queries to this prompt.</dd></div>
+                    <div class="help-key-row"><dt>Workflow ID</dt><dd>Optional backend handler name (e.g., <code>snapshot</code>). Blank = default routing.</dd></div>
+                    <div class="help-key-row"><dt>Feature Flag</dt><dd>Optional gate name for staged rollouts. Blank = always on.</dd></div>
+                    <div class="help-key-row"><dt>Favorite</dt><dd>Surfaces the prompt in the user's suggested strip. Use sparingly.</dd></div>
+                    <div class="help-key-row"><dt>Wait-state phrase</dt><dd>Reassuring/loading message cycled while the AI responds. Empty franchise list = global.</dd></div>
+                </dl>
+
+                <h4>Franchise scoping</h4>
+                <p>Franchises can be set in three places, each narrowing the audience:</p>
+                <ol>
+                    <li><strong>Category franchises</strong> — gate the whole category.</li>
+                    <li><strong>Prompt franchises</strong> — override category scope for that prompt.</li>
+                    <li><strong>Wait-state franchises</strong> — make a phrase appear only for those franchises.</li>
+                </ol>
+                <p class="muted">Empty in any of those three places = "applies to everyone" at that level.</p>
+            </section>
+
+            <section id="helpSection-authoring" class="help-section" role="tabpanel">
+                <h4>Authoring a prompt — start to finish</h4>
+                <ol>
+                    <li><strong>Pick or create a category.</strong> Use the sidebar's <code>+ Add Category</code>, or click an existing category's pencil icon to edit it.</li>
+                    <li><strong>Add a sub-category</strong> when creating/editing the category, or skip it and add more later.</li>
+                    <li><strong>Select the sub-category</strong> in the sidebar — the main panel switches to its prompt list.</li>
+                    <li><strong>Click <code>+ Add Prompt</code></strong> in the prompt list header.</li>
+                    <li><strong>Caption + Prompt</strong> first — short label, then the natural-language question.</li>
+                    <li><strong>Template</strong> — restate the question with <code>##TOKENS##</code>. Click chips to insert.</li>
+                    <li><strong>Criteria</strong> — for each token in the template, add a criterion row. Set <em>Required</em>, <em>Match Tap</em>, and a <em>Default</em> when relevant.</li>
+                    <li><strong>Franchises</strong> — leave empty to inherit the category, or pick specific ones to narrow scope.</li>
+                    <li><strong>Keywords</strong> — add 3–6 search terms users might type when looking for this prompt.</li>
+                    <li><strong>Save Prompt</strong> — the JSON output below refreshes immediately.</li>
+                </ol>
+
+                <h4>Authoring a wait-state phrase</h4>
+                <ol>
+                    <li>Expand the <strong>Wait State Phrases</strong> panel near the bottom.</li>
+                    <li>Click <code>+ Add Phrase</code>. A new row appears with an empty input.</li>
+                    <li>Type the phrase. Keep it short and reassuring (e.g., <em>"Pulling the latest TRx data..."</em>).</li>
+                    <li>Pick franchises if it's franchise-specific. Leave empty for a global phrase.</li>
+                </ol>
+
+                <h4>Tips</h4>
+                <ul>
+                    <li>Match every <code>##TOKEN##</code> in your template with a criterion of the same name.</li>
+                    <li>Captions should read like a chip label, not a sentence.</li>
+                    <li>Use <em>Match Tap</em> when the user is already looking at the entity in question — it spares them from re-typing.</li>
+                    <li>Save to Browser often — versions auto-prune at 20.</li>
+                </ul>
+            </section>
+
+            <section id="helpSection-storage" class="help-section" role="tabpanel">
+                <h4>How your work is stored</h4>
+                <p>Everything stays in your browser. There is no server. The header buttons are your save/restore controls:</p>
+                <dl>
+                    <div class="help-key-row"><dt>Load Sample Data</dt><dd>Replaces current state with a realistic example config. Useful for exploration.</dd></div>
+                    <div class="help-key-row"><dt>Load from Clipboard</dt><dd>Paste-and-import. Reads the system clipboard, expects a Gen20 JSON object.</dd></div>
+                    <div class="help-key-row"><dt>Import JSON</dt><dd>File-picker import. Accepts a <code>.json</code> file in Gen20 format.</dd></div>
+                    <div class="help-key-row"><dt>Save to Browser</dt><dd>Snapshot the current state into <code>localStorage</code>. Up to 20 most-recent versions are kept; older ones are auto-pruned.</dd></div>
+                    <div class="help-key-row"><dt>Load from Browser</dt><dd>Pick a saved snapshot to restore. You can also delete old versions from this dialog.</dd></div>
+                    <div class="help-key-row"><dt>Download JSON</dt><dd>Save the current state to a <code>.json</code> file on disk. This is the artifact you ship.</dd></div>
+                </dl>
+
+                <h4>Limits and recovery</h4>
+                <p class="muted">Browser storage is ~5–10 MB depending on the browser. If a save fails with "quota exceeded," delete older versions from <code>Load from Browser</code> and retry. Clearing site data (browser settings) erases all saved versions — download a JSON backup before doing that.</p>
+            </section>
+
+            <section id="helpSection-schema" class="help-section" role="tabpanel">
+                <h4>Gen20 schema</h4>
+                <p>The full JSON schema is embedded in the page and visible under <strong>View JSON Schema</strong> in the JSON Output panel. Key constraints:</p>
+                <ul>
+                    <li><code>wcgd</code> and <code>wait_state</code> are both required at the root.</li>
+                    <li>Categories require <code>cat</code>, <code>franchises</code>, <code>roles</code>, <code>sub-cats</code>. Empty arrays are valid; missing keys are not.</li>
+                    <li>Prompts require the full shape: <code>prompt</code>, <code>caption</code>, <code>template</code>, <code>franchises</code>, <code>roles</code>, <code>criteria</code>, <code>wrkf</code>, <code>feature</code>, <code>fav</code>. <code>keywords</code> is the only optional field.</li>
+                    <li>The <code>criterion</code> name is one of eight enums — same list as the token chips.</li>
+                    <li>Franchise is one of eight enums; chip UI dedupes.</li>
+                </ul>
+                <p class="muted">A "validate against schema" button is on the roadmap — for now, the editor enforces required keys at save time.</p>
+            </section>
+        </div>
+    </aside>
+
     <!-- Load Version Modal -->
     <div id="loadModal" class="modal-overlay" onclick="closeLoadDialog(event)">
         <div class="modal-dialog" onclick="event.stopPropagation()">
             <div class="modal-header">
                 <h2 class="modal-title">Load Saved Version</h2>
-                <button class="modal-close" onclick="closeLoadDialog()">&times;</button>
+                <button class="modal-close" onclick="closeLoadDialog()" aria-label="Close dialog"><svg class="icon icon-md"><use href="#i-close"/></svg></button>
             </div>
             <div class="modal-body" id="savedVersionsList">
                 <div class="empty-state-modal">
-                    <p>No saved versions found</p>
-                    <p style="font-size: 0.9em; margin-top: 10px;">Click "💾 Save to Browser" to save your work</p>
+                    <p>No saved versions yet.</p>
+                    <p style="font-size: 0.92em; margin-top: 8px;">Click <strong>Save to Browser</strong> in the header to save a snapshot.</p>
                 </div>
             </div>
         </div>
@@ -973,6 +2532,7 @@
         let currentKeywords = [];
         let selectedCategoryFranchises = [];
         let selectedPromptFranchises = [];
+        let currentSearch = '';
 
         // Available franchises (from ChatAssistantState.js)
         const AVAILABLE_FRANCHISES = [
@@ -1003,7 +2563,26 @@
         // ============================================================================
         function init() {
             displaySchema();
-            loadSample();
+            bindGlobalKeys();
+            applyFirstRunPulse();
+
+            if (isFirstRun()) {
+                // Don't auto-load sample on the very first ever run — let the user choose.
+                renderCategoryTree();
+                renderWaitStatePhrases();
+                generateJSON();
+                showWelcomePanel();
+            } else {
+                loadSample();
+                renderBreadcrumb();
+            }
+
+            renderSaveStatus();
+            // Refresh the "Saved Nm ago" relative time every 30s
+            saveStatusInterval = setInterval(() => {
+                renderSaveStatus();
+                renderFileContext();
+            }, 30000);
         }
 
         function displaySchema() {
@@ -2904,9 +4483,13 @@
         function loadSample() {
             // SAMPLE_DATA now contains both wcgd and wait_state
             data = JSON.parse(JSON.stringify(SAMPLE_DATA)); // Deep clone
+            markFirstRunDone();
+            hideWelcomePanel();
             renderCategoryTree();
             renderWaitStatePhrases();
             generateJSON();
+            markLoaded();
+            setFileContext(null);
             neodigmToast.q('Sample data loaded successfully!', 'brand');
         }
 
@@ -2915,44 +4498,132 @@
         // ============================================================================
         function renderCategoryTree() {
             const tree = document.getElementById('categoryTree');
+            const q = (currentSearch || '').trim().toLowerCase();
+            const isFiltering = q.length > 0;
 
             if (data.wcgd.length === 0) {
-                tree.innerHTML = '<div class="empty-state" style="padding: 20px;">No categories yet</div>';
+                tree.innerHTML = '<div class="empty-state" style="padding: 20px;">No categories yet. Click <strong>+ Add Category</strong> above to start.</div>';
+                renderSearchMeta(0, 0);
+                renderBreadcrumb();
                 return;
             }
 
-            tree.innerHTML = data.wcgd.map((category, catIndex) => {
-                const subCats = category['sub-cats'].map((subCat, subIndex) => {
-                    const count = subCat.prompts.length;
+            let visibleCats = 0;
+            let visibleSubs = 0;
+            let visiblePrompts = 0;
+
+            const renderedCategories = data.wcgd.map((category, catIndex) => {
+                // Determine which sub-cats survive the filter
+                const subRows = category['sub-cats'].map((subCat, subIndex) => {
+                    const promptHits = (subCat.prompts || []).filter(p => promptMatchesSearch(p, q)).length;
+                    const subMatches = !isFiltering
+                        || (subCat.sub || '').toLowerCase().includes(q)
+                        || (category.cat || '').toLowerCase().includes(q)
+                        || promptHits > 0;
+
+                    if (!subMatches) return null;
+
+                    const count = isFiltering && promptHits > 0 ? promptHits : subCat.prompts.length;
+                    const countLabel = isFiltering && promptHits > 0 && promptHits !== subCat.prompts.length
+                        ? `<span class="prompt-count" title="${promptHits} of ${subCat.prompts.length} prompts match">${promptHits}/${subCat.prompts.length}</span>`
+                        : `<span class="prompt-count">${count}</span>`;
                     const isSelected = selectedCategoryIndex === catIndex && selectedSubCategoryIndex === subIndex;
+
+                    visibleSubs++;
+                    if (isFiltering) visiblePrompts += promptHits;
 
                     return `
                         <div class="sub-category ${isSelected ? 'selected' : ''}"
                              onclick="selectSubCategory(${catIndex}, ${subIndex})">
-                            <span>${subCat.sub}</span>
-                            <span class="prompt-count">${count}</span>
+                            <span>${highlight(subCat.sub, q)}</span>
+                            ${countLabel}
                         </div>
                     `;
-                }).join('');
+                }).filter(Boolean).join('');
+
+                const catNameMatches = !isFiltering || (category.cat || '').toLowerCase().includes(q);
+                if (!catNameMatches && !subRows) return null;
+
+                visibleCats++;
 
                 const franchiseCount = category.franchises.length;
                 const franchiseIndicator = franchiseCount > 0
-                    ? `<span style="font-size: 0.7em; color: var(--brand-primary);" title="${category.franchises.join(', ')}">(${franchiseCount} franchises)</span>`
+                    ? `<span class="category-franchise-count" title="${escapeHTML(category.franchises.join(', '))}">(${franchiseCount} franchise${franchiseCount === 1 ? '' : 's'})</span>`
                     : '';
 
                 return `
                     <div class="category-item">
                         <div class="category-header">
-                            <span class="category-name">${category.cat} ${franchiseIndicator}</span>
+                            <span class="category-name">${highlight(category.cat, q)}${franchiseIndicator}</span>
                             <div class="category-actions">
                                 <span class="prompt-count">${category['sub-cats'].length}</span>
-                                <button class="icon-btn" onclick="editCategory(${catIndex}); event.stopPropagation();" title="Edit category">✏️</button>
+                                <button class="icon-btn" onclick="editCategory(${catIndex}); event.stopPropagation();" title="Edit category" aria-label="Edit category">${iconHTML('edit', 'icon-sm')}</button>
                             </div>
                         </div>
-                        ${subCats}
+                        ${subRows}
                     </div>
                 `;
-            }).join('');
+            }).filter(Boolean).join('');
+
+            if (isFiltering && visibleCats === 0) {
+                tree.innerHTML = `<div class="empty-state" style="padding: 20px;">No matches for <strong>${escapeHTML(currentSearch)}</strong>. <button type="button" class="breadcrumb-item" onclick="clearSearch()" style="font-size: inherit;">Clear search</button></div>`;
+            } else {
+                tree.innerHTML = renderedCategories;
+            }
+
+            renderSearchMeta(visibleCats, isFiltering ? visiblePrompts : -1);
+            renderBreadcrumb();
+        }
+
+        function promptMatchesSearch(prompt, q) {
+            if (!q) return true;
+            if ((prompt.caption || '').toLowerCase().includes(q)) return true;
+            if ((prompt.prompt || '').toLowerCase().includes(q)) return true;
+            if ((prompt.template || '').toLowerCase().includes(q)) return true;
+            const kws = prompt.keywords || [];
+            for (const kw of kws) {
+                if ((kw || '').toLowerCase().includes(q)) return true;
+            }
+            return false;
+        }
+
+        function highlight(text, q) {
+            const safe = escapeHTML(text);
+            if (!q) return safe;
+            // Escape regex specials in the query, then highlight (case-insensitive)
+            const re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+            return safe.replace(re, m => `<mark class="search-hit">${m}</mark>`);
+        }
+
+        function renderSearchMeta(visibleCats, visiblePrompts) {
+            const meta = document.getElementById('searchMeta');
+            if (!meta) return;
+            if (!currentSearch || !currentSearch.trim()) {
+                meta.textContent = '';
+                return;
+            }
+            const totalCats = data.wcgd.length;
+            const totalPrompts = data.wcgd.reduce((sum, c) =>
+                sum + (c['sub-cats'] || []).reduce((s2, sc) => s2 + (sc.prompts || []).length, 0), 0);
+            const promptPart = visiblePrompts >= 0
+                ? ` · <strong>${visiblePrompts}</strong> of ${totalPrompts} prompts`
+                : '';
+            meta.innerHTML = `<strong>${visibleCats}</strong> of ${totalCats} categories${promptPart}`;
+        }
+
+        function setSearch(value) {
+            currentSearch = value;
+            const wrap = document.getElementById('sidebarSearch');
+            if (wrap) wrap.classList.toggle('has-text', !!(value && value.length));
+            renderCategoryTree();
+            renderPromptList();
+        }
+
+        function clearSearch() {
+            const input = document.getElementById('searchInput');
+            if (input) input.value = '';
+            setSearch('');
+            if (input) input.focus();
         }
 
         // ============================================================================
@@ -2969,6 +4640,42 @@
             const subCat = data.wcgd[catIndex]['sub-cats'][subIndex].sub;
             document.getElementById('viewTitle').textContent = `${cat} > ${subCat}`;
             document.getElementById('addPromptBtn').style.display = 'block';
+
+            // Make sure the prompt list is visible (return from any open form)
+            document.getElementById('promptListView').style.display = 'block';
+            document.getElementById('categoryForm').style.display = 'none';
+            document.getElementById('promptEditor').style.display = 'none';
+        }
+
+        function selectCategoryOnly(catIndex) {
+            selectedCategoryIndex = catIndex;
+            selectedSubCategoryIndex = null;
+
+            renderCategoryTree();
+            renderPromptList();
+
+            const cat = data.wcgd[catIndex];
+            if (!cat) return;
+            document.getElementById('viewTitle').textContent = cat.cat;
+            document.getElementById('addPromptBtn').style.display = 'none';
+            document.getElementById('promptListContainer').innerHTML =
+                `<div class="empty-state">${iconHTML('arrow_back', 'icon-md show-desktop')} <span style="margin-left: 4px;">Select a sub-category from the sidebar to view its prompts.</span></div>`;
+            document.getElementById('promptListView').style.display = 'block';
+            document.getElementById('categoryForm').style.display = 'none';
+            document.getElementById('promptEditor').style.display = 'none';
+        }
+
+        function clearSelection() {
+            selectedCategoryIndex = null;
+            selectedSubCategoryIndex = null;
+            renderCategoryTree();
+            document.getElementById('viewTitle').textContent = 'Select a Sub-Category';
+            document.getElementById('addPromptBtn').style.display = 'none';
+            document.getElementById('promptListContainer').innerHTML =
+                `<div class="empty-state">${iconHTML('arrow_back', 'icon-md show-desktop')} <span style="margin-left: 4px;">Select a sub-category from the sidebar to view and manage prompts.</span></div>`;
+            document.getElementById('promptListView').style.display = 'block';
+            document.getElementById('categoryForm').style.display = 'none';
+            document.getElementById('promptEditor').style.display = 'none';
         }
 
         // ============================================================================
@@ -2978,50 +4685,63 @@
             const container = document.getElementById('promptListContainer');
 
             if (selectedCategoryIndex === null || selectedSubCategoryIndex === null) {
-                container.innerHTML = '<div class="empty-state">Select a sub-category to view prompts</div>';
+                container.innerHTML = `<div class="empty-state">${iconHTML('arrow_back', 'icon-md show-desktop')} <span style="margin-left: 4px;">Select a sub-category from the sidebar to view its prompts.</span></div>`;
                 return;
             }
 
-            const prompts = data.wcgd[selectedCategoryIndex]['sub-cats'][selectedSubCategoryIndex].prompts;
+            const allPrompts = data.wcgd[selectedCategoryIndex]['sub-cats'][selectedSubCategoryIndex].prompts;
+            const q = (currentSearch || '').trim().toLowerCase();
+            const isFiltering = q.length > 0;
 
-            if (prompts.length === 0) {
-                container.innerHTML = '<div class="empty-state">No prompts yet. Click "+ Add Prompt" to create one.</div>';
+            if (allPrompts.length === 0) {
+                container.innerHTML = '<div class="empty-state">No prompts in this sub-category yet. Click <strong>+ Add Prompt</strong> above to create one.</div>';
                 return;
             }
 
-            container.innerHTML = `<div class="prompt-list">${prompts.map((prompt, index) => {
+            // Pair each prompt with its original index so Edit/Delete still work after filtering
+            const indexedPrompts = allPrompts.map((p, originalIndex) => ({ p, originalIndex }));
+            const filteredPrompts = isFiltering
+                ? indexedPrompts.filter(({ p }) => promptMatchesSearch(p, q))
+                : indexedPrompts;
+
+            if (isFiltering && filteredPrompts.length === 0) {
+                container.innerHTML = `<div class="empty-state">No prompts in this sub-category match <strong>${escapeHTML(currentSearch)}</strong>. <button type="button" class="breadcrumb-item" onclick="clearSearch()" style="font-size: inherit;">Clear search</button></div>`;
+                return;
+            }
+
+            container.innerHTML = `<div class="prompt-list">${filteredPrompts.map(({ p: prompt, originalIndex: index }) => {
                 const criteriaHTML = prompt.criteria.map(c => {
                     const cls = c.required ? 'badge-required' : 'badge-optional';
                     const label = c.required ? 'Required' : 'Optional';
-                    return `<span class="badge ${cls}">${c.criterion} (${label})</span>`;
+                    return `<span class="badge ${cls}">${escapeHTML(c.criterion)} (${label})</span>`;
                 }).join('');
 
                 const franchiseCount = (prompt.franchises || []).length;
                 const franchiseHTML = franchiseCount > 0
-                    ? `<div style="margin-top: 8px; font-size: 0.85em; color: var(--brand-primary);">
-                         📋 Franchises (${franchiseCount}): ${prompt.franchises.join(', ')}
+                    ? `<div style="margin-top: 8px; font-size: 0.82em; color: var(--brand-primary); display: flex; align-items: center; gap: 8px;">
+                         ${iconHTML('groups', 'icon-sm')} <span>${franchiseCount} franchise${franchiseCount === 1 ? '' : 's'}: ${escapeHTML(prompt.franchises.join(', '))}</span>
                        </div>`
                     : '';
 
                 const keywordsCount = (prompt.keywords || []).length;
                 const keywordsHTML = keywordsCount > 0
-                    ? `<div style="margin-top: 8px; font-size: 0.85em; color: var(--info);">
-                         🔑 Keywords (${keywordsCount}): ${prompt.keywords.join(', ')}
+                    ? `<div style="margin-top: 8px; font-size: 0.82em; color: var(--info); display: flex; align-items: center; gap: 8px;">
+                         ${iconHTML('key', 'icon-sm')} <span>${keywordsCount} keyword${keywordsCount === 1 ? '' : 's'}: ${highlight(prompt.keywords.join(', '), q)}</span>
                        </div>`
                     : '';
 
                 return `
                     <div class="prompt-card">
-                        <div class="prompt-caption">${prompt.caption}</div>
-                        <div class="prompt-text"><strong>Prompt:</strong> ${prompt.prompt}</div>
-                        ${prompt.template ? `<div class="prompt-text"><strong>Template:</strong> ${prompt.template}</div>` : ''}
+                        <div class="prompt-caption">${highlight(prompt.caption, q)}</div>
+                        <div class="prompt-text"><strong>Prompt:</strong> ${highlight(prompt.prompt, q)}</div>
+                        ${prompt.template ? `<div class="prompt-text"><strong>Template:</strong> ${highlight(prompt.template, q)}</div>` : ''}
                         <div class="prompt-meta">
                             ${criteriaHTML || '<span class="badge badge-criterion">No criteria</span>'}
                         </div>
                         ${keywordsHTML}
                         ${franchiseHTML}
-                        ${prompt.fav ? '<div style="color: var(--warning); font-size: 0.85em;">⭐ Favorite</div>' : ''}
-                        <div class="actions" style="margin-top: 15px;">
+                        ${prompt.fav ? `<div style="color: var(--brand-accent); font-size: 0.82em; display: flex; align-items: center; gap: 8px; margin-top: 8px;">${iconHTML('star', 'icon-sm')} <span>Favorite</span></div>` : ''}
+                        <div class="actions" style="margin-top: 16px;">
                             <button class="btn btn-small" onclick="editPrompt(${index})">Edit</button>
                             <button class="btn btn-danger btn-small" onclick="deletePrompt(${index})">Delete</button>
                         </div>
@@ -3034,6 +4754,8 @@
         // CATEGORY FORM
         // ============================================================================
         function showCategoryForm() {
+            markFirstRunDone();
+            hideWelcomePanel();
             document.getElementById('categoryForm').style.display = 'block';
             document.getElementById('promptEditor').style.display = 'none';
             document.getElementById('promptListView').style.display = 'none';
@@ -3281,7 +5003,7 @@
             const list = document.getElementById('criteriaList');
 
             if (currentCriteria.length === 0) {
-                list.innerHTML = '<div style="color: var(--text-secondary); font-style: italic; padding: 10px;">No criteria defined</div>';
+                list.innerHTML = '<div style="color: var(--text-secondary); font-style: italic; padding: 8px;">No criteria yet. Add one for each <code style="font-family: var(--font-mono); font-size: 0.92em;">##TOKEN##</code> used in the template above.</div>';
                 return;
             }
 
@@ -3335,7 +5057,7 @@
             const list = document.getElementById('keywordsList');
 
             if (currentKeywords.length === 0) {
-                list.innerHTML = '<div style="color: var(--text-secondary); font-style: italic; padding: 10px;">No keywords defined</div>';
+                list.innerHTML = '<div style="color: var(--text-secondary); font-style: italic; padding: 8px;">No keywords yet. Add 3–6 search terms users might type.</div>';
                 return;
             }
 
@@ -3447,6 +5169,7 @@
         function generateJSON() {
             const output = JSON.stringify(data, null, 2);
             document.getElementById('jsonOutput').value = output;
+            renderSaveStatus();
         }
 
         function copyJSON() {
@@ -3499,12 +5222,17 @@
                     data = importedData;
                 }
 
+                markFirstRunDone();
+                hideWelcomePanel();
+
                 selectedCategoryIndex = null;
                 selectedSubCategoryIndex = null;
 
                 renderCategoryTree();
                 renderWaitStatePhrases();
                 generateJSON();
+                markLoaded();
+                setFileContext(null);
 
                 document.getElementById('promptListView').style.display = 'block';
                 document.getElementById('promptEditor').style.display = 'none';
@@ -3579,12 +5307,17 @@
                         data = imported;
                     }
 
+                    markFirstRunDone();
+                    hideWelcomePanel();
+
                     selectedCategoryIndex = null;
                     selectedSubCategoryIndex = null;
 
                     renderCategoryTree();
                     renderWaitStatePhrases();
                     generateJSON();
+                    markLoaded();
+                    setFileContext(file && file.name ? file.name : null);
                     neodigmToast.q('JSON imported successfully!', 'brand');
                 } catch (error) {
                     neodigmToast.q('Error parsing JSON|' + error.message, 'danger');
@@ -3603,20 +5336,20 @@
             const list = document.getElementById('waitStatePhrasesList');
 
             if (data.wait_state.length === 0) {
-                list.innerHTML = '<div class="empty-state">No wait state phrases defined. Click "+ Add Phrase" to create one.</div>';
+                list.innerHTML = '<div class="empty-state">No wait-state phrases yet. Click <strong>+ Add Phrase</strong> above to create one.</div>';
                 return;
             }
 
             list.innerHTML = data.wait_state.map((item, idx) => `
-                <div class="criterion-item" style="grid-template-columns: 1fr auto auto; margin-bottom: 15px; padding: 15px; background: var(--bg-dark-tertiary); border-radius: 4px;">
+                <div class="criterion-item" style="grid-template-columns: 1fr auto auto; margin-bottom: 16px; padding: 16px; background: var(--bg-dark-tertiary); border-radius: 4px;">
                     <div>
                         <input type="text" value="${item.phrase || ''}"
                                placeholder="Enter wait state phrase (e.g., Analyzing your request...)"
                                onchange="updateWaitStatePhrase(${idx}, this.value)"
-                               style="width: 100%; margin-bottom: 10px;">
-                        <div style="margin-top: 10px;">
-                            <label style="display: block; margin-bottom: 5px; font-size: 0.85em; color: var(--text-secondary);">Franchises (optional)</label>
-                            <div class="token-selector" style="margin-top: 5px;">
+                               style="width: 100%; margin-bottom: 8px;">
+                        <div style="margin-top: 8px;">
+                            <label style="display: block; margin-bottom: 4px; font-size: 0.82em; color: var(--text-secondary);">Franchises (optional)</label>
+                            <div class="token-selector" style="margin-top: 4px;">
                                 ${renderWaitStateFranchiseChips(idx, item.franchises || [])}
                             </div>
                         </div>
@@ -3647,7 +5380,14 @@
             });
             renderWaitStatePhrases();
             generateJSON();
-            neodigmToast.q('Phrase added', 'brand');
+
+            // Focus the new input so the user lands ready to type
+            const list = document.getElementById('waitStatePhrasesList');
+            if (list) {
+                const inputs = list.querySelectorAll('input[type="text"]');
+                const newInput = inputs[inputs.length - 1];
+                if (newInput) newInput.focus();
+            }
         }
 
         function updateWaitStatePhrase(idx, newPhrase) {
@@ -3718,6 +5458,7 @@
                 // Save to localStorage
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(limitedVersions));
 
+                markSaved();
                 neodigmToast.q(`Saved to browser storage|${date.toLocaleString()}`, 'brand');
             } catch (error) {
                 if (error.name === 'QuotaExceededError') {
@@ -3736,8 +5477,8 @@
             if (versions.length === 0) {
                 list.innerHTML = `
                     <div class="empty-state-modal">
-                        <p>No saved versions found</p>
-                        <p style="font-size: 0.9em; margin-top: 10px;">Click "💾 Save to Browser" to save your work</p>
+                        <p>No saved versions yet.</p>
+                        <p style="font-size: 0.92em; margin-top: 8px;">Click <strong>Save to Browser</strong> in the header to save a snapshot.</p>
                     </div>
                 `;
             } else {
@@ -3789,12 +5530,17 @@
                 // Load the data
                 data = JSON.parse(JSON.stringify(version.data)); // Deep clone
 
+                markFirstRunDone();
+                hideWelcomePanel();
+
                 // Update UI
                 selectedCategoryIndex = null;
                 selectedSubCategoryIndex = null;
                 renderCategoryTree();
                 renderWaitStatePhrases();
                 generateJSON();
+                markLoaded();
+                setFileContext(null);
 
                 // Reset views
                 document.getElementById('promptListView').style.display = 'block';
@@ -3835,6 +5581,543 @@
             } catch (error) {
                 neodigmToast.q('Error deleting version|' + error.message, 'danger');
             }
+        }
+
+        // ============================================================================
+        // PHASE 2A — HELP DRAWER, BREADCRUMBS, FIRST-RUN PULSE
+        // ============================================================================
+        function escapeHTML(s) {
+            return String(s == null ? '' : s).replace(/[&<>"']/g, ch => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            })[ch]);
+        }
+
+        function iconHTML(name, extraClasses) {
+            const cls = extraClasses ? `icon ${extraClasses}` : 'icon';
+            return `<svg class="${cls}" aria-hidden="true"><use href="#i-${name}"/></svg>`;
+        }
+
+        function renderBreadcrumb() {
+            const el = document.getElementById('breadcrumbs');
+            if (!el) return;
+
+            const parts = [];
+            const rootCurrent = selectedCategoryIndex === null;
+            parts.push(
+                `<button type="button" class="breadcrumb-item${rootCurrent ? ' is-current' : ''}"` +
+                (rootCurrent ? ' aria-current="page" disabled' : ' onclick="clearSelection()"') +
+                `>${iconHTML('home', 'icon-sm')} <span>Categories</span></button>`
+            );
+
+            if (selectedCategoryIndex !== null) {
+                const cat = data.wcgd[selectedCategoryIndex];
+                if (cat) {
+                    const catCurrent = selectedSubCategoryIndex === null;
+                    parts.push('<span class="breadcrumb-sep" aria-hidden="true">›</span>');
+                    parts.push(
+                        `<button type="button" class="breadcrumb-item${catCurrent ? ' is-current' : ''}"` +
+                        (catCurrent ? ' aria-current="page" disabled' : ` onclick="selectCategoryOnly(${selectedCategoryIndex})"`) +
+                        `>${escapeHTML(cat.cat)}</button>`
+                    );
+
+                    if (selectedSubCategoryIndex !== null) {
+                        const subcat = cat['sub-cats'] && cat['sub-cats'][selectedSubCategoryIndex];
+                        if (subcat) {
+                            parts.push('<span class="breadcrumb-sep" aria-hidden="true">›</span>');
+                            parts.push(
+                                `<span class="breadcrumb-item is-current" aria-current="page">${escapeHTML(subcat.sub)}</span>`
+                            );
+                            const count = (subcat.prompts || []).length;
+                            parts.push(
+                                `<span class="breadcrumb-meta">${count} prompt${count === 1 ? '' : 's'}</span>`
+                            );
+                        }
+                    }
+                }
+            }
+
+            el.innerHTML = parts.join('');
+        }
+
+        function openHelp() {
+            const overlay = document.getElementById('helpOverlay');
+            const drawer = document.getElementById('helpDrawer');
+            overlay.classList.add('active');
+            drawer.classList.add('active');
+            overlay.setAttribute('aria-hidden', 'false');
+            drawer.setAttribute('aria-hidden', 'false');
+
+            const btn = document.getElementById('btnHelp');
+            if (btn && btn.classList.contains('is-pulsing')) {
+                btn.classList.remove('is-pulsing');
+                try { localStorage.setItem('wcgd_help_seen', '1'); } catch (e) { /* ignore */ }
+            }
+            // Focus the close button so Esc/Tab work intuitively
+            const closeBtn = drawer.querySelector('.help-drawer-close');
+            if (closeBtn) closeBtn.focus();
+        }
+
+        function closeHelp() {
+            const overlay = document.getElementById('helpOverlay');
+            const drawer = document.getElementById('helpDrawer');
+            overlay.classList.remove('active');
+            drawer.classList.remove('active');
+            overlay.setAttribute('aria-hidden', 'true');
+            drawer.setAttribute('aria-hidden', 'true');
+        }
+
+        function selectHelpTab(name) {
+            document.querySelectorAll('.help-drawer-tab').forEach(t => {
+                const isMatch = t.getAttribute('data-help-tab') === name;
+                t.classList.toggle('is-active', isMatch);
+                t.setAttribute('aria-selected', isMatch ? 'true' : 'false');
+            });
+            document.querySelectorAll('.help-section').forEach(s => {
+                s.classList.toggle('is-active', s.id === `helpSection-${name}`);
+            });
+            // Scroll the body back to top when switching tabs
+            const body = document.querySelector('.help-drawer-body');
+            if (body) body.scrollTop = 0;
+        }
+
+        function applyFirstRunPulse() {
+            let seen = false;
+            try { seen = localStorage.getItem('wcgd_help_seen') === '1'; } catch (e) { /* ignore */ }
+            if (!seen) {
+                const btn = document.getElementById('btnHelp');
+                if (btn) btn.classList.add('is-pulsing');
+            }
+        }
+
+        function bindGlobalKeys() {
+            document.addEventListener('keydown', (e) => {
+                if (e.key !== 'Escape') return;
+                const drawer = document.getElementById('helpDrawer');
+                const modal = document.getElementById('loadModal');
+                if (drawer && drawer.classList.contains('active')) {
+                    closeHelp();
+                } else if (modal && modal.classList.contains('active')) {
+                    modal.classList.remove('active');
+                }
+            });
+        }
+
+        // ============================================================================
+        // PHASE 2B — VALIDATION, WELCOME PANEL
+        // ============================================================================
+        const FIRST_RUN_KEY = 'wcgd_first_run_done';
+        const TOKEN_REGEX = /##([A-Z_]+)##/g;
+
+        function validateData() {
+            const issues = [];
+            const ctx = { issues };
+
+            if (!data || typeof data !== 'object') {
+                issues.push({ level: 'error', path: '$', message: 'Root is not an object.' });
+                renderValidationResults(issues, 0, 0, 0);
+                return;
+            }
+
+            if (!Array.isArray(data.wcgd)) {
+                issues.push({ level: 'error', path: 'wcgd', message: 'Required: must be an array.' });
+            }
+            if (!Array.isArray(data.wait_state)) {
+                issues.push({ level: 'error', path: 'wait_state', message: 'Required: must be an array.' });
+            }
+
+            let totalCats = 0, totalPrompts = 0, totalPhrases = 0;
+            const seenCatNames = new Map();
+
+            (data.wcgd || []).forEach((cat, ci) => {
+                totalCats++;
+                const catPath = `wcgd[${ci}]`;
+                if (!cat || typeof cat !== 'object') {
+                    issues.push({ level: 'error', path: catPath, message: 'Category must be an object.' });
+                    return;
+                }
+                if (!isNonEmptyString(cat.cat)) {
+                    issues.push({ level: 'error', path: `${catPath}.cat`, message: 'Required: non-empty string.' });
+                } else if (seenCatNames.has(cat.cat)) {
+                    issues.push({ level: 'warn', path: `${catPath}.cat`, message: `Duplicate category name "${cat.cat}" (also at index ${seenCatNames.get(cat.cat)}).` });
+                } else {
+                    seenCatNames.set(cat.cat, ci);
+                }
+                if (!Array.isArray(cat.franchises)) {
+                    issues.push({ level: 'error', path: `${catPath}.franchises`, message: 'Required array (may be empty).' });
+                } else {
+                    cat.franchises.forEach((f, fi) => {
+                        if (!AVAILABLE_FRANCHISES.includes(f)) {
+                            issues.push({ level: 'error', path: `${catPath}.franchises[${fi}]`, message: `Not in franchise enum: "${f}".` });
+                        }
+                    });
+                }
+                if (!Array.isArray(cat.roles)) {
+                    issues.push({ level: 'error', path: `${catPath}.roles`, message: 'Required array (may be empty).' });
+                }
+                if (cat['cat-desc'] !== undefined && typeof cat['cat-desc'] !== 'string') {
+                    issues.push({ level: 'error', path: `${catPath}.cat-desc`, message: 'Optional, but if present must be a string.' });
+                }
+                if (!Array.isArray(cat['sub-cats'])) {
+                    issues.push({ level: 'error', path: `${catPath}.sub-cats`, message: 'Required array (may be empty).' });
+                    return;
+                }
+
+                const seenSubNames = new Map();
+                cat['sub-cats'].forEach((sc, si) => {
+                    const scPath = `${catPath}.sub-cats[${si}]`;
+                    if (!sc || typeof sc !== 'object') {
+                        issues.push({ level: 'error', path: scPath, message: 'Sub-category must be an object.' });
+                        return;
+                    }
+                    if (!isNonEmptyString(sc.sub)) {
+                        issues.push({ level: 'error', path: `${scPath}.sub`, message: 'Required: non-empty string.' });
+                    } else if (seenSubNames.has(sc.sub)) {
+                        issues.push({ level: 'warn', path: `${scPath}.sub`, message: `Duplicate sub-category name "${sc.sub}" within this category.` });
+                    } else {
+                        seenSubNames.set(sc.sub, si);
+                    }
+                    if (!Array.isArray(sc.prompts)) {
+                        issues.push({ level: 'error', path: `${scPath}.prompts`, message: 'Required array (may be empty).' });
+                        return;
+                    }
+
+                    sc.prompts.forEach((pr, pi) => {
+                        totalPrompts++;
+                        const prPath = `${scPath}.prompts[${pi}]`;
+                        validatePrompt(pr, prPath, issues);
+                    });
+                });
+            });
+
+            (data.wait_state || []).forEach((ph, pi) => {
+                totalPhrases++;
+                const phPath = `wait_state[${pi}]`;
+                if (!ph || typeof ph !== 'object') {
+                    issues.push({ level: 'error', path: phPath, message: 'Phrase must be an object.' });
+                    return;
+                }
+                if (!isNonEmptyString(ph.phrase)) {
+                    issues.push({ level: 'error', path: `${phPath}.phrase`, message: 'Required: non-empty string.' });
+                }
+                if (!Array.isArray(ph.franchises)) {
+                    issues.push({ level: 'error', path: `${phPath}.franchises`, message: 'Required array (may be empty for global phrase).' });
+                } else {
+                    ph.franchises.forEach((f, fi) => {
+                        if (!AVAILABLE_FRANCHISES.includes(f)) {
+                            issues.push({ level: 'error', path: `${phPath}.franchises[${fi}]`, message: `Not in franchise enum: "${f}".` });
+                        }
+                    });
+                }
+            });
+
+            renderValidationResults(issues, totalCats, totalPrompts, totalPhrases);
+        }
+
+        function validatePrompt(pr, prPath, issues) {
+            if (!pr || typeof pr !== 'object') {
+                issues.push({ level: 'error', path: prPath, message: 'Prompt must be an object.' });
+                return;
+            }
+            const requiredStringFields = ['prompt', 'caption', 'template', 'wrkf', 'feature'];
+            for (const f of requiredStringFields) {
+                if (typeof pr[f] !== 'string') {
+                    issues.push({ level: 'error', path: `${prPath}.${f}`, message: `Required string (empty string allowed).` });
+                }
+            }
+            if (!isNonEmptyString(pr.prompt)) {
+                issues.push({ level: 'error', path: `${prPath}.prompt`, message: 'Required: non-empty string.' });
+            }
+            if (!isNonEmptyString(pr.caption)) {
+                issues.push({ level: 'error', path: `${prPath}.caption`, message: 'Required: non-empty string.' });
+            }
+            if (typeof pr.fav !== 'boolean') {
+                issues.push({ level: 'error', path: `${prPath}.fav`, message: 'Required boolean.' });
+            }
+            if (!Array.isArray(pr.franchises)) {
+                issues.push({ level: 'error', path: `${prPath}.franchises`, message: 'Required array (may be empty).' });
+            } else {
+                pr.franchises.forEach((f, fi) => {
+                    if (!AVAILABLE_FRANCHISES.includes(f)) {
+                        issues.push({ level: 'error', path: `${prPath}.franchises[${fi}]`, message: `Not in franchise enum: "${f}".` });
+                    }
+                });
+            }
+            if (!Array.isArray(pr.roles)) {
+                issues.push({ level: 'error', path: `${prPath}.roles`, message: 'Required array (may be empty).' });
+            }
+            if (pr.keywords !== undefined && !Array.isArray(pr.keywords)) {
+                issues.push({ level: 'error', path: `${prPath}.keywords`, message: 'Optional, but if present must be an array of strings.' });
+            }
+
+            if (!Array.isArray(pr.criteria)) {
+                issues.push({ level: 'error', path: `${prPath}.criteria`, message: 'Required array (may be empty).' });
+                return;
+            }
+
+            const criteriaNames = new Set();
+            pr.criteria.forEach((c, ci) => {
+                const cPath = `${prPath}.criteria[${ci}]`;
+                if (!c || typeof c !== 'object') {
+                    issues.push({ level: 'error', path: cPath, message: 'Criterion must be an object.' });
+                    return;
+                }
+                if (!AVAILABLE_CRITERIA.includes(c.criterion)) {
+                    issues.push({ level: 'error', path: `${cPath}.criterion`, message: `Required: must be one of ${AVAILABLE_CRITERIA.join(', ')}.` });
+                } else {
+                    criteriaNames.add(c.criterion);
+                }
+                if (typeof c.required !== 'boolean') {
+                    issues.push({ level: 'error', path: `${cPath}.required`, message: 'Required boolean.' });
+                }
+                if (typeof c.match_tap !== 'boolean') {
+                    issues.push({ level: 'error', path: `${cPath}.match_tap`, message: 'Required boolean.' });
+                }
+                if (typeof c.default !== 'string') {
+                    issues.push({ level: 'error', path: `${cPath}.default`, message: 'Required string (empty string allowed).' });
+                }
+            });
+
+            // Cross-check tokens vs criteria (warnings only)
+            if (typeof pr.template === 'string' && pr.template) {
+                const usedTokens = new Set();
+                let m;
+                TOKEN_REGEX.lastIndex = 0;
+                while ((m = TOKEN_REGEX.exec(pr.template)) !== null) {
+                    usedTokens.add(m[1]);
+                }
+                usedTokens.forEach(tok => {
+                    if (!AVAILABLE_CRITERIA.includes(tok)) {
+                        issues.push({ level: 'warn', path: `${prPath}.template`, message: `Template uses ##${tok}## which is not a valid criterion enum.` });
+                    } else if (!criteriaNames.has(tok)) {
+                        issues.push({ level: 'warn', path: `${prPath}.template`, message: `Template uses ##${tok}## but no matching criterion is defined.` });
+                    }
+                });
+                criteriaNames.forEach(name => {
+                    if (!usedTokens.has(name)) {
+                        issues.push({ level: 'warn', path: `${prPath}.criteria`, message: `Criterion ${name} is defined but ##${name}## is not used in the template.` });
+                    }
+                });
+            }
+        }
+
+        function isNonEmptyString(v) {
+            return typeof v === 'string' && v.trim().length > 0;
+        }
+
+        function renderValidationResults(issues, totalCats, totalPrompts, totalPhrases) {
+            const el = document.getElementById('validationResults');
+            if (!el) return;
+
+            const errors = issues.filter(i => i.level === 'error');
+            const warnings = issues.filter(i => i.level === 'warn');
+            const counts = `${totalCats} categories · ${totalPrompts} prompts · ${totalPhrases} phrases`;
+
+            let stateClass, iconName, summaryText, toastTheme;
+            if (errors.length > 0) {
+                stateClass = 'is-fail';
+                iconName = 'error';
+                summaryText = `${errors.length} error${errors.length === 1 ? '' : 's'}` +
+                    (warnings.length > 0 ? ` · ${warnings.length} warning${warnings.length === 1 ? '' : 's'}` : '');
+                toastTheme = 'danger';
+            } else if (warnings.length > 0) {
+                stateClass = 'is-warn';
+                iconName = 'warning';
+                summaryText = `Valid · ${warnings.length} warning${warnings.length === 1 ? '' : 's'}`;
+                toastTheme = 'warning';
+            } else {
+                stateClass = 'is-pass';
+                iconName = 'check_circle';
+                summaryText = 'Configuration is valid';
+                toastTheme = 'brand';
+            }
+
+            const issuesHTML = issues.length === 0 ? '' : `
+                <ul class="validation-issue-list">
+                    ${issues.slice(0, 200).map(i => `
+                        <li class="validation-issue">
+                            <span class="validation-issue-level lvl-${i.level === 'warn' ? 'warn' : 'error'}">${i.level === 'warn' ? 'Warn' : 'Error'}</span>
+                            <span class="validation-issue-body">
+                                ${escapeHTML(i.message)}
+                                <code class="validation-issue-path">${escapeHTML(i.path)}</code>
+                            </span>
+                        </li>
+                    `).join('')}
+                    ${issues.length > 200 ? `<li class="validation-issue"><span class="validation-issue-level lvl-warn">Note</span><span class="validation-issue-body">${issues.length - 200} more issue(s) not shown.</span></li>` : ''}
+                </ul>
+            `;
+
+            el.className = 'validation-results is-visible ' + stateClass;
+            el.innerHTML = `
+                <div class="validation-summary">
+                    <span style="display: inline-flex; align-items: center; gap: 8px;">
+                        <span class="validation-summary-icon">${iconHTML(iconName, 'icon-lg')}</span>
+                        ${escapeHTML(summaryText)}
+                    </span>
+                    <span class="validation-meta">${escapeHTML(counts)}</span>
+                </div>
+                ${issuesHTML}
+            `;
+
+            try { neodigmToast.q(`Validation: ${summaryText}|${counts}`, toastTheme); } catch (e) { /* ignore */ }
+        }
+
+        // ============================================================================
+        // PHASE 2B — WELCOME PANEL FLOW
+        // ============================================================================
+        function isFirstRun() {
+            try {
+                return localStorage.getItem(FIRST_RUN_KEY) !== '1';
+            } catch (e) {
+                return true;
+            }
+        }
+
+        function markFirstRunDone() {
+            try { localStorage.setItem(FIRST_RUN_KEY, '1'); } catch (e) { /* ignore */ }
+        }
+
+        function showWelcomePanel() {
+            const w = document.getElementById('welcomePanel');
+            const bc = document.getElementById('breadcrumbs');
+            const list = document.getElementById('promptListView');
+            const waitDetails = document.querySelector('details.panel');
+            const jsonPanels = document.querySelectorAll('.content-area > .panel');
+            if (w) w.style.display = 'block';
+            if (bc) bc.style.display = 'none';
+            // Hide everything else in the content area while welcome is up
+            if (list) list.style.display = 'none';
+            if (waitDetails) waitDetails.style.display = 'none';
+            jsonPanels.forEach(p => {
+                if (p.id !== 'categoryForm' && p.id !== 'promptEditor' && p.id !== 'promptListView') {
+                    p.style.display = 'none';
+                }
+            });
+        }
+
+        function hideWelcomePanel() {
+            const w = document.getElementById('welcomePanel');
+            const bc = document.getElementById('breadcrumbs');
+            const list = document.getElementById('promptListView');
+            const waitDetails = document.querySelector('details.panel');
+            const jsonPanels = document.querySelectorAll('.content-area > .panel');
+            if (w) w.style.display = 'none';
+            if (bc) bc.style.display = '';
+            if (list) list.style.display = '';
+            if (waitDetails) waitDetails.style.display = '';
+            jsonPanels.forEach(p => { p.style.display = ''; });
+            // Re-hide forms that were not previously open
+            document.getElementById('categoryForm').style.display = 'none';
+            document.getElementById('promptEditor').style.display = 'none';
+        }
+
+        function welcomeLoadSample() {
+            markFirstRunDone();
+            hideWelcomePanel();
+            loadSample();
+        }
+
+        function welcomeStartFresh() {
+            markFirstRunDone();
+            hideWelcomePanel();
+            data = { wcgd: [], wait_state: [] };
+            selectedCategoryIndex = null;
+            selectedSubCategoryIndex = null;
+            renderCategoryTree();
+            renderWaitStatePhrases();
+            generateJSON();
+            setFileContext(null);
+            try { neodigmToast.q('Started fresh|Add your first category from the sidebar.', 'brand'); } catch (e) { /* ignore */ }
+        }
+
+        function welcomeOpenHelp() {
+            // Don't mark first-run done — the user hasn't picked yet.
+            openHelp();
+        }
+
+        // ============================================================================
+        // SAVE-STATE INDICATOR + OPEN DROPDOWN
+        // ============================================================================
+        let lastSavedHash = null;
+        let lastSavedAt = null;
+        let saveStatusInterval = null;
+        let currentFileName = null;
+        let currentFileLoadedAt = null;
+
+        function dataHash() {
+            return JSON.stringify(data);
+        }
+
+        function hasAnyData() {
+            return (data && Array.isArray(data.wcgd) && data.wcgd.length > 0)
+                || (data && Array.isArray(data.wait_state) && data.wait_state.length > 0);
+        }
+
+        function getSaveState() {
+            if (!hasAnyData()) {
+                return { kind: 'empty', text: 'No data yet' };
+            }
+            if (lastSavedHash === null) {
+                return { kind: 'draft', text: 'Working draft — not yet saved' };
+            }
+            if (dataHash() === lastSavedHash) {
+                return { kind: 'saved', text: `Saved ${formatRelative(lastSavedAt)}` };
+            }
+            return { kind: 'dirty', text: 'Unsaved changes' };
+        }
+
+        function renderSaveStatus() {
+            const el = document.getElementById('saveStatus');
+            if (!el) return;
+            const s = getSaveState();
+            el.className = `save-status state-${s.kind}`;
+            el.textContent = s.text;
+        }
+
+        function formatRelative(ts) {
+            if (!ts) return 'just now';
+            const diffSec = Math.max(0, Math.floor((Date.now() - ts) / 1000));
+            if (diffSec < 45) return 'just now';
+            const diffMin = Math.floor(diffSec / 60);
+            if (diffMin < 60) return `${diffMin}m ago`;
+            const diffHr = Math.floor(diffMin / 60);
+            if (diffHr < 24) return `${diffHr}h ago`;
+            const d = new Date(ts);
+            return `${(d.getMonth() + 1)}/${d.getDate()}`;
+        }
+
+        function markSaved() {
+            lastSavedHash = dataHash();
+            lastSavedAt = Date.now();
+            renderSaveStatus();
+        }
+
+        function markLoaded() {
+            // Loaded from a known source (sample/import/clipboard/saved version).
+            // Treat the just-loaded state as the baseline so it shows "saved" rather
+            // than "draft". The hash matches; any edit flips to "Unsaved changes".
+            lastSavedHash = dataHash();
+            lastSavedAt = Date.now();
+            renderSaveStatus();
+        }
+
+        function setFileContext(filename) {
+            currentFileName = filename || null;
+            currentFileLoadedAt = currentFileName ? Date.now() : null;
+            renderFileContext();
+        }
+
+        function renderFileContext() {
+            const el = document.getElementById('fileContext');
+            if (!el) return;
+            if (!currentFileName) {
+                el.style.display = 'none';
+                el.innerHTML = '';
+                return;
+            }
+            el.style.display = '';
+            el.innerHTML =
+                `${iconHTML('data_object', 'icon-sm')}` +
+                `<span>Editing <strong>${escapeHTML(currentFileName)}</strong> · imported ${formatRelative(currentFileLoadedAt)}</span>`;
         }
 
         // ============================================================================
