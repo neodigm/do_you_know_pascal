@@ -1997,7 +1997,7 @@
         <header>
             <div class="header-top-row">
                 <div class="brand-lockup">
-                    <span class="brand-mark">AbbVie GenAIsys</span>
+                    <span class="brand-mark">GenAIMatic</span>
                 </div>
                 <button id="btnHelp" class="btn btn-help" onclick="openHelp()" aria-label="Open help">
                     <svg class="icon" aria-hidden="true"><use href="#i-help"/></svg>
@@ -2293,11 +2293,8 @@
         <div class="help-drawer-body">
             <section id="helpSection-overview" class="help-section is-active" role="tabpanel">
                 <h4>What this tool does</h4>
-                <p>The <strong>WCGD applet</strong> is the authoring surface for the prompts and wait-state phrases that power AbbVie GenAIsys. You define <em>what users can ask</em> and <em>how the system frames itself while answering</em>.</p>
-                <p>Output is a single Gen20 JSON file consumed by the GenAIsys client (iRep integration). Edit here, save to your browser, then download the JSON when you're ready to ship.</p>
-
-                <h4>Who uses it</h4>
-                <p class="muted">Field-team enablement, content authors, and franchise leads who curate the suggested-prompt experience for their reps.</p>
+                <p>The <strong>WCGD applet</strong> is the authoring surface for the prompt library and wait-state phrases that power GenAIsys. You define <em>what users can ask</em> and <em>how the system frames the criteria while assisting</em>.</p>
+                <p>Output is a single Gen20 JSON file consumed by the GenAIsys UI client. Edit here, save to your browser, then download the JSON when you're ready to ship.</p>
 
                 <h4>How it's organized</h4>
                 <ul>
@@ -2901,7 +2898,7 @@
           "sub": "Recent Interactions",
           "prompts": [
             {
-              "prompt": "Show me recent interactions with Dr.X",
+              "prompt": "Show me call activity for Dr.X",
               "franchises": [
                 "IMMUNOLOGY - ACCOUNT EXECS",
                 "IMMUNOLOGY - DERM",
@@ -2914,7 +2911,8 @@
               ],
               "roles": [],
               "caption": "Recent HCP Interactions",
-              "template": "Show me recent interactions with ##HCP_NAME##",
+              "template": "Show me call activity for ##HCP_NAME##",
+              "keywords": [],
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -3124,7 +3122,8 @@
                 "IMMUNOLOGY - RHEUM",
                 "IMMUNOLOGY DERM - AD",
                 "MIGRAINE",
-                "PSYCH"
+                "PSYCH",
+                "ONCOLOGY FRANCHISE V"
               ],
               "roles": [],
               "caption": "HCP Suggestions",
@@ -3475,6 +3474,160 @@
               "wrkf": "",
               "feature": "",
               "fav": false
+            },
+            {
+              "prompt": "Show me the top TRx Growers for product in Zip Code for the last time period",
+              "franchises": [
+                "IMMUNOLOGY - DERM",
+                "IMMUNOLOGY - GASTRO",
+                "IMMUNOLOGY - RHEUM",
+                "IMMUNOLOGY DERM - AD",
+                "PSYCH",
+                "MIGRAINE",
+                "ONCOLOGY FRANCHISE V"
+              ],
+              "roles": [],
+              "caption": "Top TRx Growers for Zip Code",
+              "template": "Show me the top TRx Growers for ##PRODUCT## in ##ZIP_CODE## for the last ##TIME_PERIOD##",
+              "keywords": [],
+              "criteria": [
+                {
+                  "criterion": "PRODUCT",
+                  "required": true,
+                  "match_tap": false,
+                  "default": ""
+                },
+                {
+                  "criterion": "ZIP_CODE",
+                  "required": true,
+                  "match_tap": false,
+                  "default": ""
+                },
+                {
+                  "criterion": "TIME_PERIOD",
+                  "required": false,
+                  "match_tap": false,
+                  "default": ""
+                }
+              ],
+              "wrkf": "",
+              "feature": "",
+              "fav": false
+            },
+            {
+              "prompt": "Show me the top NBRx Growers for Product for Zip Code for the last time period",
+              "franchises": [
+                "IMMUNOLOGY - DERM",
+                "IMMUNOLOGY - GASTRO",
+                "IMMUNOLOGY - RHEUM",
+                "IMMUNOLOGY DERM - AD",
+                "MIGRAINE",
+                "PSYCH"
+              ],
+              "roles": [],
+              "caption": "Top NBRx Growers for Zip Code",
+              "template": "Show me the top NBRx Growers for ##PRODUCT## for ##ZIP_CODE## for the last ##TIME_PERIOD##",
+              "keywords": [],
+              "criteria": [
+                {
+                  "criterion": "PRODUCT",
+                  "required": true,
+                  "match_tap": false,
+                  "default": ""
+                },
+                {
+                  "criterion": "ZIP_CODE",
+                  "required": true,
+                  "match_tap": false,
+                  "default": ""
+                },
+                {
+                  "criterion": "TIME_PERIOD",
+                  "required": false,
+                  "match_tap": false,
+                  "default": ""
+                }
+              ],
+              "wrkf": "",
+              "feature": "",
+              "fav": false
+            },
+            {
+              "prompt": "Show me the top TRx decliners for product for Zip Code for the last time period",
+              "franchises": [
+                "IMMUNOLOGY - DERM",
+                "IMMUNOLOGY - GASTRO",
+                "IMMUNOLOGY - RHEUM",
+                "IMMUNOLOGY DERM - AD",
+                "MIGRAINE",
+                "PSYCH",
+                "ONCOLOGY FRANCHISE V"
+              ],
+              "roles": [],
+              "caption": "Top TRx Decliners for Zip Code",
+              "template": "Show me the top TRx decliners for ##PRODUCT## for ##ZIP_CODE## for the last ##TIME_PERIOD##",
+              "keywords": [],
+              "criteria": [
+                {
+                  "criterion": "PRODUCT",
+                  "required": true,
+                  "match_tap": false,
+                  "default": ""
+                },
+                {
+                  "criterion": "ZIP_CODE",
+                  "required": true,
+                  "match_tap": false,
+                  "default": ""
+                },
+                {
+                  "criterion": "TIME_PERIOD",
+                  "required": false,
+                  "match_tap": false,
+                  "default": ""
+                }
+              ],
+              "wrkf": "",
+              "feature": "",
+              "fav": false
+            },
+            {
+              "prompt": "Show me the top NBRx growers for product for zip code for the last time period",
+              "franchises": [
+                "IMMUNOLOGY - DERM",
+                "IMMUNOLOGY - GASTRO",
+                "IMMUNOLOGY - RHEUM",
+                "IMMUNOLOGY DERM - AD",
+                "MIGRAINE",
+                "PSYCH"
+              ],
+              "roles": [],
+              "caption": "Top NBRx Decliners for Zip Code",
+              "template": "Show me the top NBRx growers for ##PRODUCT## for ##ZIP_CODE## for the last ##TIME_PERIOD##",
+              "keywords": [],
+              "criteria": [
+                {
+                  "criterion": "PRODUCT",
+                  "required": true,
+                  "match_tap": false,
+                  "default": ""
+                },
+                {
+                  "criterion": "ZIP_CODE",
+                  "required": true,
+                  "match_tap": false,
+                  "default": ""
+                },
+                {
+                  "criterion": "TIME_PERIOD",
+                  "required": false,
+                  "match_tap": false,
+                  "default": ""
+                }
+              ],
+              "wrkf": "",
+              "feature": "",
+              "fav": false
             }
           ]
         },
@@ -3649,7 +3802,7 @@
           "sub": "Other HCP Categories",
           "prompts": [
             {
-              "prompt": "Sow me all HCPs with AOC status ESR samples blocked",
+              "prompt": "Show me all HCPs with AOC status ESR samples blocked",
               "franchises": [
                 "IMMUNOLOGY - DERM",
                 "IMMUNOLOGY - GASTRO",
@@ -3659,7 +3812,8 @@
               ],
               "roles": [],
               "caption": "AOC ESR sample blocked",
-              "template": "Sow me all HCPs with AOC status ESR samples blocked",
+              "template": "Show me all HCPs with AOC status ESR samples blocked",
+              "keywords": [],
               "criteria": [],
               "wrkf": "",
               "feature": "",
@@ -3697,6 +3851,25 @@
               "roles": [],
               "caption": "Territory suggestions",
               "template": "Show me active suggestions in my territory",
+              "criteria": [],
+              "wrkf": "",
+              "feature": "",
+              "fav": false
+            },
+            {
+              "prompt": "Show me the HCPs with the least total spend that have no restricted state",
+              "franchises": [
+                "IMMUNOLOGY - GASTRO",
+                "IMMUNOLOGY - DERM",
+                "IMMUNOLOGY DERM - AD",
+                "IMMUNOLOGY - RHEUM",
+                "PSYCH",
+                "MIGRAINE"
+              ],
+              "roles": [],
+              "caption": "Territory Least HCP Spend",
+              "template": "Show me the HCPs with the least total spend that have no restricted state",
+              "keywords": [],
               "criteria": [],
               "wrkf": "",
               "feature": "",
@@ -3857,6 +4030,81 @@
               "wrkf": "",
               "feature": "",
               "fav": false
+            },
+            {
+              "prompt": "Show me complete enrollment data for HCP for the last time period",
+              "franchises": [
+                "IMMUNOLOGY - RHEUM",
+                "IMMUNOLOGY - DERM",
+                "IMMUNOLOGY - GASTRO",
+                "IMMUNOLOGY DERM - AD"
+              ],
+              "roles": [],
+              "caption": "Complete Enrollment Data",
+              "template": "Show me complete enrollment data for ##HCP_NAME## for the last ##TIME_PERIOD##",
+              "keywords": [],
+              "criteria": [
+                {
+                  "criterion": "HCP_NAME",
+                  "required": true,
+                  "match_tap": false,
+                  "default": ""
+                },
+                {
+                  "criterion": "TIME_PERIOD",
+                  "required": false,
+                  "match_tap": false,
+                  "default": "YTD"
+                }
+              ],
+              "wrkf": "",
+              "feature": "",
+              "fav": false
+            },
+            {
+              "prompt": "Show me Channel Payor Metrics for HCP",
+              "franchises": [
+                "IMMUNOLOGY - DERM",
+                "IMMUNOLOGY - GASTRO",
+                "IMMUNOLOGY - RHEUM",
+                "IMMUNOLOGY DERM - AD",
+                "MIGRAINE",
+                "PSYCH"
+              ],
+              "roles": [],
+              "caption": "Channel Payor Mix HCP",
+              "template": "Show me Channel Payor Metrics for ##HCP_NAME##",
+              "keywords": [],
+              "criteria": [
+                {
+                  "criterion": "HCP_NAME",
+                  "required": true,
+                  "match_tap": false,
+                  "default": ""
+                }
+              ],
+              "wrkf": "",
+              "feature": "",
+              "fav": false
+            },
+            {
+              "prompt": "Show me Channel Payor Mix Metrics for my territory",
+              "franchises": [
+                "IMMUNOLOGY - DERM",
+                "IMMUNOLOGY - GASTRO",
+                "IMMUNOLOGY - RHEUM",
+                "IMMUNOLOGY DERM - AD",
+                "MIGRAINE",
+                "PSYCH"
+              ],
+              "roles": [],
+              "caption": "Channel Payor Mix Territory",
+              "template": "Show me Channel Payor Mix Metrics for my territory",
+              "keywords": [],
+              "criteria": [],
+              "wrkf": "",
+              "feature": "",
+              "fav": false
             }
           ]
         },
@@ -3968,6 +4216,9 @@
         {
           "sub": "Account Management",
           "prompts": [
+            null,
+            null,
+            null,
             {
               "prompt": "Show me the account details for Dr. X",
               "franchises": [
@@ -4122,12 +4373,117 @@
               "wrkf": "",
               "feature": "",
               "fav": false
+            },
+            {
+              "prompt": "Create a new account for a business",
+              "franchises": [
+                "IMMUNOLOGY - ACCOUNT EXECS",
+                "IMMUNOLOGY - DERM",
+                "IMMUNOLOGY - GASTRO",
+                "IMMUNOLOGY - RHEUM",
+                "IMMUNOLOGY DERM - AD",
+                "MIGRAINE",
+                "PSYCH",
+                "ONCOLOGY FRANCHISE V"
+              ],
+              "roles": [],
+              "caption": "Add a business account",
+              "template": "Create a new account for a business",
+              "criteria": [],
+              "wrkf": "",
+              "feature": "",
+              "fav": false
+            },
+            {
+              "prompt": "Update the account association for Dr. X",
+              "franchises": [
+                "IMMUNOLOGY - ACCOUNT EXECS",
+                "IMMUNOLOGY - DERM",
+                "IMMUNOLOGY - GASTRO",
+                "IMMUNOLOGY - RHEUM",
+                "IMMUNOLOGY DERM - AD",
+                "MIGRAINE",
+                "PSYCH",
+                "ONCOLOGY FRANCHISE V"
+              ],
+              "roles": [],
+              "caption": "Update an existing association",
+              "template": "Update the account association for ##HCP_NAME##",
+              "criteria": [
+                {
+                  "criterion": "HCP_NAME",
+                  "required": true,
+                  "match_tap": true,
+                  "default": ""
+                }
+              ],
+              "wrkf": "",
+              "feature": "",
+              "fav": false
+            },
+            {
+              "prompt": "Remove account Dr. X from my territory",
+              "franchises": [
+                "IMMUNOLOGY - ACCOUNT EXECS",
+                "IMMUNOLOGY - DERM",
+                "IMMUNOLOGY - GASTRO",
+                "IMMUNOLOGY - RHEUM",
+                "IMMUNOLOGY DERM - AD",
+                "MIGRAINE",
+                "PSYCH",
+                "ONCOLOGY FRANCHISE V"
+              ],
+              "roles": [],
+              "caption": "Remove Account from territory",
+              "template": "Remove account ##HCP_NAME## from my territory",
+              "criteria": [
+                {
+                  "criterion": "HCP_NAME",
+                  "required": true,
+                  "match_tap": true,
+                  "default": ""
+                }
+              ],
+              "wrkf": "",
+              "feature": "",
+              "fav": false
+            },
+            {
+              "prompt": "Inactivate address for Dr. X",
+              "franchises": [
+                "IMMUNOLOGY - ACCOUNT EXECS",
+                "IMMUNOLOGY - DERM",
+                "IMMUNOLOGY - GASTRO",
+                "IMMUNOLOGY - RHEUM",
+                "IMMUNOLOGY DERM - AD",
+                "MIGRAINE",
+                "PSYCH",
+                "ONCOLOGY FRANCHISE V"
+              ],
+              "roles": [],
+              "caption": "Inactivate account address",
+              "template": "Inactivate address for ##HCP_NAME##",
+              "criteria": [
+                {
+                  "criterion": "HCP_NAME",
+                  "required": true,
+                  "match_tap": true,
+                  "default": ""
+                }
+              ],
+              "wrkf": "",
+              "feature": "",
+              "fav": false
             }
           ]
         },
         {
           "sub": "Account Addresses",
           "prompts": [
+            null,
+            null,
+            null,
+            null,
             {
               "prompt": "Show me the account addresses for Dr. X",
               "franchises": [
@@ -4154,6 +4510,60 @@
               "wrkf": "",
               "feature": "",
               "fav": false
+            },
+            {
+              "prompt": "Update address for Dr. X",
+              "franchises": [
+                "IMMUNOLOGY - ACCOUNT EXECS",
+                "IMMUNOLOGY - DERM",
+                "IMMUNOLOGY - GASTRO",
+                "IMMUNOLOGY - RHEUM",
+                "IMMUNOLOGY DERM - AD",
+                "MIGRAINE",
+                "PSYCH",
+                "ONCOLOGY FRANCHISE V"
+              ],
+              "roles": [],
+              "caption": "Update account address",
+              "template": "Update address for ##HCP_NAME##",
+              "criteria": [
+                {
+                  "criterion": "HCP_NAME",
+                  "required": true,
+                  "match_tap": true,
+                  "default": ""
+                }
+              ],
+              "wrkf": "",
+              "feature": "",
+              "fav": false
+            },
+            {
+              "prompt": "Add Account address for Dr. X",
+              "franchises": [
+                "IMMUNOLOGY - ACCOUNT EXECS",
+                "IMMUNOLOGY - DERM",
+                "IMMUNOLOGY - GASTRO",
+                "IMMUNOLOGY - RHEUM",
+                "IMMUNOLOGY DERM - AD",
+                "MIGRAINE",
+                "PSYCH",
+                "ONCOLOGY FRANCHISE V"
+              ],
+              "roles": [],
+              "caption": "Add account addess",
+              "template": "Add Account address for ##HCP_NAME##",
+              "criteria": [
+                {
+                  "criterion": "HCP_NAME",
+                  "required": true,
+                  "match_tap": true,
+                  "default": ""
+                }
+              ],
+              "wrkf": "",
+              "feature": "",
+              "fav": false
             }
           ]
         }
@@ -4161,18 +4571,109 @@
     },
     {
       "cat": "Playbook",
-      "franchises": ["IMMUNOLOGY - RHEUM"],
+      "franchises": [],
       "roles": [],
       "sub-cats": [
         {
           "sub": "Playbook",
           "prompts": [
             {
-              "prompt": "Can you give me some talking points from the playbook?",
+              "prompt": "Show me the playbook for ##PRODUCT##",
               "franchises": [],
               "roles": [],
               "caption": "Product Playbook",
               "template": "",
+              "criteria": [
+                {
+                  "criterion": "PRODUCT",
+                  "required": false,
+                  "match_tap": true,
+                  "default": ""
+                }
+              ],
+              "wrkf": "",
+              "feature": "",
+              "fav": false
+            },
+            {
+              "prompt": "Can you give me some talking points from the playbook?",
+              "franchises": [
+                "IMMUNOLOGY - RHEUM"
+              ],
+              "roles": [],
+              "caption": "Playbook Talking Points",
+              "template": "Can you give me some talking points from the playbook?",
+              "keywords": [],
+              "criteria": [],
+              "wrkf": "",
+              "feature": "",
+              "fav": false
+            },
+            {
+              "prompt": "What are examples of powerful questions from the playbook?",
+              "franchises": [
+                "IMMUNOLOGY - RHEUM"
+              ],
+              "roles": [],
+              "caption": "Playbook Powerful Questions",
+              "template": "What are examples of powerful questions from the playbook?",
+              "keywords": [],
+              "criteria": [],
+              "wrkf": "",
+              "feature": "",
+              "fav": false
+            },
+            {
+              "prompt": "What should I do if a doctor says they prefer another product according to the playbook?",
+              "franchises": [
+                "IMMUNOLOGY - RHEUM"
+              ],
+              "roles": [],
+              "caption": "Playbook Other Product",
+              "template": "What should I do if a doctor says they prefer another product according to the playbook?",
+              "keywords": [],
+              "criteria": [],
+              "wrkf": "",
+              "feature": "",
+              "fav": false
+            },
+            {
+              "prompt": "What is the primary purpose of the Challenger Insights in the sales call process according to the playbook?",
+              "franchises": [
+                "IMMUNOLOGY - RHEUM"
+              ],
+              "roles": [],
+              "caption": "Playbook Challenger Insights",
+              "template": "What is the primary purpose of the Challenger Insights in the sales call process according to the playbook?",
+              "keywords": [],
+              "criteria": [],
+              "wrkf": "",
+              "feature": "",
+              "fav": false
+            },
+            {
+              "prompt": "According to the playbook, how should a I handle a situation where an HCP asks for assistance meeting with an MSL and also has medical questions?",
+              "franchises": [
+                "IMMUNOLOGY - RHEUM"
+              ],
+              "roles": [],
+              "caption": "Playbook MSL Question",
+              "template": "According to the playbook, how should a I handle a situation where an HCP asks for assistance meeting with an MSL and also has medical questions?",
+              "keywords": [],
+              "criteria": [],
+              "wrkf": "",
+              "feature": "",
+              "fav": false
+            },
+            {
+              "prompt": "According to the playbook's Guiding Principles, how should a representative respond to unsolicited requests or off-label information?",
+              "franchises": [
+                "IMMUNOLOGY - RHEUM"
+              ],
+              "roles": [],
+              "caption": "Playbook Guiding Principles",
+              "template": "According to the playbook's Guiding Principles, how should a representative respond to unsolicited requests or off-label information?",
+              "keywords": [],
               "criteria": [],
               "wrkf": "",
               "feature": "",
@@ -4185,7 +4686,7 @@
   ],
   "wait_state": [
     {
-      "phrase": "Not sure where to start? Try asking \"What can GenAIsys do for me?\" to get a personalized list of capabilities.",
+      "phrase": "Not sure where to start? Try asking 'What can GenAIsys do for me?' to get a personalized list of capabilities.",
       "franchises": []
     },
     {
@@ -4197,7 +4698,7 @@
       "franchises": []
     },
     {
-      "phrase": "Want to know who else is calling on an account? Ask \"Who else is aligned with [Account X]?\"",
+      "phrase": "Want to know who else is calling on an account? Ask 'Who else is aligned with [Account X]?'",
       "franchises": []
     },
     {
@@ -4239,13 +4740,24 @@
     {
       "phrase": "Keep track of your AOC status by asking GenAIsys — it shows the current status and number of days outstanding.",
       "franchises": [
-        "IMMUNOLOGY - GASTRO"
+        "IMMUNOLOGY - GASTRO",
+        "IMMUNOLOGY - DERM",
+        "IMMUNOLOGY - RHEUM",
+        "IMMUNOLOGY DERM - AD",
+        "MIGRAINE",
+        "PSYCH"
       ]
     },
     {
       "phrase": "You can mark a suggestion as complete directly in GenAIsys — it will sync back to iRep automatically.",
       "franchises": [
-        "IMMUNOLOGY - GASTRO"
+        "IMMUNOLOGY - DERM",
+        "IMMUNOLOGY - GASTRO",
+        "IMMUNOLOGY - RHEUM",
+        "IMMUNOLOGY DERM - AD",
+        "ONCOLOGY FRANCHISE V",
+        "PSYCH",
+        "MIGRAINE"
       ]
     },
     {
@@ -4255,9 +4767,11 @@
       ]
     },
     {
-      "phrase": "Ask for Complete Enrollment data for any HCP directly from their Snapshot or via a quick prompt.",
+      "phrase": "View Complete Enrollment data right in the Snapshot or ask for it directly.",
       "franchises": [
-        "IMMUNOLOGY - GASTRO"
+        "IMMUNOLOGY - GASTRO",
+        "IMMUNOLOGY - DERM",
+        "IMMUNOLOGY DERM - AD"
       ]
     },
     {
@@ -4285,200 +4799,31 @@
       ]
     },
     {
-      "phrase": "Keep track of your AOC status by asking GenAIsys — it shows the current status and number of days outstanding.",
+      "phrase": "Ask GenAIsys for NBRx and TRx trends for AbbVie and competitor products to see the full prescribing landscape for your HCPs.",
       "franchises": [
         "IMMUNOLOGY - DERM"
       ]
     },
     {
-      "phrase": "Keep track of your AOC status by asking GenAIsys — it shows the current status and number of days outstanding.",
+      "phrase": "Request a competitive comparison between products to see how AbbVie stacks up in your territory.",
       "franchises": [
-        "IMMUNOLOGY DERM - AD"
+        "IMMUNOLOGY - DERM"
       ]
     },
     {
-      "phrase": "You can mark a suggestion as complete directly in GenAIsys — it will sync back to iRep automatically.",
-      "franchises": [
-        "IMMUNOLOGY DERM - AD"
-      ]
+      "phrase": "",
+      "franchises": []
     },
     {
-      "phrase": "The Derm AD Snapshot includes an NBRx competitor table — get both NBRx and TRx competitor views in one place.",
-      "franchises": [
-        "IMMUNOLOGY DERM - AD"
-      ]
+      "phrase": "",
+      "franchises": []
     },
     {
-      "phrase": "Your Snapshot features SPIFF Target segmentation to help you identify and prioritize key accounts.",
-      "franchises": [
-        "IMMUNOLOGY DERM - AD"
-      ]
-    },
-    {
-      "phrase": "Ask GenAIsys for NBRx and TRx trends over time to track how your HCPs are trending against the market.",
-      "franchises": [
-        "IMMUNOLOGY DERM - AD"
-      ]
-    },
-    {
-      "phrase": "View Complete Enrollment data right in the Snapshot or ask for it directly.",
-      "franchises": [
-        "IMMUNOLOGY DERM - AD"
-      ]
-    },
-    {
-      "phrase": "Request a competitive comparison to see how products in your market stack up.",
-      "franchises": [
-        "IMMUNOLOGY DERM - AD"
-      ]
-    },
-    {
-      "phrase": "Keep track of your AOC status by asking GenAIsys — it shows the current status and number of days outstanding.",
-      "franchises": [
-        "IMMUNOLOGY - RHEUM"
-      ]
-    },
-    {
-      "phrase": "You can mark a suggestion as complete directly in GenAIsys — it will sync back to iRep automatically.",
-      "franchises": [
-        "IMMUNOLOGY - RHEUM"
-      ]
-    },
-    {
-      "phrase": "Ask GenAIsys for suggested ISA tiles for any HCP — dynamically updated for Rinvoq Portfolio, RA/GCA, and SKY PsA.",
-      "franchises": [
-        "IMMUNOLOGY - RHEUM"
-      ]
-    },
-    {
-      "phrase": "Have a clinical question? Ask GenAIsys to pull from the Rheum Playbook for talking points, study data, and objection handling guidance.",
-      "franchises": [
-        "IMMUNOLOGY - RHEUM"
-      ]
-    },
-    {
-      "phrase": "Ask \"What are my suggested ISA tiles for [HCP]?\" to make sure you're leading with the most relevant content on your next call.",
-      "franchises": [
-        "IMMUNOLOGY - RHEUM"
-      ]
-    },
-    {
-      "phrase": "View Channel Payor Mix for individual HCPs or across your full territory to stay ahead of access challenges.",
-      "franchises": [
-        "IMMUNOLOGY - RHEUM"
-      ]
-    },
-    {
-      "phrase": "Pull up top growers and decliners in your territory to sharpen your targeting strategy.",
-      "franchises": [
-        "IMMUNOLOGY - RHEUM"
-      ]
-    },
-    {
-      "phrase": "Ask for prescribing data by indication — specify RA, PsA, or others to get focused insights.",
-      "franchises": [
-        "IMMUNOLOGY - RHEUM"
-      ]
-    },
-    {
-      "phrase": "Keep track of your AOC status by asking GenAIsys — it shows the current status and number of days outstanding.",
-      "franchises": [
-        "PSYCH"
-      ]
-    },
-    {
-      "phrase": "Keep track of your AOC status by asking GenAIsys — it shows the current status and number of days outstanding.",
-      "franchises": [
-        "MIGRAINE"
-      ]
-    },
-    {
-      "phrase": "You can mark a suggestion as complete directly in GenAIsys — it will sync back to iRep automatically.",
-      "franchises": [
-        "MIGRAINE"
-      ]
-    },
-    {
-      "phrase": "The Migraine Snapshot separates Ubrelvy and Qulipta competitor data — view acute and preventive markets independently.",
-      "franchises": [
-        "MIGRAINE"
-      ]
-    },
-    {
-      "phrase": "Your Snapshot tiles show absolute volume changes instead of percentages, making it easier to gauge real-world impact.",
-      "franchises": [
-        "MIGRAINE"
-      ]
-    },
-    {
-      "phrase": "Ask GenAIsys for NBRx and TRx trends for both AbbVie and competitor products.",
-      "franchises": [
-        "MIGRAINE"
-      ]
-    },
-    {
-      "phrase": "View Channel Payor Mix for any HCP or your territory to understand access and market dynamics.",
-      "franchises": [
-        "MIGRAINE"
-      ]
-    },
-    {
-      "phrase": "Ask for top growers and decliners in your territory to stay focused on high-opportunity accounts.",
-      "franchises": [
-        "MIGRAINE"
-      ]
-    },
-    {
-      "phrase": "You can mark a suggestion as complete directly in GenAIsys — it will sync back to iRep automatically.",
-      "franchises": [
-        "ONCOLOGY FRANCHISE V"
-      ]
-    },
-    {
-      "phrase": "Ask GenAIsys for TRx trends for AbbVie and competitor products — charts and summaries available on demand.",
-      "franchises": [
-        "ONCOLOGY FRANCHISE V"
-      ]
-    },
-    {
-      "phrase": "View speaker program attendance for any HCP to understand their engagement history with AbbVie.",
-      "franchises": [
-        "ONCOLOGY FRANCHISE V"
-      ]
-    },
-    {
-      "phrase": "See your HCPs' affiliated prescribers within a practice — ask GenAIsys who else is seeing patients at the same location.",
-      "franchises": [
-        "ONCOLOGY FRANCHISE V"
-      ]
-    },
-    {
-      "phrase": "Look up top writers by territory or zip code to find the highest-volume prescribers in your area.",
-      "franchises": [
-        "ONCOLOGY FRANCHISE V"
-      ]
-    },
-    {
-      "phrase": "Ask GenAIsys to pull HCP Spend data to stay informed about spend limits and restrictions before your call.",
-      "franchises": [
-        "ONCOLOGY FRANCHISE V"
-      ]
-    },
-    {
-      "phrase": "Pull up ISA tiles shown to an HCP this year — including which ones haven't been shown yet — to plan your next interaction.",
-      "franchises": [
-        "ONCOLOGY FRANCHISE V"
-      ]
-    },
-    {
-      "phrase": "View an HCO Snapshot for a full account-level overview — including affiliated child accounts, recent prescribing behavior, and suggestions.",
-      "franchises": [
-        "IMMUNOLOGY - ACCOUNT EXECS"
-      ]
+      "phrase": "",
+      "franchises": []
     }
   ]
 }
-
 
         function loadSample() {
             // SAMPLE_DATA now contains both wcgd and wait_state
@@ -4710,7 +5055,7 @@
             }
 
             container.innerHTML = `<div class="prompt-list">${filteredPrompts.map(({ p: prompt, originalIndex: index }) => {
-                const criteriaHTML = prompt.criteria.map(c => {
+                const criteriaHTML = (prompt.criteria || []).map(c => {
                     const cls = c.required ? 'badge-required' : 'badge-optional';
                     const label = c.required ? 'Required' : 'Optional';
                     return `<span class="badge ${cls}">${escapeHTML(c.criterion)} (${label})</span>`;
