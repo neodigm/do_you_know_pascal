@@ -2106,6 +2106,12 @@
                     </div>
 
                     <div class="form-group">
+                        <label>Sub-Category Order <span style="font-size: 0.82em; color: var(--text-secondary); font-weight: normal;">(Optional)</span><span class="info-tip" tabindex="0" data-tip="Numeric order for sorting sub-categories. Lower numbers appear first. Defaults to 0.">?</span></label>
+                        <input type="number" id="subCategoryOrder" placeholder="0" value="0">
+                        <div class="help-text">Defaults to 0. Lower numbers appear first.</div>
+                    </div>
+
+                    <div class="form-group">
                         <label>Category Franchises <span style="font-size: 0.82em; color: var(--text-secondary); font-weight: normal;">(Optional)</span><span class="info-tip" tabindex="0" data-tip="Limits this category to selected therapeutic franchises. Empty = visible to all franchises. Prompt-level franchises can further narrow scope.">?</span></label>
                         <div class="help-text" style="margin-bottom: 8px;">Select franchises that can see this category. Leave empty to make it available to everyone.</div>
                         <div id="categoryFranchiseSelector" class="token-selector"></div>
@@ -2169,6 +2175,12 @@
                         <label>Prompt Franchises <span style="font-size: 0.82em; color: var(--text-secondary); font-weight: normal;">(Optional)</span><span class="info-tip" tabindex="0" data-tip="Limits this individual prompt to selected franchises, overriding the category-level scope. Empty = inherit from category.">?</span></label>
                         <div class="help-text" style="margin-bottom: 8px;">Empty = inherit category scope. Selected = override and show only to those franchises.</div>
                         <div id="promptFranchiseSelector" class="token-selector"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Order <span style="font-size: 0.82em; color: var(--text-secondary); font-weight: normal;">(Optional)</span><span class="info-tip" tabindex="0" data-tip="Numeric order for sorting prompts. Lower numbers appear first. Defaults to 0.">?</span></label>
+                        <input type="number" id="promptOrder" placeholder="0" value="0">
+                        <div class="help-text">Defaults to 0. Lower numbers appear first.</div>
                     </div>
 
                     <div class="form-group">
@@ -2360,11 +2372,12 @@
                 <h4>Authoring a prompt — start to finish</h4>
                 <ol>
                     <li><strong>Pick or create a category.</strong> Use the sidebar's <code>+ Add Category</code>, or click an existing category's pencil icon to edit it.</li>
-                    <li><strong>Add a sub-category</strong> when creating/editing the category, or skip it and add more later.</li>
+                    <li><strong>Add a sub-category</strong> when creating/editing the category, or skip it and add more later. Set the <strong>Order</strong> field (defaults to 0) to control display order — lower numbers appear first.</li>
                     <li><strong>Select the sub-category</strong> in the sidebar — the main panel switches to its prompt list.</li>
                     <li><strong>Click <code>+ Add Prompt</code></strong> in the prompt list header.</li>
                     <li><strong>Caption + Prompt</strong> first — short label, then the natural-language question.</li>
                     <li><strong>Template</strong> — restate the question with <code>##TOKENS##</code>. Click chips to insert.</li>
+                    <li><strong>Order</strong> — set the numeric order for this prompt (defaults to 0). Lower numbers appear first in lists.</li>
                     <li><strong>Criteria</strong> — for each token in the template, add a criterion row. Set <em>Required</em>, <em>Match Tap</em>, and a <em>Default</em> when relevant.</li>
                     <li><strong>Franchises</strong> — leave empty to inherit the category, or pick specific ones to narrow scope.</li>
                     <li><strong>Keywords</strong> — add 3–6 search terms users might type when looking for this prompt.</li>
@@ -2378,6 +2391,13 @@
                     <li>Type the phrase. Keep it short and reassuring (e.g., <em>"Pulling the latest TRx data..."</em>).</li>
                     <li>Pick franchises if it's franchise-specific. Leave empty for a global phrase.</li>
                 </ol>
+
+                <h4>Editing order</h4>
+                <ul>
+                    <li><strong>Sub-category order:</strong> Click the pencil icon (✏️) next to any sub-category in the sidebar to edit both its name and order.</li>
+                    <li><strong>Prompt order:</strong> Click <em>Edit</em> on any prompt card to modify its order field along with other properties.</li>
+                    <li>Order values are numeric — lower numbers appear first. Use gaps (0, 10, 20...) to make future reordering easier.</li>
+                </ul>
 
                 <h4>Tips</h4>
                 <ul>
@@ -2463,6 +2483,7 @@
                                     "required": ["sub", "prompts"],
                                     "properties": {
                                         "sub": {"type": "string"},
+                                        "order": {"type": "number", "default": 0},
                                         "prompts": {
                                             "type": "array",
                                             "items": {
@@ -2475,6 +2496,7 @@
                                                     "caption": {"type": "string"},
                                                     "template": {"type": "string"},
                                                     "keywords": {"type": "array", "items": {"type": "string"}},
+                                                    "order": {"type": "number", "default": 0},
                                                     "criteria": {
                                                         "type": "array",
                                                         "items": {
@@ -2556,6 +2578,41 @@
         ];
 
         // ============================================================================
+        // BACKWARD COMPATIBILITY
+        // ============================================================================
+        function ensureOrderFields() {
+            // Ensure all sub-categories and prompts have an 'order' field for backward compatibility
+            // This allows importing old JSON data that doesn't include the 'order' attribute.
+            // Existing order values are preserved; missing ones default to 0.
+            if (data.wcgd && Array.isArray(data.wcgd)) {
+                data.wcgd.forEach(category => {
+                    if (category['sub-cats'] && Array.isArray(category['sub-cats'])) {
+                        category['sub-cats'].forEach(subCat => {
+                            // Skip null or invalid sub-categories
+                            if (!subCat || typeof subCat !== 'object') return;
+
+                            // Add order to sub-category if missing
+                            if (!('order' in subCat)) {
+                                subCat.order = 0;
+                            }
+                            // Add order to each prompt if missing
+                            if (subCat.prompts && Array.isArray(subCat.prompts)) {
+                                subCat.prompts.forEach(prompt => {
+                                    // Skip null or invalid prompts
+                                    if (!prompt || typeof prompt !== 'object') return;
+
+                                    if (!('order' in prompt)) {
+                                        prompt.order = 0;
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
+        // ============================================================================
         // INITIALIZATION
         // ============================================================================
         function init() {
@@ -2607,6 +2664,8 @@
       "sub-cats": [
         {
           "sub": "TRx questions",
+          "order": 0,
+          "order": 0,
           "prompts": [
             {
               "prompt": "Show me the TRx volume for Product for Dr. X for the last time period",
@@ -2622,6 +2681,8 @@
               "roles": [],
               "caption": "TRx Volume by HCP",
               "template": "Show me the TRx volume for ##PRODUCT## for ##HCP_NAME## for the last ##TIME_PERIOD##",
+              "order": 0,
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -2660,6 +2721,7 @@
               "roles": [],
               "caption": "TRx Trend",
               "template": "Show me the TRx trend for ##PRODUCT## for ##HCP_NAME## for the last ##TIME_PERIOD##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "PRODUCT",
@@ -2698,6 +2760,7 @@
               "roles": [],
               "caption": "TRx share",
               "template": "Show me the TRx share for ##PRODUCT## for ##HCP_NAME## for the last ##TIME_PERIOD##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "PRODUCT",
@@ -2726,6 +2789,8 @@
         },
         {
           "sub": "NBRx questions",
+          "order": 0,
+          "order": 0,
           "prompts": [
             {
               "prompt": "Show me the NBRx volume for [product] for [HCP] for the last time period",
@@ -2740,6 +2805,7 @@
               "roles": [],
               "caption": "NBRx Volume by HCP",
               "template": "Show me the NBRx volume for ##PRODUCT## for ##HCP_NAME## for the last ##TIME_PERIOD##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -2777,6 +2843,7 @@
               "roles": [],
               "caption": "NBRx Trends",
               "template": "Shoe me the NBRx trend for ##PRODUCT## for ##HCP_NAME## for the last ##TIME_PERIOD##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "PRODUCT",
@@ -2814,6 +2881,7 @@
               "roles": [],
               "caption": "NBRx Share",
               "template": "Show me the NBRx share for ##PRODUCT## for ##HCP_NAME## for the last ##TIME_PERIOD##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "PRODUCT",
@@ -2842,6 +2910,8 @@
         },
         {
           "sub": "Snapshot",
+          "order": 0,
+          "order": 0,
           "prompts": [
             {
               "prompt": "Show me the snapshot for Dr. X",
@@ -2858,6 +2928,7 @@
               "roles": [],
               "caption": "HCP snapshot",
               "template": "Show me the snapshot for ##HCP_NAME##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -2896,6 +2967,7 @@
       "sub-cats": [
         {
           "sub": "Recent Interactions",
+          "order": 0,
           "prompts": [
             {
               "prompt": "Show me call activity for Dr.X",
@@ -2912,7 +2984,9 @@
               "roles": [],
               "caption": "Recent HCP Interactions",
               "template": "Show me call activity for ##HCP_NAME##",
+              "order": 0,
               "keywords": [],
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -2939,6 +3013,7 @@
               "roles": [],
               "caption": "Samples Dropped",
               "template": "Show me samples dropped for ##HCP_NAME##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -2965,6 +3040,7 @@
               "roles": [],
               "caption": "Speaker Program Attendance",
               "template": "Show me speaker programs attended by ##HCP_NAME##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -2992,6 +3068,7 @@
               "roles": [],
               "caption": "Abbvie Booth Attendance",
               "template": "Show me conference attendance for ##HCP_NAME##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -3019,6 +3096,7 @@
               "roles": [],
               "caption": "iRep Emails",
               "template": "Show me the iRep emails sent to ##HCP_NAME##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -3046,6 +3124,7 @@
               "roles": [],
               "caption": "Home office emails",
               "template": "Show me the Home Office emails sent to ##HCP_NAME##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -3071,6 +3150,7 @@
               "roles": [],
               "caption": "ISA Last Tile",
               "template": "Show me the last ISA tiles show to ##HCP_NAME##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -3097,6 +3177,7 @@
               "roles": [],
               "caption": "ISA tiles not shown",
               "template": "Which ISA tiles have I not shown to ##HCP_NAME##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -3113,6 +3194,7 @@
         },
         {
           "sub": "Suggestions",
+          "order": 0,
           "prompts": [
             {
               "prompt": "Show me suggestions available for Dr. X",
@@ -3128,6 +3210,7 @@
               "roles": [],
               "caption": "HCP Suggestions",
               "template": "Show me suggestions available for ##HCP_NAME##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -3148,6 +3231,7 @@
               "roles": [],
               "caption": "Suggest ISA tiles",
               "template": "What are my suggested ISA tiles for ##HCP_NAME##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -3164,6 +3248,7 @@
         },
         {
           "sub": "Call Plan Achievement",
+          "order": 0,
           "prompts": [
             {
               "prompt": "Show me my call plan achievement for Dr. X",
@@ -3179,6 +3264,7 @@
               "roles": [],
               "caption": "Call Plan Achievement",
               "template": "Show me my call plan achievement for ##HCP_NAME##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -3210,6 +3296,7 @@
       "sub-cats": [
         {
           "sub": "Top Prescribers",
+          "order": 0,
           "prompts": [
             {
               "prompt": "Show me the top TRx prescribers for product in the last time period",
@@ -3225,6 +3312,7 @@
               "roles": [],
               "caption": "Top TRx Prescribers in territory",
               "template": "Show me the top TRx prescribers for ##PRODUCT## in the last ##TIME_PERIOD##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "PRODUCT",
@@ -3256,6 +3344,7 @@
               "roles": [],
               "caption": "Top NBRx HCPs in territory",
               "template": "Show me the top NBRx prescribers for ##PRODUCT## in the last ##TIME_PERIOD##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -3288,6 +3377,7 @@
               "roles": [],
               "caption": "Top TRx HCPs in zip code",
               "template": "Show me the top TRx prescribers for ##PRODUCT## in ##ZIP_CODE## in the last ##TIME_PERIOD##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "PRODUCT",
@@ -3325,6 +3415,7 @@
               "roles": [],
               "caption": "Top NBRx HCPs in zip code",
               "template": "Show me the top NBRx prescribers for ##PRODUCT## in ##ZIP_CODE## in the last ##TIME_PERIOD##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "PRODUCT",
@@ -3363,6 +3454,7 @@
               "roles": [],
               "caption": "Top TRx Growers",
               "template": "Show me the top TRx growers for ##PRODUCT## for the last ##TIME_PERIOD##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "PRODUCT",
@@ -3394,6 +3486,7 @@
               "roles": [],
               "caption": "Top NBRx growers",
               "template": "Show me the top NBRx growers for ##PRODUCT## for the last ##TIME_PERIOD##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "PRODUCT",
@@ -3426,6 +3519,7 @@
               "roles": [],
               "caption": "Top TRx decliners",
               "template": "Show me the top TRx decliners for ##PRODUCT## for the last ##TIME_PERIOD##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "PRODUCT",
@@ -3457,6 +3551,7 @@
               "roles": [],
               "caption": "Top NBRx decliners",
               "template": "Show me the top NBRx decliners for ##PRODUCT## for the last ##TIME_PERIOD##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "PRODUCT",
@@ -3489,7 +3584,9 @@
               "roles": [],
               "caption": "Top TRx Growers for Zip Code",
               "template": "Show me the top TRx Growers for ##PRODUCT## in ##ZIP_CODE## for the last ##TIME_PERIOD##",
+              "order": 0,
               "keywords": [],
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "PRODUCT",
@@ -3527,7 +3624,9 @@
               "roles": [],
               "caption": "Top NBRx Growers for Zip Code",
               "template": "Show me the top NBRx Growers for ##PRODUCT## for ##ZIP_CODE## for the last ##TIME_PERIOD##",
+              "order": 0,
               "keywords": [],
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "PRODUCT",
@@ -3566,7 +3665,9 @@
               "roles": [],
               "caption": "Top TRx Decliners for Zip Code",
               "template": "Show me the top TRx decliners for ##PRODUCT## for ##ZIP_CODE## for the last ##TIME_PERIOD##",
+              "order": 0,
               "keywords": [],
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "PRODUCT",
@@ -3604,7 +3705,9 @@
               "roles": [],
               "caption": "Top NBRx Decliners for Zip Code",
               "template": "Show me the top NBRx growers for ##PRODUCT## for ##ZIP_CODE## for the last ##TIME_PERIOD##",
+              "order": 0,
               "keywords": [],
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "PRODUCT",
@@ -3633,6 +3736,7 @@
         },
         {
           "sub": "Product Comparison",
+          "order": 0,
           "prompts": [
             {
               "prompt": "How does product 1 TRx data compare to product 2 for time period",
@@ -3648,6 +3752,7 @@
               "roles": [],
               "caption": "Product Comparison - TRx",
               "template": "How does ##PRODUCT## TRx data compare to ##COMPETITOR## for ##TIME_PERIOD##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "PRODUCT",
@@ -3685,6 +3790,7 @@
               "roles": [],
               "caption": "Product comparison - NBRx",
               "template": "How does ##PRODUCT## NBRx data compare to ##COMPETITOR## for the last ##TIME_PERIOD##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "PRODUCT",
@@ -3723,6 +3829,7 @@
               "roles": [],
               "caption": "Product comparison for zip code - TRx",
               "template": "How does ##PRODUCT## TRx data compare to ##COMPETITOR## in ##ZIP_CODE## for the last ##TIME_PERIOD##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "PRODUCT",
@@ -3766,6 +3873,7 @@
               "roles": [],
               "caption": "Product comparison for zip code - NBRx",
               "template": "How does ##PRODUCT## NBRx data compare to ##COMPETITOR## in ##ZIP_CODE## for the last ##TIME_PERIOD##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "PRODUCT",
@@ -3800,6 +3908,7 @@
         },
         {
           "sub": "Other HCP Categories",
+          "order": 0,
           "prompts": [
             {
               "prompt": "Show me all HCPs with AOC status ESR samples blocked",
@@ -3813,7 +3922,9 @@
               "roles": [],
               "caption": "AOC ESR sample blocked",
               "template": "Show me all HCPs with AOC status ESR samples blocked",
+              "order": 0,
               "keywords": [],
+              "order": 0,
               "criteria": [],
               "wrkf": "",
               "feature": "",
@@ -3833,6 +3944,7 @@
               "roles": [],
               "caption": "Territory most HCP spend",
               "template": "Show me the top HCPs with the most total spend",
+              "order": 0,
               "criteria": [],
               "wrkf": "",
               "feature": "",
@@ -3851,6 +3963,7 @@
               "roles": [],
               "caption": "Territory suggestions",
               "template": "Show me active suggestions in my territory",
+              "order": 0,
               "criteria": [],
               "wrkf": "",
               "feature": "",
@@ -3869,7 +3982,9 @@
               "roles": [],
               "caption": "Territory Least HCP Spend",
               "template": "Show me the HCPs with the least total spend that have no restricted state",
+              "order": 0,
               "keywords": [],
+              "order": 0,
               "criteria": [],
               "wrkf": "",
               "feature": "",
@@ -3879,6 +3994,7 @@
         },
         {
           "sub": "Snapshot",
+          "order": 0,
           "prompts": [
             {
               "prompt": "Show me my territory snapshot for the last time period",
@@ -3894,6 +4010,7 @@
               "roles": [],
               "caption": "Territory Snapshot",
               "template": "Show me my territory snapshot for the last ##TIME_PERIOD##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "TIME_PERIOD",
@@ -3926,6 +4043,7 @@
       "sub-cats": [
         {
           "sub": "HCP Info",
+          "order": 0,
           "prompts": [
             {
               "prompt": "Show me the Abbvie Account team for Dr. X",
@@ -3942,6 +4060,7 @@
               "roles": [],
               "caption": "Abbvie Account team",
               "template": "Show me the Abbvie Account team for ##HCP_NAME##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -3968,6 +4087,7 @@
               "roles": [],
               "caption": "Prescribers in practice",
               "template": "Show me affiliated prescribers for ##HCP_NAME##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -3994,6 +4114,7 @@
               "roles": [],
               "caption": "HCP Spend",
               "template": "Show me the HCP spend data for ##HCP_NAME##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -4019,6 +4140,7 @@
               "roles": [],
               "caption": "AOC Status",
               "template": "Show me the AOC status for ##HCP_NAME##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -4042,7 +4164,9 @@
               "roles": [],
               "caption": "Complete Enrollment Data",
               "template": "Show me complete enrollment data for ##HCP_NAME## for the last ##TIME_PERIOD##",
+              "order": 0,
               "keywords": [],
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -4074,7 +4198,9 @@
               "roles": [],
               "caption": "Channel Payor Mix HCP",
               "template": "Show me Channel Payor Metrics for ##HCP_NAME##",
+              "order": 0,
               "keywords": [],
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -4100,7 +4226,9 @@
               "roles": [],
               "caption": "Channel Payor Mix Territory",
               "template": "Show me Channel Payor Mix Metrics for my territory",
+              "order": 0,
               "keywords": [],
+              "order": 0,
               "criteria": [],
               "wrkf": "",
               "feature": "",
@@ -4110,6 +4238,7 @@
         },
         {
           "sub": "Sample Lots & Rep Info",
+          "order": 0,
           "prompts": [
             {
               "prompt": "Show me my sample lots",
@@ -4126,6 +4255,7 @@
               "roles": [],
               "caption": "Sample Lots",
               "template": "Show me my sample lots",
+              "order": 0,
               "criteria": [],
               "wrkf": "",
               "feature": "",
@@ -4146,6 +4276,7 @@
               "roles": [],
               "caption": "Pending sample shipments",
               "template": "Show me my pending sample shipments",
+              "order": 0,
               "criteria": [],
               "wrkf": "",
               "feature": "",
@@ -4166,6 +4297,7 @@
               "roles": [],
               "caption": "Profile data",
               "template": "Show me my profile information",
+              "order": 0,
               "criteria": [],
               "wrkf": "",
               "feature": "",
@@ -4186,6 +4318,7 @@
               "roles": [],
               "caption": "Activate sample lot",
               "template": "Activate a sample lot",
+              "order": 0,
               "criteria": [],
               "wrkf": "",
               "feature": "",
@@ -4206,6 +4339,7 @@
               "roles": [],
               "caption": "Inactivate a sample lot",
               "template": "Inactivate a sample lot",
+              "order": 0,
               "criteria": [],
               "wrkf": "",
               "feature": "",
@@ -4215,6 +4349,7 @@
         },
         {
           "sub": "Account Management",
+          "order": 0,
           "prompts": [
             null,
             null,
@@ -4234,6 +4369,7 @@
               "roles": [],
               "caption": "Account Details",
               "template": "Show me the account details for ##HCP_NAME##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -4261,6 +4397,7 @@
               "roles": [],
               "caption": "Account Specialty",
               "template": "What is the specialty for ##HCP_NAME##?",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -4288,6 +4425,7 @@
               "roles": [],
               "caption": "Association lookup",
               "template": "Show me the associated accounts for ##HCP_NAME##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -4315,6 +4453,7 @@
               "roles": [],
               "caption": "Change requests",
               "template": "Show me my change requests for ##HCP_NAME##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -4342,6 +4481,7 @@
               "roles": [],
               "caption": "Add a person account",
               "template": "Add an HCP",
+              "order": 0,
               "criteria": [],
               "wrkf": "",
               "feature": "",
@@ -4362,6 +4502,7 @@
               "roles": [],
               "caption": "Create follow up request",
               "template": "Create a follow up request for ##HCP_NAME##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -4389,6 +4530,7 @@
               "roles": [],
               "caption": "Add a business account",
               "template": "Create a new account for a business",
+              "order": 0,
               "criteria": [],
               "wrkf": "",
               "feature": "",
@@ -4409,6 +4551,7 @@
               "roles": [],
               "caption": "Update an existing association",
               "template": "Update the account association for ##HCP_NAME##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -4436,6 +4579,7 @@
               "roles": [],
               "caption": "Remove Account from territory",
               "template": "Remove account ##HCP_NAME## from my territory",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -4463,6 +4607,7 @@
               "roles": [],
               "caption": "Inactivate account address",
               "template": "Inactivate address for ##HCP_NAME##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -4479,6 +4624,7 @@
         },
         {
           "sub": "Account Addresses",
+          "order": 0,
           "prompts": [
             null,
             null,
@@ -4499,6 +4645,7 @@
               "roles": [],
               "caption": "Account Address",
               "template": "Show me the account addresses for ##HCP_NAME##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -4526,6 +4673,7 @@
               "roles": [],
               "caption": "Update account address",
               "template": "Update address for ##HCP_NAME##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -4553,6 +4701,7 @@
               "roles": [],
               "caption": "Add account addess",
               "template": "Add Account address for ##HCP_NAME##",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "HCP_NAME",
@@ -4576,6 +4725,7 @@
       "sub-cats": [
         {
           "sub": "Playbook",
+          "order": 0,
           "prompts": [
             {
               "prompt": "Show me the playbook for ##PRODUCT##",
@@ -4583,6 +4733,7 @@
               "roles": [],
               "caption": "Product Playbook",
               "template": "",
+              "order": 0,
               "criteria": [
                 {
                   "criterion": "PRODUCT",
@@ -4603,7 +4754,9 @@
               "roles": [],
               "caption": "Playbook Talking Points",
               "template": "Can you give me some talking points from the playbook?",
+              "order": 0,
               "keywords": [],
+              "order": 0,
               "criteria": [],
               "wrkf": "",
               "feature": "",
@@ -4617,7 +4770,9 @@
               "roles": [],
               "caption": "Playbook Powerful Questions",
               "template": "What are examples of powerful questions from the playbook?",
+              "order": 0,
               "keywords": [],
+              "order": 0,
               "criteria": [],
               "wrkf": "",
               "feature": "",
@@ -4631,7 +4786,9 @@
               "roles": [],
               "caption": "Playbook Other Product",
               "template": "What should I do if a doctor says they prefer another product according to the playbook?",
+              "order": 0,
               "keywords": [],
+              "order": 0,
               "criteria": [],
               "wrkf": "",
               "feature": "",
@@ -4645,7 +4802,9 @@
               "roles": [],
               "caption": "Playbook Challenger Insights",
               "template": "What is the primary purpose of the Challenger Insights in the sales call process according to the playbook?",
+              "order": 0,
               "keywords": [],
+              "order": 0,
               "criteria": [],
               "wrkf": "",
               "feature": "",
@@ -4659,7 +4818,9 @@
               "roles": [],
               "caption": "Playbook MSL Question",
               "template": "According to the playbook, how should a I handle a situation where an HCP asks for assistance meeting with an MSL and also has medical questions?",
+              "order": 0,
               "keywords": [],
+              "order": 0,
               "criteria": [],
               "wrkf": "",
               "feature": "",
@@ -4673,7 +4834,9 @@
               "roles": [],
               "caption": "Playbook Guiding Principles",
               "template": "According to the playbook's Guiding Principles, how should a representative respond to unsolicited requests or off-label information?",
+              "order": 0,
               "keywords": [],
+              "order": 0,
               "criteria": [],
               "wrkf": "",
               "feature": "",
@@ -4828,6 +4991,10 @@
         function loadSample() {
             // SAMPLE_DATA now contains both wcgd and wait_state
             data = JSON.parse(JSON.stringify(SAMPLE_DATA)); // Deep clone
+
+            // Ensure backward compatibility: add order field if missing
+            ensureOrderFields();
+
             markFirstRunDone();
             hideWelcomePanel();
             renderCategoryTree();
@@ -4881,7 +5048,10 @@
                         <div class="sub-category ${isSelected ? 'selected' : ''}"
                              onclick="selectSubCategory(${catIndex}, ${subIndex})">
                             <span>${highlight(subCat.sub, q)}</span>
-                            ${countLabel}
+                            <div style="display: flex; align-items: center; gap: 4px; margin-left: auto;">
+                                ${countLabel}
+                                <button class="icon-btn" onclick="editSubCategory(${catIndex}, ${subIndex}); event.stopPropagation();" title="Edit sub-category" aria-label="Edit sub-category" style="opacity: 0.7;">${iconHTML('edit', 'icon-sm')}</button>
+                            </div>
                         </div>
                     `;
                 }).filter(Boolean).join('');
@@ -5131,6 +5301,47 @@
             renderCategoryFranchiseSelector();
         }
 
+        function editSubCategory(catIndex, subIndex) {
+            const category = data.wcgd[catIndex];
+            const subCat = category['sub-cats'][subIndex];
+
+            // Use a simple prompt dialog to edit sub-category name and order
+            const newName = prompt('Sub-Category Name:', subCat.sub);
+            if (newName === null) return; // User cancelled
+
+            const newOrder = prompt('Order (lower numbers appear first):', subCat.order || 0);
+            if (newOrder === null) return; // User cancelled
+
+            // Validate
+            if (!newName.trim()) {
+                neodigmToast.q('Sub-category name cannot be empty', 'warning');
+                return;
+            }
+
+            const orderNum = parseInt(newOrder);
+            if (isNaN(orderNum)) {
+                neodigmToast.q('Order must be a number', 'warning');
+                return;
+            }
+
+            // Check for duplicate name (excluding current)
+            const duplicate = category['sub-cats'].find((sc, idx) =>
+                idx !== subIndex && sc.sub === newName.trim()
+            );
+            if (duplicate) {
+                neodigmToast.q('Sub-category name already exists', 'warning');
+                return;
+            }
+
+            // Update
+            subCat.sub = newName.trim();
+            subCat.order = orderNum;
+
+            renderCategoryTree();
+            generateJSON();
+            neodigmToast.q('Sub-category updated!', 'brand');
+        }
+
         function renderCategoryFranchiseSelector() {
             const selector = document.getElementById('categoryFranchiseSelector');
             selector.innerHTML = AVAILABLE_FRANCHISES.map(franchise => {
@@ -5157,6 +5368,7 @@
             document.getElementById('categoryName').value = '';
             document.getElementById('categoryDescription').value = '';
             document.getElementById('subCategoryName').value = '';
+            document.getElementById('subCategoryOrder').value = '0';
             selectedCategoryFranchises = [];
         }
 
@@ -5165,6 +5377,7 @@
             const catName = document.getElementById('categoryName').value.trim();
             const catDesc = document.getElementById('categoryDescription').value.trim();
             const subCatName = document.getElementById('subCategoryName').value.trim();
+            const subCatOrder = parseInt(document.getElementById('subCategoryOrder').value) || 0;
 
             if (!catName) {
                 neodigmToast.q('Category name is required', 'warning');
@@ -5224,6 +5437,7 @@
                 }
                 category['sub-cats'].push({
                     sub: subCatName,
+                    order: subCatOrder,
                     prompts: []
                 });
                 neodigmToast.q('Sub-category added!', 'brand');
@@ -5269,6 +5483,7 @@
             document.getElementById('promptCaption').value = '';
             document.getElementById('promptText').value = '';
             document.getElementById('promptTemplate').value = '';
+            document.getElementById('promptOrder').value = '0';
             document.getElementById('promptWorkflow').value = '';
             document.getElementById('promptFeature').value = '';
             document.getElementById('promptFav').checked = false;
@@ -5445,6 +5660,7 @@
                 caption: caption,
                 template: document.getElementById('promptTemplate').value.trim(),
                 keywords: currentKeywords.filter(k => k.trim() !== ''),
+                order: parseInt(document.getElementById('promptOrder').value) || 0,
                 criteria: currentCriteria.map(c => ({...c})),
                 wrkf: document.getElementById('promptWorkflow').value.trim(),
                 feature: document.getElementById('promptFeature').value.trim(),
@@ -5479,6 +5695,7 @@
             document.getElementById('promptCaption').value = prompt.caption;
             document.getElementById('promptText').value = prompt.prompt;
             document.getElementById('promptTemplate').value = prompt.template || '';
+            document.getElementById('promptOrder').value = prompt.order || 0;
             document.getElementById('promptWorkflow').value = prompt.wrkf || '';
             document.getElementById('promptFeature').value = prompt.feature || '';
             document.getElementById('promptFav').checked = prompt.fav || false;
@@ -5567,6 +5784,9 @@
                     data = importedData;
                 }
 
+                // Ensure backward compatibility: add order field if missing
+                ensureOrderFields();
+
                 markFirstRunDone();
                 hideWelcomePanel();
 
@@ -5651,6 +5871,9 @@
                     } else {
                         data = imported;
                     }
+
+                    // Ensure backward compatibility: add order field if missing
+                    ensureOrderFields();
 
                     markFirstRunDone();
                     hideWelcomePanel();
