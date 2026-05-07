@@ -2161,6 +2161,7 @@
                         <div class="help-text">Click tokens below to insert them at the cursor.</div>
                         <div class="token-selector">
                             <div class="token-chip" onclick="insertToken('##HCP_NAME##')" title="Healthcare provider name">##HCP_NAME##</div>
+                            <div class="token-chip" onclick="insertToken('##HCP_HCO##')" title="Healthcare provider or organization (HCP or HCO)">##HCP_HCO##</div>
                             <div class="token-chip" onclick="insertToken('##PRODUCT##')" title="Product or medication">##PRODUCT##</div>
                             <div class="token-chip" onclick="insertToken('##TIME_PERIOD##')" title="Time range (e.g., last 90 days)">##TIME_PERIOD##</div>
                             <div class="token-chip" onclick="insertToken('##ZIP_CODE##')" title="Geographic ZIP code">##ZIP_CODE##</div>
@@ -2208,8 +2209,13 @@
                     <div class="form-group">
                         <div class="checkbox-group">
                             <input type="checkbox" id="promptFav">
-                            <label class="checkbox-label" for="promptFav">Mark as Favorite</label>
-                            <span class="info-tip" tabindex="0" data-tip="Favorited prompts surface in the user's suggested-prompt strip. Use sparingly — favorites should be the highest-value, broadly-useful prompts.">?</span>
+                            <label class="checkbox-label" for="promptFav">Mark as RM Favorite</label>
+                            <span class="info-tip" tabindex="0" data-tip="RM (Regional Manager) Favorites are prompts designated by management to appear in users' suggested-prompt strip. Unlike user favorites (which users set themselves), RM Favorites are set centrally. Use sparingly for the highest-value, broadly-useful prompts.">?</span>
+                        </div>
+                        <div class="checkbox-group" style="margin-top: 8px;">
+                            <input type="checkbox" id="promptHomePage">
+                            <label class="checkbox-label" for="promptHomePage">Show on Home Page</label>
+                            <span class="info-tip" tabindex="0" data-tip="Marks this prompt to appear in the home page carousel, provided it is configured as available to the current user's franchise.">?</span>
                         </div>
                     </div>
 
@@ -2345,8 +2351,8 @@
                     <div class="help-key-row"><dt>Prompt</dt><dd>The plain-language question users see. No tokens.</dd></div>
                     <div class="help-key-row"><dt>Caption</dt><dd>Short display label (≤ ~30 chars) used in suggestion chips and lists.</dd></div>
                     <div class="help-key-row"><dt>Template</dt><dd>The same question with <code>##TOKENS##</code> swapped in for dynamic values. Filled by the system at runtime.</dd></div>
-                    <div class="help-key-row"><dt>Token</dt><dd>One of eight placeholders: <code>##HCP_NAME##</code>, <code>##PRODUCT##</code>, <code>##TIME_PERIOD##</code>, <code>##ZIP_CODE##</code>, <code>##INDICATION##</code>, <code>##SPECIALTY##</code>, <code>##COMPETITOR##</code>, <code>##FRANCHISE##</code>.</dd></div>
-                    <div class="help-key-row"><dt>Criterion</dt><dd>A data input the prompt expects. Each is one of the eight token types and has three flags.</dd></div>
+                    <div class="help-key-row"><dt>Token</dt><dd>One of nine placeholders: <code>##HCP_NAME##</code>, <code>##HCP_HCO##</code>, <code>##PRODUCT##</code>, <code>##TIME_PERIOD##</code>, <code>##ZIP_CODE##</code>, <code>##INDICATION##</code>, <code>##SPECIALTY##</code>, <code>##COMPETITOR##</code>, <code>##FRANCHISE##</code>. <strong>Note:</strong> <code>##HCP_NAME##</code> is for Healthcare Professionals only, while <code>##HCP_HCO##</code> accepts both Healthcare Professionals (HCP) and Healthcare Organizations (HCO).</dd></div>
+                    <div class="help-key-row"><dt>Criterion</dt><dd>A data input the prompt expects. Each is one of the nine token types and has three flags.</dd></div>
                     <div class="help-key-row"><dt>Required</dt><dd>The prompt cannot run until this value is supplied (or asked for).</dd></div>
                     <div class="help-key-row"><dt>Match Tap</dt><dd>Bind to whatever the user tapped/selected (e.g., the HCP they were viewing) instead of asking.</dd></div>
                     <div class="help-key-row"><dt>Default</dt><dd>Fallback value used when the criterion is neither supplied nor tapped.</dd></div>
@@ -2354,7 +2360,8 @@
                     <div class="help-key-row"><dt>Keywords</dt><dd>Search hints that help GenAIsys match natural-language queries to this prompt.</dd></div>
                     <div class="help-key-row"><dt>Workflow ID</dt><dd>Optional backend handler name (e.g., <code>snapshot</code>). Blank = default routing.</dd></div>
                     <div class="help-key-row"><dt>Feature Flag</dt><dd>Optional gate name for staged rollouts. Blank = always on.</dd></div>
-                    <div class="help-key-row"><dt>Favorite</dt><dd>Surfaces the prompt in the user's suggested strip. Use sparingly.</dd></div>
+                    <div class="help-key-row"><dt>RM Favorite</dt><dd>Regional Manager Favorite — prompts designated by management to appear in users' suggested strip. Unlike user favorites (which users set themselves), RM Favorites are set centrally in this config. Use sparingly for the highest-value, broadly-useful prompts.</dd></div>
+                    <div class="help-key-row"><dt>Home Page</dt><dd>Marks a prompt to appear in the home page carousel. Prompts are only shown if they are configured as available to the current user's franchise.</dd></div>
                     <div class="help-key-row"><dt>Wait-state phrase</dt><dd>Reassuring/loading message cycled while the AI responds. Empty franchise list = global.</dd></div>
                 </dl>
 
@@ -2488,7 +2495,7 @@
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
-                                                "required": ["prompt", "franchises", "roles", "caption", "template", "criteria", "wrkf", "feature", "fav"],
+                                                "required": ["prompt", "franchises", "roles", "caption", "template", "criteria", "wrkf", "feature", "fav", "homePage"],
                                                 "properties": {
                                                     "prompt": {"type": "string"},
                                                     "franchises": {"type": "array", "items": {"type": "string"}},
@@ -2512,7 +2519,8 @@
                                                     },
                                                     "wrkf": {"type": "string"},
                                                     "feature": {"type": "string"},
-                                                    "fav": {"type": "boolean"}
+                                                    "fav": {"type": "boolean"},
+                                                    "homePage": {"type": "boolean"}
                                                 }
                                             }
                                         }
@@ -2568,6 +2576,7 @@
         // Available criterion names (matching token chip values)
         const AVAILABLE_CRITERIA = [
             "HCP_NAME",
+            "HCP_HCO",
             "PRODUCT",
             "TIME_PERIOD",
             "ZIP_CODE",
@@ -2581,9 +2590,9 @@
         // BACKWARD COMPATIBILITY
         // ============================================================================
         function ensureOrderFields() {
-            // Ensure all sub-categories and prompts have an 'order' field for backward compatibility
-            // This allows importing old JSON data that doesn't include the 'order' attribute.
-            // Existing order values are preserved; missing ones default to 0.
+            // Ensure all sub-categories and prompts have required fields for backward compatibility
+            // This allows importing old JSON data that doesn't include new attributes.
+            // Existing values are preserved; missing ones get defaults.
             if (data.wcgd && Array.isArray(data.wcgd)) {
                 data.wcgd.forEach(category => {
                     if (category['sub-cats'] && Array.isArray(category['sub-cats'])) {
@@ -2595,7 +2604,7 @@
                             if (!('order' in subCat)) {
                                 subCat.order = 0;
                             }
-                            // Add order to each prompt if missing
+                            // Add fields to each prompt if missing
                             if (subCat.prompts && Array.isArray(subCat.prompts)) {
                                 subCat.prompts.forEach(prompt => {
                                     // Skip null or invalid prompts
@@ -2603,6 +2612,9 @@
 
                                     if (!('order' in prompt)) {
                                         prompt.order = 0;
+                                    }
+                                    if (!('homePage' in prompt)) {
+                                        prompt.homePage = false;
                                     }
                                 });
                             }
@@ -5255,7 +5267,8 @@
                         </div>
                         ${keywordsHTML}
                         ${franchiseHTML}
-                        ${prompt.fav ? `<div style="color: var(--brand-accent); font-size: 0.82em; display: flex; align-items: center; gap: 8px; margin-top: 8px;">${iconHTML('star', 'icon-sm')} <span>Favorite</span></div>` : ''}
+                        ${prompt.fav ? `<div style="color: var(--brand-accent); font-size: 0.82em; display: flex; align-items: center; gap: 8px; margin-top: 8px;">${iconHTML('star', 'icon-sm')} <span>RM Favorite</span></div>` : ''}
+                        ${prompt.homePage ? `<div style="color: var(--brand-accent); font-size: 0.82em; display: flex; align-items: center; gap: 8px; margin-top: 8px;">${iconHTML('home', 'icon-sm')} <span>Home Page</span></div>` : ''}
                         <div class="actions" style="margin-top: 16px;">
                             <button class="btn btn-small" onclick="editPrompt(${index})">Edit</button>
                             <button class="btn btn-danger btn-small" onclick="deletePrompt(${index})">Delete</button>
@@ -5487,6 +5500,7 @@
             document.getElementById('promptWorkflow').value = '';
             document.getElementById('promptFeature').value = '';
             document.getElementById('promptFav').checked = false;
+            document.getElementById('promptHomePage').checked = false;
             currentCriteria = [];
             currentKeywords = [];
         }
@@ -5664,7 +5678,8 @@
                 criteria: currentCriteria.map(c => ({...c})),
                 wrkf: document.getElementById('promptWorkflow').value.trim(),
                 feature: document.getElementById('promptFeature').value.trim(),
-                fav: document.getElementById('promptFav').checked
+                fav: document.getElementById('promptFav').checked,
+                homePage: document.getElementById('promptHomePage').checked
             };
 
             if (editingPromptIndex !== null) {
@@ -5699,6 +5714,7 @@
             document.getElementById('promptWorkflow').value = prompt.wrkf || '';
             document.getElementById('promptFeature').value = prompt.feature || '';
             document.getElementById('promptFav').checked = prompt.fav || false;
+            document.getElementById('promptHomePage').checked = prompt.homePage || false;
 
             currentKeywords = [...(prompt.keywords || [])];
             renderKeywordsList();
